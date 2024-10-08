@@ -12,7 +12,7 @@ public class EmployeeService : IEmployeeService
         _context = context;
     }
 
-    public async Task<Employee> GetEmployeeByIdAsync(int id)
+    public async Task<Employee?> GetEmployeeByIdAsync(int id)
     {
         return await _context.Employees
         .Where(e => e.Id == id)
