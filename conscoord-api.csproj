@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="Coravel" Version="6.0.0" />
+    <PackageReference Include="dotenv.net" Version="3.2.1" />
     <PackageReference Include="MailKit" Version="4.8.0" />
     <PackageReference Include="Microsoft.AspNetCore.SpaProxy">
       <Version>8.*-*</Version>
