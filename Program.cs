@@ -4,6 +4,9 @@ using conscoord_api.Data.Interfaces;
 using conscoord_api.Services;
 using Microsoft.EntityFrameworkCore;
 using Coravel;
+using dotenv.net;
+
+var envVars = DotEnv.Read();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +20,6 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -30,7 +32,13 @@ builder.Services.AddScoped<SendEmailsAtMidnight>();
 //builder.Services.AddTransient<string>(p => "");
 
 // Services
-builder.Services.AddDbContext<PostgresContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("db")));
+builder.Services.Configure<SmtpSettings>(options =>
+{
+    options.SenderName = envVars["SMTP_SENDERNAME"];
+    options.Username = envVars["SMTP_USERNAME"];
+    options.Password = envVars["SMTP_PASSWORD"];
+});
+builder.Services.AddDbContext<PostgresContext>(options => options.UseNpgsql(envVars["DB"]));
 builder.Services.AddScoped<ICompanyService, CompanyService>();
 builder.Services.AddScoped<IShiftService, ShiftService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
@@ -65,13 +73,9 @@ app.UseCors(x => x
     .AllowCredentials());
 
 app.UseRouting();
-
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.MapFallbackToFile("/index.html");
 
 app.Run();
