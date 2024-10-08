@@ -52,9 +52,8 @@ if (app.Environment.IsDevelopment())
 
 app.Services.UseScheduler(scheduler => {
     //add more of these for different times/different processes
-    scheduler.Schedule<SendEmailsAtMidnight>()
-        .EveryMinute()      
-        //.Cron("0 0 * * *")
+    scheduler.Schedule<SendEmailsAtMidnight>()      
+        .Cron("0 0 * * *")
         .PreventOverlapping(nameof(SendEmailsAtMidnight));
 });
 
