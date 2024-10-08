@@ -4,7 +4,7 @@ public interface IShiftService
 {
     public Task<List<Shift>> GetAllShifts();
     public Task<List<Shift>> GetAllArchivedAndCompletedShifts();
-    public Task<Shift> GetShiftById(int id);
+    public Task<Shift?> GetShiftById(int id);
     public Task CreateShift(Shift shift);
     public Task ArchiveShiftAsync(int shiftId);
     public Task EditShiftAsync(Shift shift);

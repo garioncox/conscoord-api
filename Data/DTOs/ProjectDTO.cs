@@ -2,9 +2,9 @@
 {
     public class ProjectDTO
     {
-        public string Name { get; set; }
-        public string Location { get; set; }
-        public string StartDate { get; set; }
-        public string EndDate { get; set; }
+        public required string Name { get; set; }
+        public required string Location { get; set; }
+        public required string StartDate { get; set; }
+        public required string EndDate { get; set; }
     }
 }

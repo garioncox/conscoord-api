@@ -3,7 +3,7 @@ using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace practicum2425.Server.Controllers;
+namespace conscoord_api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -12,12 +12,15 @@ public class EmployeeShiftController(IEmployeeShiftService service, IShiftServic
     private readonly IEmployeeShiftService _empShiftService = service;
     private readonly IShiftService _shiftService = shiftService;
 
-    [HttpPost()]
-    public async Task CreateEmpShift([FromBody] EmployeeShiftDTO empShift)
+    [HttpPost("add")]
+    public async Task<ActionResult> CreateEmpShift([FromBody] EmployeeShiftDTO empShift)
     {
         var signedUpFor = GetShiftsByEmpId(empShift.EmployeeId);
         var toSignUpFor = await _shiftService.GetShiftById(empShift.ShiftId);
-
+        if (toSignUpFor == null)
+        {
+            return NotFound();
+        }
 
         // For the shift we are adding, check to see if it overlaps with an existing shift we signed up for
         DateTime ts = DateTime.Parse(toSignUpFor.StartTime);
@@ -26,15 +29,15 @@ public class EmployeeShiftController(IEmployeeShiftService service, IShiftServic
         {
             DateTime ss = DateTime.Parse(s.StartTime);
             DateTime se = DateTime.Parse(s.EndTime);
-            if ((ts > ss && ts < se) || (te > ss && te < se))
+            if (ts > ss && ts < se || te > ss && te < se)
             {
-                return;
+                return NotFound();
             }
 
             // Check to see if we are signing up for the same shift
             if (s.Id == toSignUpFor.Id)
             {
-                return;
+                return NotFound();
             }
         }
 
@@ -45,12 +48,13 @@ public class EmployeeShiftController(IEmployeeShiftService service, IShiftServic
         };
 
         await _empShiftService.CreateEmployeeShift(e);
+        return Ok();
     }
 
-    [HttpDelete()]
-    public async Task DeleteEmpShift(int empShiftId)
+    [HttpDelete("delete/{Id}")]
+    public async Task DeleteEmpShift(int Id)
     {
-        await _empShiftService.DeleteEmpShiftAsync(empShiftId);
+        await _empShiftService.DeleteEmpShiftAsync(Id);
     }
 
     [HttpGet("getShifts/{empId}")]

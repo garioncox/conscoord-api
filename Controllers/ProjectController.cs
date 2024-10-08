@@ -3,6 +3,8 @@ using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
+namespace conscoord_api.Controllers;
+
 [ApiController]
 [Route("api/[controller]")]
 public class ProjectController : ControllerBase
@@ -13,13 +15,13 @@ public class ProjectController : ControllerBase
         _projectService = service;
     }
 
-    [HttpGet("GetProjects")]
+    [HttpGet("get")]
     public async Task<List<Project>> GetProjectListAsync()
     {
         return await _projectService.GetProjectListAsync();
     }
 
-    [HttpPost()]
+    [HttpPost("add")]
     public async Task CreateProject( [FromBody] ProjectDTO projectDTO)
     {
 

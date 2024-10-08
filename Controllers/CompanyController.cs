@@ -14,7 +14,7 @@ public class CompanyController : ControllerBase
         _CompanyService = service;
     }
 
-    [HttpGet("GetCompanies")]
+    [HttpGet("get")]
     public async Task<List<Company>> GetCompanyListAsync()
     {
         return await _CompanyService.GetCompanyListAsync();
