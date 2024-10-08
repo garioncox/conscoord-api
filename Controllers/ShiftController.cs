@@ -3,6 +3,8 @@ using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
+namespace conscoord_api.Controllers;
+
 [ApiController]
 [Route("api/[controller]")]
 public class ShiftController : ControllerBase
@@ -25,7 +27,7 @@ public class ShiftController : ControllerBase
         return await _shiftService.GetAllArchivedAndCompletedShifts();
     }
 
-    [HttpPost("create")]
+    [HttpPost("add")]
     public async Task CreateShift([FromBody] ShiftDTO shiftDTO)
     {
         Shift shift = new()
@@ -53,7 +55,7 @@ public class ShiftController : ControllerBase
         await _shiftService.EditShiftAsync(shift);
     }
 
-    [HttpDelete("delete/{id}" )]
+    [HttpDelete("delete/{id}")]
     public async Task Delete(int id)
     {
         await _shiftService.DeleteShiftAsync(id);
