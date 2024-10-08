@@ -2,11 +2,11 @@
 {
     public class ShiftDTO
     {
-        public string StartTime { get; set; }
-        public string EndTime { get; set; }
+        public required string StartTime { get; set; }
+        public required string EndTime { get; set; }
         public string? Description { get; set; }
         public string? Location { get; set; }
         public int RequestedEmployees { get; set; }
-        public string Status { get; set; }
+        public required string Status { get; set; }
     }
 }
