@@ -2,6 +2,7 @@
 using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace conscoord_api.Controllers;
 
@@ -33,6 +34,11 @@ public class EmployeeController : Controller
         return Ok(employee);
     }
 
+    [HttpGet("GetEmployeeByEmail/{email}")]
+    public async Task<Employee> GetEmployeeByEmail(string email)
+    {
+        return await _EmployeeService.GetEmployeeByEmailAsync(email);
+    }
 
     [HttpPost("add")]
     public async Task PostEmployee([FromBody] EmployeeDTO employeeDTO)

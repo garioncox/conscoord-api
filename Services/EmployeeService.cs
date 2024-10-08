@@ -19,6 +19,13 @@ public class EmployeeService : IEmployeeService
         .FirstOrDefaultAsync();
     }
 
+    public async Task<Employee> GetEmployeeByEmailAsync(string email)
+    {
+        return await _context.Employees
+        .Where(e => e.Email == email)
+        .FirstOrDefaultAsync();
+    }
+
     public async Task<List<Employee>> GetEmployeesListAsync()
     {
         return await _context.Employees.ToListAsync();
