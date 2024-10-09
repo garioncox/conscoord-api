@@ -16,7 +16,7 @@ public class EmployeeController : Controller
         _EmployeeService = service;
     }
 
-    [HttpGet("getall")]
+    [HttpGet("getAll")]
     public async Task<List<Employee>> GetEmployeeListAsync()
     {
         return await _EmployeeService.GetEmployeesListAsync();
@@ -34,14 +34,14 @@ public class EmployeeController : Controller
         return Ok(employee);
     }
 
-    [HttpGet("GetEmployeeByEmail/{email}")]
+    [HttpGet("getByEmail/{email}")]
     public async Task<Employee> GetEmployeeByEmail(string email)
     {
         return await _EmployeeService.GetEmployeeByEmailAsync(email);
     }
 
     [HttpPost("add")]
-    public async Task PostEmployee([FromBody] EmployeeDTO employeeDTO)
+    public async Task AddEmployee([FromBody] EmployeeDTO employeeDTO)
     {
         Employee employee = new Employee()
         {
@@ -49,6 +49,6 @@ public class EmployeeController : Controller
             Email = employeeDTO.Email,
             Name = employeeDTO.Name
         };
-        await _EmployeeService.PostEmployee(employee);
+        await _EmployeeService.AddEmployee(employee);
     }
 }

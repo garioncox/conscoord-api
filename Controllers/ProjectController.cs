@@ -15,7 +15,7 @@ public class ProjectController : ControllerBase
         _projectService = service;
     }
 
-    [HttpGet("get")]
+    [HttpGet("getAll")]
     public async Task<List<Project>> GetProjectListAsync()
     {
         return await _projectService.GetProjectListAsync();
