@@ -3,6 +3,7 @@ using conscoord_api.Data;
 using conscoord_api.Data.Interfaces;
 using conscoord_api.Services;
 using Microsoft.EntityFrameworkCore;
+using Coravel;
 using dotenv.net;
 
 var envVars = DotEnv.Read();
@@ -24,6 +25,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Cron Scheduler
+builder.Services.AddScheduler();
+builder.Services.AddScoped<SendEmailsAtMidnight>();
+//this is how you pass in parameters
+//builder.Services.AddTransient<string>(p => "");
+
 // Services
 builder.Services.Configure<SmtpSettings>(options =>
 {
@@ -37,6 +44,7 @@ builder.Services.AddScoped<IShiftService, ShiftService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IEmployeeShiftService, EmployeeShiftService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+builder.Services.AddScoped<EmailController>();
 
 var app = builder.Build();
 
@@ -49,6 +57,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.Services.UseScheduler(scheduler => {
+    //add more of these for different times/different processes
+    scheduler.Schedule<SendEmailsAtMidnight>()      
+        .Cron("0 0 * * *")
+        .PreventOverlapping(nameof(SendEmailsAtMidnight));
+});
 
 app.UseCors(x => x
     .AllowAnyMethod()
