@@ -15,15 +15,15 @@ public class EmployeeService : IEmployeeService
     public async Task<Employee?> GetEmployeeByIdAsync(int id)
     {
         return await _context.Employees
-        .Where(e => e.Id == id)
-        .FirstOrDefaultAsync();
+            .Where(e => e.Id == id)
+            .FirstOrDefaultAsync();
     }
 
     public async Task<Employee> GetEmployeeByEmailAsync(string email)
     {
         return await _context.Employees
-        .Where(e => e.Email == email)
-        .FirstOrDefaultAsync();
+            .Where(e => e.Email == email)
+            .FirstOrDefaultAsync();
     }
 
     public async Task<List<Employee>> GetEmployeesListAsync()
@@ -31,7 +31,7 @@ public class EmployeeService : IEmployeeService
         return await _context.Employees.ToListAsync();
     }
 
-    public async Task PostEmployee(Employee employee)
+    public async Task AddEmployee(Employee employee)
     {
         _context.Employees.Add(employee);
         await _context.SaveChangesAsync();

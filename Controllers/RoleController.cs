@@ -14,7 +14,7 @@ public class RoleController : ControllerBase
         _RoleService = service;
     }
 
-    [HttpGet("getall")]
+    [HttpGet("getAll")]
     public async Task<List<Role>> GetRoleListAsync()
     {
         return await _RoleService.GetRoleListAsync();
