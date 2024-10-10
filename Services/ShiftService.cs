@@ -68,4 +68,9 @@ public class ShiftService : IShiftService
         }
         return _context.SaveChangesAsync();
     }
+
+    public Task<Shift[]> GetShiftByProjectAsync(Project project)
+    {
+        return Task.CompletedTask;
+    }
 }

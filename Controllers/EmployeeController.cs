@@ -35,9 +35,15 @@ public class EmployeeController : Controller
     }
 
     [HttpGet("getByEmail/{email}")]
-    public async Task<Employee> GetEmployeeByEmail(string email)
+    public async Task<ActionResult<Employee>> GetEmployeeByEmail(string email)
     {
-        return await _EmployeeService.GetEmployeeByEmailAsync(email);
+        var employee = await _EmployeeService.GetEmployeeByEmailAsync(email); ;
+        if (employee == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(employee);
     }
 
     [HttpPost("add")]

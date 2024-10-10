@@ -10,9 +10,11 @@ namespace conscoord_api.Controllers;
 public class ProjectController : ControllerBase
 {
     private readonly IProjectService _projectService;
-    public ProjectController(IProjectService service)
+    private readonly IShiftService _shiftService;
+    public ProjectController(IProjectService projectService, IShiftService shiftService)
     {
-        _projectService = service;
+        _projectService = projectService;
+        _shiftService = shiftService;
     }
 
     [HttpGet("getAll")]
@@ -22,23 +24,44 @@ public class ProjectController : ControllerBase
     }
 
     [HttpPost("add")]
-    public async Task CreateProject( [FromBody] ProjectDTO projectDTO)
+    public async Task CreateProject([FromBody] ProjectDTO projectDTO)
     {
-
         Project project = new Project()
         {
-           EndDate = projectDTO.EndDate,
-           StartDate = projectDTO.StartDate,
-           Location = projectDTO.Location,
-           Name = projectDTO.Name,
-           Status = Shift.STATUS_ACTIVE
+            EndDate = projectDTO.EndDate,
+            StartDate = projectDTO.StartDate,
+            Location = projectDTO.Location,
+            Name = projectDTO.Name,
+            Status = Shift.STATUS_ACTIVE
         };
 
         await _projectService.CreateProject(project);
     }
 
+    [HttpPut("archive")]
+    public async Task ArchiveProject([FromBody] ProjectDTO projectDTO)
+    {
+        Project project = new()
+        {
+            EndDate = projectDTO.EndDate,
+            StartDate = projectDTO.StartDate,
+            Location = projectDTO.Location,
+            Name = projectDTO.Name,
+            Status = Shift.STATUS_ARCHIVED
+        };
+
+        Shift[] shifts = await _shiftService.GetShiftByProjectAsync(project);
+
+        foreach (Shift s in shifts)
+        {
+            await _shiftService.ArchiveShiftAsync(s.Id);
+        }
+
+        await _projectService.ArchiveProjectAsync(project);
+    }
+
     [HttpPut("edit/{id}")]
-    public async Task EditProject( [FromBody] Project project, int id)
+    public async Task EditProject([FromBody] Project project, int id)
     {
         await _projectService.EditProjectAsync(project);
     }

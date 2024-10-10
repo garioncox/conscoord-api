@@ -38,4 +38,10 @@ public class ProjectService : IProjectService
         _context.Projects.Update(project);
         await _context.SaveChangesAsync();
     }
+
+    public async Task ArchiveProjectAsync(Project project)
+    {
+        project.Status = Shift.STATUS_ARCHIVED;
+        await EditProjectAsync(project);
+    }
 }
