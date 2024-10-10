@@ -6,4 +6,5 @@ public interface IProjectService
     public Task CreateProject(Project project);
     public Task DeleteProjectAsync(int id);
     public Task EditProjectAsync(Project project);
+    public Task ArchiveProjectAsync(Project project);
 }

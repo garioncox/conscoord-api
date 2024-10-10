@@ -59,9 +59,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.Services.UseScheduler(scheduler => {
+app.Services.UseScheduler(scheduler =>
+{
     //add more of these for different times/different processes
-    scheduler.Schedule<SendEmailsAtMidnight>()      
+    scheduler.Schedule<SendEmailsAtMidnight>()
         .Cron("0 0 * * *")
         .PreventOverlapping(nameof(SendEmailsAtMidnight));
 });

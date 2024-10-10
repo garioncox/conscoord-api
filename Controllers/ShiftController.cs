@@ -15,13 +15,13 @@ public class ShiftController : ControllerBase
         _shiftService = service;
     }
 
-    [HttpGet("get")]
+    [HttpGet("getAll")]
     public async Task<List<Shift>> GetShiftsListAsync()
     {
         return await _shiftService.GetAllShifts();
     }
 
-    [HttpGet("get/archived")]
+    [HttpGet("getAll/archived")]
     public async Task<List<Shift>> GetArchivedAndCompletedShiftsAsync()
     {
         return await _shiftService.GetAllArchivedAndCompletedShifts();
