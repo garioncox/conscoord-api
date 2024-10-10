@@ -68,4 +68,10 @@ public class ShiftService : IShiftService
         }
         return _context.SaveChangesAsync();
     }
+
+    public Task<Shift[]> GetShiftByProjectAsync(Project project)
+    {
+        // TODO: KGB-111
+        return Task.FromResult(new Shift[0]); 
+    }
 }
