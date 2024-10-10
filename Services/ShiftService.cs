@@ -71,6 +71,7 @@ public class ShiftService : IShiftService
 
     public Task<Shift[]> GetShiftByProjectAsync(Project project)
     {
-        return Task.CompletedTask;
+        // TODO: KGB-111
+        return Task.FromResult(new Shift[0]); 
     }
 }
