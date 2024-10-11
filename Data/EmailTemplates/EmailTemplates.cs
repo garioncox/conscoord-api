@@ -1,4 +1,6 @@
 static class EmailTemplates {
+
+
 static private (string Subject, string MailBody) _warnLowOfficerCount = (
     "[Announcement] Low Officer Count",
     "We wish to inform you that your shift {project} - {insert shift here} currently has {number} fewer officers signed up than anticipated. Please review and adjust your plans accordingly.\n\nBest regards,\n[Your Organization]"
@@ -20,3 +22,4 @@ static private (string Subject, string MailBody) _notClockedIn = (
     static public (string Subject, string MailBody) OfficerCancellation => _officerCancellation;
     static public (string Subject, string MailBody) NotClockedIn => _notClockedIn;
 }
+
