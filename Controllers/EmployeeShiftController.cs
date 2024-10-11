@@ -31,13 +31,13 @@ public class EmployeeShiftController(IEmployeeShiftService service, IShiftServic
             DateTime se = DateTime.Parse(s.EndTime);
             if (ts > ss && ts < se || te > ss && te < se)
             {
-                return NotFound();
+                return StatusCode(500);
             }
 
             // Check to see if we are signing up for the same shift
             if (s.Id == toSignUpFor.Id)
             {
-                return NotFound();
+                return StatusCode(500);
             }
         }
 
