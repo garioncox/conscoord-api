@@ -43,7 +43,7 @@ public class ShiftController : ControllerBase
         await _shiftService.CreateShift(shift);
     }
 
-    [HttpPost("archive")]
+    [HttpPut("archive/{shiftId}")]
     public async Task ArchiveShift(int shiftId)
     {
         await _shiftService.ArchiveShiftAsync(shiftId);
