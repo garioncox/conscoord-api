@@ -57,4 +57,10 @@ public class EmployeeController : Controller
         };
         await _EmployeeService.AddEmployee(employee);
     }
+
+    [HttpPut("edit")]
+    public async Task EditEmployee([FromBody] Employee employee)
+    {
+        await _EmployeeService.EditEmployee(employee);
+    }
 }
