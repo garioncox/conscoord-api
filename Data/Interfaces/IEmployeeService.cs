@@ -7,4 +7,5 @@ public interface IEmployeeService
     public Task<Employee?> GetEmployeeByEmailAsync(string email);
     public Task<Employee?> GetEmployeeByIdAsync(int id);
     public Task AddEmployee(Employee employee);
+    public Task EditEmployee(Employee employee);
 }
