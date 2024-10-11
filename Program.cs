@@ -76,7 +76,8 @@ app.Services.UseScheduler(scheduler =>
         .PreventOverlapping(nameof(SendEmailsAtMidnight));
 
     scheduler.Schedule<ShiftClockInReminder>()        
-          .EveryFifteenMinutes()
+          .EveryMinute()
+          //.EveryFifteenMinutes()
           .PreventOverlapping(nameof(ShiftClockInReminder));
 });
 

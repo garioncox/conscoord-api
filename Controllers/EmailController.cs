@@ -27,7 +27,6 @@ public class EmailController : ControllerBase
     {
         if (_featureFlags.EMAIL_ENABLED)
         {
-<<<<<<< Updated upstream
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress(_smtpSettings.SenderName, _smtpSettings.Username));
             message.To.Add(new MailboxAddress("", email));
@@ -48,14 +47,6 @@ public class EmailController : ControllerBase
         {
             return StatusCode(405);
         }
-=======
-            client.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
-            client.Authenticate(_smtpSettings.Username, _smtpSettings.Password);
-            client.Send(message);
-            client.Disconnect(true);
-        }
-        return Ok("Success");
->>>>>>> Stashed changes
     }
 
     [HttpPost]
