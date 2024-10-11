@@ -31,6 +31,13 @@ builder.Services.AddScoped<SendEmailsAtMidnight>();
 //this is how you pass in parameters
 //builder.Services.AddTransient<string>(p => "");
 
+// Feature Flags
+builder.Services.Configure<FeatureFlags>(o =>
+    {
+        o.EMAIL_ENABLED = envVars["EMAIL_ENABLED"] == "TRUE";
+    }
+);
+
 // Services
 builder.Services.Configure<SmtpSettings>(options =>
 {
