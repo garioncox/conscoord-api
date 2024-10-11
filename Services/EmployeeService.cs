@@ -37,6 +37,12 @@ public class EmployeeService : IEmployeeService
         await _context.SaveChangesAsync();
     }
 
+    public async Task EditEmployee(Employee emp)
+    {
+        _context.Employees.Update(emp);
+        await _context.SaveChangesAsync();
+    }
+
     public async Task ResignFromShift(int shift_id)
     {
         EmployeeShift? shift = await _context.EmployeeShifts
