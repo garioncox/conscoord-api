@@ -5,6 +5,7 @@ using conscoord_api.Services;
 using Microsoft.EntityFrameworkCore;
 using Coravel;
 using dotenv.net;
+using conscoord_api;
 
 var envVars = DotEnv.Read();
 
@@ -28,6 +29,7 @@ builder.Services.AddSwaggerGen();
 //Cron Scheduler
 builder.Services.AddScheduler();
 builder.Services.AddScoped<SendEmailsAtMidnight>();
+builder.Services.AddScoped<ShiftClockInReminder>();
 //this is how you pass in parameters
 //builder.Services.AddTransient<string>(p => "");
 
@@ -72,6 +74,10 @@ app.Services.UseScheduler(scheduler =>
     scheduler.Schedule<SendEmailsAtMidnight>()
         .Cron("0 0 * * *")
         .PreventOverlapping(nameof(SendEmailsAtMidnight));
+
+    scheduler.Schedule<ShiftClockInReminder>()        
+          .EveryFifteenMinutes()
+          .PreventOverlapping(nameof(ShiftClockInReminder));
 });
 
 app.UseCors(x => x
