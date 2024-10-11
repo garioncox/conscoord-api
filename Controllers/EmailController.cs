@@ -19,8 +19,6 @@ public class EmailController : ControllerBase
         _smtpSettings = smtpSettings.Value;
     }
 
-    [HttpPost]
-    [Route("send")]
     public IActionResult SendEmail(string email, string subject, string messageBody)
     {
         var message = new MimeMessage();
@@ -28,6 +26,27 @@ public class EmailController : ControllerBase
         message.To.Add(new MailboxAddress("", email));
         message.Subject = subject;
         message.Body = new TextPart("plain") { Text = messageBody };
+
+        using (var client = new SmtpClient())
+        {
+            client.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
+            client.Authenticate(_smtpSettings.Username, _smtpSettings.Password);
+            client.Send(message);
+            client.Disconnect(true);
+        }
+
+        return Ok("Success");
+    }
+
+    [HttpPost]
+    [Route("send")]
+    public IActionResult SendEmail([FromBody] EmailRequest emailRequest)
+    {
+        var message = new MimeMessage();
+        message.From.Add(new MailboxAddress(_smtpSettings.SenderName, _smtpSettings.Username));
+        message.To.Add(new MailboxAddress("", emailRequest.Email));
+        message.Subject = emailRequest.Subject;
+        message.Body = new TextPart("plain") { Text = emailRequest.MessageBody };
 
         using (var client = new SmtpClient())
         {
