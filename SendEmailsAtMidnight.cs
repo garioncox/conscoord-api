@@ -22,10 +22,9 @@ public class SendEmailsAtMidnight : IInvocable
   {
     foreach (EmployeeShift employeeShift in _allFutureEmployeeShifts)
     {
-      Console.WriteLine("sending email to " + employeeShift.Emp.Email);
       if (employeeShift.Emp.Email != null)
       {
-        _emailController.SendEmail(employeeShift.Emp.Email, EmailTemplates.WarnLowOfficerCount.Subject, EmailTemplates.WarnLowOfficerCount.MailBody);
+        _emailController.SendEmailBackend(employeeShift.Emp.Email, EmailTemplates.WarnLowOfficerCount.Subject, EmailTemplates.WarnLowOfficerCount.MailBody);
       }
     }
     return Task.CompletedTask;

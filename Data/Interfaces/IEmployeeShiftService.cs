@@ -6,4 +6,5 @@ public interface IEmployeeShiftService
     Task DeleteEmpShiftAsync(int shiftId);
     List<Shift> GetScheduledShiftsByEmpId(int empId);
     List<EmployeeShift> GetFutureShifts();
+    List<EmployeeShift> GetShiftsWithinTime(DateTime start, DateTime End);
 }

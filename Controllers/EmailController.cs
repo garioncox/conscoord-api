@@ -22,7 +22,8 @@ public class EmailController : ControllerBase
         _featureFlags = featureFlags.Value;
     }
 
-    public IActionResult SendEmail(string email, string subject, string messageBody)
+    [HttpPost]
+    public IActionResult SendEmailBackend(string email, string subject, string messageBody)
     {
         if (_featureFlags.EMAIL_ENABLED)
         {
