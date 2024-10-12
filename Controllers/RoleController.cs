@@ -19,4 +19,17 @@ public class RoleController : ControllerBase
     {
         return await _RoleService.GetRoleListAsync();
     }
+
+    [HttpGet("getByEmail/{email}")]
+    public async Task<ActionResult<Role>> GetRoleByEmailAsync(string email)
+    {
+        Role? role = await _RoleService.GetRoleByEmailAsync("garionlcox@gmail.com");
+
+        if (role == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(role);
+    }
 }
