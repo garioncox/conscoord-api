@@ -12,6 +12,14 @@ public class RoleService : IRoleService
         _context = context;
     }
 
+    public async Task<Role?> GetRoleByEmailAsync(string email)
+    {
+        return await _context.Employees
+            .Where(e => e.Email == email)
+            .Select(e => e.Role)
+            .FirstOrDefaultAsync();
+    }
+
     public async Task<List<Role>> GetRoleListAsync()
     {
         return await _context.Roles.ToListAsync();
