@@ -20,7 +20,6 @@ public class RoleService : IRoleService
             .FirstOrDefaultAsync();
     }
 
-
     public async Task<List<Role>> GetRoleListAsync()
     {
         return await _context.Roles.ToListAsync();
