@@ -5,6 +5,7 @@ using conscoord_api.Services;
 using Microsoft.EntityFrameworkCore;
 using Coravel;
 using dotenv.net;
+using System.Text.Json.Serialization;
 
 var envVars = DotEnv.Read();
 
@@ -45,6 +46,7 @@ builder.Services.Configure<SmtpSettings>(options =>
     options.Username = envVars["SMTP_USERNAME"];
     options.Password = envVars["SMTP_PASSWORD"];
 });
+builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles); // Prevent circular dependencies
 builder.Services.AddDbContext<PostgresContext>(options => options.UseNpgsql(envVars["DB"]));
 builder.Services.AddScoped<ICompanyService, CompanyService>();
 builder.Services.AddScoped<IShiftService, ShiftService>();

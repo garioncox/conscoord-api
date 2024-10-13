@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using dotenv.net;
+using Microsoft.EntityFrameworkCore;
 
 namespace conscoord_api.Data;
 
@@ -30,7 +31,10 @@ public partial class PostgresContext : DbContext
     public virtual DbSet<Shift> Shifts { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseNpgsql("Name=db");
+    {
+        var envVars = DotEnv.Read();
+        optionsBuilder.UseNpgsql(envVars["DB"]);
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
