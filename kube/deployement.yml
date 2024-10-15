@@ -19,7 +19,7 @@ spec:
         app: conscoord-api
     spec:
       containers:
-        - name: inventory-management-api
+        - name: conscoord-api
           image: garioncox/conscoord-api:${IMAGE_TAG}
           env:
             - name: DB
