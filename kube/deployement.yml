@@ -30,6 +30,8 @@ spec:
               value: ${SMTP_USERNAME}
             - name: SMTP_PASSWORD
               value: ${SMTP_PASSWORD}
+            - name: EMAIL_ENABLED
+              value: ${EMAIL_ENABLED}
           ports:
             - containerPort: 8080
           readinessProbe:
