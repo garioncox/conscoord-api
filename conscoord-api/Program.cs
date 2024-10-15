@@ -35,19 +35,19 @@ builder.Services.AddScoped<SendEmailsAtMidnight>();
 // Feature Flags
 builder.Services.Configure<FeatureFlags>(o =>
     {
-        o.EMAIL_ENABLED = envVars["EMAIL_ENABLED"] == "TRUE";
+        o.EMAIL_ENABLED = (Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]) == "TRUE";
     }
 );
 
 // Services
 builder.Services.Configure<SmtpSettings>(options =>
 {
-    options.SenderName = envVars["SMTP_SENDERNAME"];
-    options.Username = envVars["SMTP_USERNAME"];
-    options.Password = envVars["SMTP_PASSWORD"];
+    options.SenderName = Environment.GetEnvironmentVariable("SMTP_SENDERNAME") ?? envVars["SMTP_SENDERNAME"];
+    options.Username = Environment.GetEnvironmentVariable("SMTP_USERNAME")  ?? envVars["SMTP_USERNAME"];
+    options.Password = Environment.GetEnvironmentVariable("SMTP_PASSWORD")  ?? envVars["SMTP_PASSWORD"];
 });
 builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles); // Prevent circular dependencies
-builder.Services.AddDbContext<PostgresContext>(options => options.UseNpgsql(envVars["DB"]));
+builder.Services.AddDbContext<PostgresContext>(options => options.UseNpgsql(Environment.GetEnvironmentVariable("DB")  ?? envVars["DB"]));
 builder.Services.AddScoped<ICompanyService, CompanyService>();
 builder.Services.AddScoped<IShiftService, ShiftService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
