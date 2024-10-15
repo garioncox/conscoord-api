@@ -21,6 +21,15 @@ spec:
       containers:
         - name: inventory-management-api
           image: garioncox/conscoord-api:${IMAGE_TAG}
+          env:
+            - name: DB
+              value: ${DB}
+            - name: SMTP_SENDERNAME
+              value: ${SMTP_SENDERNAME}
+            - name: SMTP_USERNAME
+              value: ${SMTP_USERNAME}
+            - name: SMTP_PASSWORD
+              value: ${SMTP_PASSWORD}
           ports:
             - containerPort: 8080
           readinessProbe:

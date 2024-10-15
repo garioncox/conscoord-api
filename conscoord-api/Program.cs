@@ -61,6 +61,9 @@ var app = builder.Build();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
+// Health Probe
+app.MapGet("/api/health", () => "healthy");
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
