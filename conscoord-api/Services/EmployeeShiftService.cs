@@ -44,7 +44,7 @@ public class EmployeeShiftService : IEmployeeShiftService
         var futureShifts = _context.EmployeeShifts
           .Include(s => s.Shift)
           .Include(e => e.Emp)
-          .AsEnumerable() // Bring the data into memory
+          .AsEnumerable()
         .Where(s => DateTime.ParseExact(s.Shift.StartTime, "yyyy/MM/dd HH:mm:ss", null) >= currentTime)
         .ToList();
 
