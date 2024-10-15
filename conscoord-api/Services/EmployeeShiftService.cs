@@ -25,10 +25,10 @@ public class EmployeeShiftService : IEmployeeShiftService
             .ToList();
     }
 
-    public async Task DeleteEmpShiftAsync(int empShiftId)
+    public async Task DeleteEmpShiftAsync(int shiftId)
     {
         EmployeeShift? shift = _context.EmployeeShifts
-            .Where(s => s.Id == empShiftId)
+            .Where(s => s.ShiftId == shiftId)
             .FirstOrDefault();
 
         if (shift != null)
@@ -38,16 +38,30 @@ public class EmployeeShiftService : IEmployeeShiftService
         }
     }
 
-  public List<EmployeeShift> GetFutureShifts()
-  {
-    DateTime currentTime = DateTime.Now;
-    var futureShifts = _context.EmployeeShifts
-      .Include(s => s.Shift)
-      .Include(e => e.Emp)
-      .AsEnumerable() // Bring the data into memory
-    .Where(s => DateTime.ParseExact(s.Shift.StartTime, "yyyy/MM/dd HH:mm:ss", null) >= currentTime)
-    .ToList();
+    public List<EmployeeShift> GetFutureShifts()
+    {
+        DateTime currentTime = DateTime.Now;
+        var futureShifts = _context.EmployeeShifts
+          .Include(s => s.Shift)
+          .Include(e => e.Emp)
+          .AsEnumerable() // Bring the data into memory
+        .Where(s => DateTime.ParseExact(s.Shift.StartTime, "yyyy/MM/dd HH:mm:ss", null) >= currentTime)
+        .ToList();
 
-    return futureShifts;
-  }
+        return futureShifts;
+    }
+
+    public List<Shift> getSignedUpShift(string email)
+    {
+        return _context.EmployeeShifts
+            .Include(e => e.Emp)
+            .Where(e => e.Emp.Email == email)
+            .Select(e => e.Shift)
+            .ToList();
+    }
+
+    public Task EditEmployeeShift(EmployeeShift empShift)
+    {
+        throw new NotImplementedException();
+    }
 }
