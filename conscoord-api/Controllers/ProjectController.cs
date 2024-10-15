@@ -39,17 +39,8 @@ public class ProjectController : ControllerBase
     }
 
     [HttpPut("archive")]
-    public async Task ArchiveProject([FromBody] ProjectDTO projectDTO)
+    public async Task ArchiveProject([FromBody] Project project)
     {
-        Project project = new()
-        {
-            EndDate = projectDTO.EndDate,
-            StartDate = projectDTO.StartDate,
-            Location = projectDTO.Location,
-            Name = projectDTO.Name,
-            Status = Shift.STATUS_ARCHIVED
-        };
-
         Shift[] shifts = await _shiftService.GetShiftByProjectAsync(project);
 
         foreach (Shift s in shifts)
@@ -60,8 +51,8 @@ public class ProjectController : ControllerBase
         await _projectService.ArchiveProjectAsync(project);
     }
 
-    [HttpPut("edit/{id}")]
-    public async Task EditProject([FromBody] Project project, int id)
+    [HttpPut("edit")]
+    public async Task EditProject([FromBody] Project project)
     {
         await _projectService.EditProjectAsync(project);
     }
