@@ -62,4 +62,10 @@ public class EmployeeShiftController(IEmployeeShiftService service, IShiftServic
     {
         return _empShiftService.GetScheduledShiftsByEmpId(empId);
     }
+
+    [HttpGet("get/{email}")]
+    public List<Shift> getSignedUpShift(string email)
+    {
+        return _empShiftService.getSignedUpShift(email);
+    }
 }
