@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 WORKDIR /App
 
-COPY . ./
+COPY conscoord-api/. ./
 RUN dotnet restore
 RUN dotnet build -c Release -o out
 
@@ -12,5 +12,5 @@ RUN dotnet publish -c Release -o out/publish
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /App
 COPY --from=build-env /App/out .
-COPY ./.env .
-ENTRYPOINT ["dotnet", "conscoord-api.dll"]
+COPY ./conscoord-api/.env .
+ENTRYPOINT ["dotnet", "conscoord.api.dll"]
