@@ -43,7 +43,6 @@ jobs:
           export SMTP_SENDERNAME=${{ secrets.SMTP_SENDERNAME }}
           export SMTP_USERNAME=${{ secrets.SMTP_USERNAME }}
           export SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }}
-          export EMAIL_ENABLED=${{ env.EMAIL_ENABLED }}
 
           for file in kube/*; do
               echo "Applying $file"
