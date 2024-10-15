@@ -12,13 +12,11 @@ namespace conscoord_api.Controllers;
 public class EmailController : ControllerBase
 {
     private readonly ILogger<EmailController> _logger;
-    private readonly SmtpSettings _smtpSettings;
     private readonly CustomConfiguration _configurations;
 
-    public EmailController(ILogger<EmailController> logger, IOptions<SmtpSettings> smtpSettings, IOptions<CustomConfiguration> customConfiguration)
+    public EmailController(ILogger<EmailController> logger, IOptions<CustomConfiguration> customConfiguration)
     {
         _logger = logger;
-        _smtpSettings = smtpSettings.Value;
         _configurations = customConfiguration.Value;
     }
 
@@ -28,7 +26,7 @@ public class EmailController : ControllerBase
         if (_configurations.EMAIL_ENABLED)
         {
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress(_smtpSettings.SenderName, _smtpSettings.Username));
+            message.From.Add(new MailboxAddress(_configurations.SMTP_SENDERNAME, _configurations.SMTP_USERNAME));
             message.To.Add(new MailboxAddress("", email));
             message.Subject = subject;
             message.Body = new TextPart("plain") { Text = messageBody };
@@ -36,11 +34,10 @@ public class EmailController : ControllerBase
             using (var client = new SmtpClient())
             {
                 client.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
-                client.Authenticate(_smtpSettings.Username, _smtpSettings.Password);
+                client.Authenticate(_configurations.SMTP_USERNAME, _configurations.SMTP_PASSWORD);
                 client.Send(message);
                 client.Disconnect(true);
             }
-
             return Ok("Success");
         }
         else
@@ -56,7 +53,7 @@ public class EmailController : ControllerBase
         if (_configurations.EMAIL_ENABLED)
         {
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress(_smtpSettings.SenderName, _smtpSettings.Username));
+            message.From.Add(new MailboxAddress(_configurations.SMTP_SENDERNAME, _configurations.SMTP_USERNAME));
             message.To.Add(new MailboxAddress("", emailRequest.Email));
             message.Subject = emailRequest.Subject;
             message.Body = new TextPart("plain") { Text = emailRequest.MessageBody };
@@ -64,7 +61,7 @@ public class EmailController : ControllerBase
             using (var client = new SmtpClient())
             {
                 client.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
-                client.Authenticate(_smtpSettings.Username, _smtpSettings.Password);
+                client.Authenticate(_configurations.SMTP_USERNAME, _configurations.SMTP_PASSWORD);
                 client.Send(message);
                 client.Disconnect(true);
             }
@@ -76,11 +73,4 @@ public class EmailController : ControllerBase
             return StatusCode(405);
         }
     }
-}
-
-public class SmtpSettings
-{
-    public required string SenderName { get; set; }
-    public required string Username { get; set; }
-    public required string Password { get; set; }
 }
