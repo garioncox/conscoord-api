@@ -33,8 +33,9 @@ builder.Services.AddScoped<SendEmailsAtMidnight>();
 //builder.Services.AddTransient<string>(p => "");
 
 // Feature Flags
-builder.Services.Configure<FeatureFlags>(o =>
+builder.Services.Configure<CustomConfiguration>(o =>
     {
+        o.DB = Environment.GetEnvironmentVariable("DB")  ?? envVars["DB"];   
         o.EMAIL_ENABLED = (Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]) == "TRUE";
     }
 );

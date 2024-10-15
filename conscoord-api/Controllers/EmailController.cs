@@ -13,19 +13,19 @@ public class EmailController : ControllerBase
 {
     private readonly ILogger<EmailController> _logger;
     private readonly SmtpSettings _smtpSettings;
-    private readonly FeatureFlags _featureFlags;
+    private readonly CustomConfiguration _configurations;
 
-    public EmailController(ILogger<EmailController> logger, IOptions<SmtpSettings> smtpSettings, IOptions<FeatureFlags> featureFlags)
+    public EmailController(ILogger<EmailController> logger, IOptions<SmtpSettings> smtpSettings, IOptions<CustomConfiguration> featureFlags)
     {
         _logger = logger;
         _smtpSettings = smtpSettings.Value;
-        _featureFlags = featureFlags.Value;
+        _configurations = featureFlags.Value;
     }
 
     [HttpPost]
     public IActionResult SendEmail(string email, string subject, string messageBody)
     {
-        if (_featureFlags.EMAIL_ENABLED)
+        if (_configurations.EMAIL_ENABLED)
         {
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress(_smtpSettings.SenderName, _smtpSettings.Username));
@@ -53,7 +53,7 @@ public class EmailController : ControllerBase
     [Route("send")]
     public IActionResult SendEmail([FromBody] EmailRequest emailRequest)
     {
-        if (_featureFlags.EMAIL_ENABLED)
+        if (_configurations.EMAIL_ENABLED)
         {
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress(_smtpSettings.SenderName, _smtpSettings.Username));
