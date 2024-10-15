@@ -10,16 +10,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # - name: Setup dotnet
-      #   uses: actions/setup-dotnet@v4
-      #   with:
-      #     dotnet-version: "8.0.x"
-      # - name: Install dependencies
-      #   run: dotnet restore
-      # - name: Build
-      #   run: dotnet build
-      # - name: Test with the dotnet CLI
-      #   run: dotnet test
+      - name: Install dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build
+      - name: Test with the dotnet CLI
+        run: dotnet test
 
       - name: Log into Docker Hub
         uses: docker/login-action@v2
@@ -29,8 +25,9 @@ jobs:
 
       - name: Build image
         run: |
-          docker build -t garioncox/conscoord-api:${{ github.run_number }} \
-          -t garioncox/conscoord-api:latest \
+          docker build \
+            -t garioncox/conscoord-api:${{ github.run_number }} \
+            -t garioncox/conscoord-api:latest \
           .
 
       - name: Push image
@@ -42,6 +39,10 @@ jobs:
           export PATH=$PATH:~/.nix-profile/bin:/nix/var/nix/profiles/default/bin
 
           export IMAGE_TAG=${{ github.run_number }}
+          export DB=${{ secrets.DB_CONNECTION_STRING }}
+          export SMTP_SENDERNAME=${{ secrets.SMTP_SENDERNAME }}
+          export SMTP_USERNAME=${{ secrets.SMTP_USERNAME }}
+          export SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }}
 
           for file in kube/*; do
               echo "Applying $file"
