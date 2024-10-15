@@ -15,11 +15,11 @@ public class EmailController : ControllerBase
     private readonly SmtpSettings _smtpSettings;
     private readonly CustomConfiguration _configurations;
 
-    public EmailController(ILogger<EmailController> logger, IOptions<SmtpSettings> smtpSettings, IOptions<CustomConfiguration> featureFlags)
+    public EmailController(ILogger<EmailController> logger, IOptions<SmtpSettings> smtpSettings, IOptions<CustomConfiguration> customConfiguration)
     {
         _logger = logger;
         _smtpSettings = smtpSettings.Value;
-        _configurations = featureFlags.Value;
+        _configurations = customConfiguration.Value;
     }
 
     [HttpPost]

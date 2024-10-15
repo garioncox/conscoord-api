@@ -7,16 +7,16 @@ public partial class PostgresContext : DbContext
 {
     public PostgresContext(IOptions<CustomConfiguration> configuration)
     {
-        _configuration = configuration;
+        _configuration = configuration.Value;
     }
 
     public PostgresContext(DbContextOptions<PostgresContext> options, IOptions<CustomConfiguration> configuration)
         : base(options)
     {
-        _configuration = configuration;
+        _configuration = configuration.Value;
     }
 
-    private IOptions<CustomConfiguration> _configuration;
+    private CustomConfiguration _configuration;
 
     public virtual DbSet<Company> Companies { get; set; }
 
