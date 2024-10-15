@@ -36,7 +36,7 @@ public partial class PostgresContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseNpgsql(_configuration.Value.DB);
+        optionsBuilder.UseNpgsql(_configuration.DB);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
