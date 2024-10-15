@@ -1,13 +1,13 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: inventory-management-api
+  name: conscoord-api
   namespace: kgb-conscoord
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: inventory-management-api
+      app: conscoord-api
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -16,7 +16,7 @@ spec:
   template:
     metadata:
       labels:
-        app: inventory-management-api
+        app: conscoord-api
     spec:
       containers:
         - name: inventory-management-api
