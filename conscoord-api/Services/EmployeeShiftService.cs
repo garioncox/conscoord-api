@@ -38,16 +38,16 @@ public class EmployeeShiftService : IEmployeeShiftService
         }
     }
 
-  public List<EmployeeShift> GetFutureShifts()
-  {
-    DateTime currentTime = DateTime.Now;
-    var futureShifts = _context.EmployeeShifts
-      .Include(s => s.Shift)
-      .Include(e => e.Emp)
-      .AsEnumerable() // Bring the data into memory
-    .Where(s => DateTime.ParseExact(s.Shift.StartTime, "yyyy/MM/dd HH:mm:ss", null) >= currentTime)
-    .ToList();
+    public List<EmployeeShift> GetFutureShifts()
+    {
+        DateTime currentTime = DateTime.Now;
+        var futureShifts = _context.EmployeeShifts
+          .Include(s => s.Shift)
+          .Include(e => e.Emp)
+          .AsEnumerable() // Bring the data into memory
+        .Where(s => DateTime.ParseExact(s.Shift.StartTime, "yyyy/MM/dd HH:mm:ss", null) >= currentTime)
+        .ToList();
 
-    return futureShifts;
-  }
+        return futureShifts;
+    }
 }
