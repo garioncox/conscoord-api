@@ -1,5 +1,4 @@
-﻿using dotenv.net;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace conscoord_api.Data;

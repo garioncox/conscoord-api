@@ -32,10 +32,46 @@ builder.Services.AddScoped<SendEmailsAtMidnight>();
 //this is how you pass in parameters
 //builder.Services.AddTransient<string>(p => "");
 
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]);
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]);
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]);
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]);
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]);
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]);
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]);
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]);
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]);
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]);
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]);
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]);
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]);
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]);
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]);
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]);
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]);
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]);
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]);
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]);
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]);
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]);
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]);
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]);
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]);
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]);
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]);
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]);
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]);
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]);
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]);
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]);
+
+
+
+
 // Feature Flags
 builder.Services.Configure<CustomConfiguration>(o =>
     {
-        o.DB = Environment.GetEnvironmentVariable("DB")  ?? envVars["DB"];   
+        o.DB = Environment.GetEnvironmentVariable("DB") ?? envVars["DB"];
         o.EMAIL_ENABLED = (Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]) == "TRUE";
     }
 );
@@ -44,11 +80,11 @@ builder.Services.Configure<CustomConfiguration>(o =>
 builder.Services.Configure<SmtpSettings>(options =>
 {
     options.SenderName = Environment.GetEnvironmentVariable("SMTP_SENDERNAME") ?? envVars["SMTP_SENDERNAME"];
-    options.Username = Environment.GetEnvironmentVariable("SMTP_USERNAME")  ?? envVars["SMTP_USERNAME"];
-    options.Password = Environment.GetEnvironmentVariable("SMTP_PASSWORD")  ?? envVars["SMTP_PASSWORD"];
+    options.Username = Environment.GetEnvironmentVariable("SMTP_USERNAME") ?? envVars["SMTP_USERNAME"];
+    options.Password = Environment.GetEnvironmentVariable("SMTP_PASSWORD") ?? envVars["SMTP_PASSWORD"];
 });
 builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles); // Prevent circular dependencies
-builder.Services.AddDbContext<PostgresContext>(options => options.UseNpgsql(Environment.GetEnvironmentVariable("DB")  ?? envVars["DB"]));
+builder.Services.AddDbContext<PostgresContext>(options => options.UseNpgsql(Environment.GetEnvironmentVariable("DB") ?? envVars["DB"]));
 builder.Services.AddScoped<ICompanyService, CompanyService>();
 builder.Services.AddScoped<IShiftService, ShiftService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
