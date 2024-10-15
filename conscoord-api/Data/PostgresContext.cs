@@ -1,18 +1,23 @@
 ﻿using dotenv.net;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace conscoord_api.Data;
 
 public partial class PostgresContext : DbContext
 {
-    public PostgresContext()
+    public PostgresContext(IOptions<CustomConfiguration> configuration)
     {
+        _configuration = configuration;
     }
 
-    public PostgresContext(DbContextOptions<PostgresContext> options)
+    public PostgresContext(DbContextOptions<PostgresContext> options, IOptions<CustomConfiguration> configuration)
         : base(options)
     {
+        _configuration = configuration;
     }
+
+    private IOptions<CustomConfiguration> _configuration;
 
     public virtual DbSet<Company> Companies { get; set; }
 
@@ -32,8 +37,7 @@ public partial class PostgresContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        var envVars = DotEnv.Read();
-        optionsBuilder.UseNpgsql(envVars["DB"]);
+        optionsBuilder.UseNpgsql(_configuration.Value.DB);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
