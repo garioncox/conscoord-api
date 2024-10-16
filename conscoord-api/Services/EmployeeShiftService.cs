@@ -59,9 +59,4 @@ public class EmployeeShiftService : IEmployeeShiftService
             .Select(e => e.Shift)
             .ToList();
     }
-
-    public Task EditEmployeeShift(EmployeeShift empShift)
-    {
-        throw new NotImplementedException();
-    }
 }
