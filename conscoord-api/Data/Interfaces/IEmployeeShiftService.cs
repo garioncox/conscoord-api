@@ -7,5 +7,4 @@ public interface IEmployeeShiftService
     List<Shift> GetScheduledShiftsByEmpId(int empId);
     List<EmployeeShift> GetFutureShifts();
     List<Shift> getSignedUpShift(string email);
-    Task EditEmployeeShift(EmployeeShift empShift);
 }
