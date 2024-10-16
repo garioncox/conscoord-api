@@ -28,7 +28,7 @@ public class ShiftController : ControllerBase
     }
 
     [HttpPost("add")]
-    public async Task CreateShift([FromBody] ShiftDTO shiftDTO)
+    public async Task<int> CreateShift([FromBody] ShiftDTO shiftDTO)
     {
         Shift shift = new()
         {
@@ -41,6 +41,7 @@ public class ShiftController : ControllerBase
         };
 
         await _shiftService.CreateShift(shift);
+        return shift.Id;
     }
 
     [HttpPut("archive/{shiftId}")]
