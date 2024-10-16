@@ -1,6 +1,8 @@
-﻿namespace conscoord_api.Data.DTOs
+﻿
+namespace conscoord_api.Data.DTOs;
+
+public class ProjectShiftDTO
 {
-    public class ProjectShift
-    {
-    }
+    public int ProjectId { get; set; }
+    public int ShiftId { get; set; }
 }
