@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: conscoord-api
+  namespace: kgb-conscoord
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: conscoord-api
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: conscoord-api
+    spec:
+      containers:
+        - name: conscoord-api
+          image: garioncox/conscoord-api:${IMAGE_TAG}
+          env:
+            - name: DB
+              value: "${DB}"
+            - name: SMTP_SENDERNAME
+              value: "${SMTP_SENDERNAME}"
+            - name: SMTP_USERNAME
+              value: "${SMTP_USERNAME}"
+            - name: SMTP_PASSWORD
+              value: "${SMTP_PASSWORD}"
+            - name: EMAIL_ENABLED
+              value: "${EMAIL_ENABLED}"
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 20
