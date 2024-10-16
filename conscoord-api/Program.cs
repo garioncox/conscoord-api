@@ -21,7 +21,6 @@ builder.Services.AddCors(options =>
     });
 });
 
-
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -32,22 +31,20 @@ builder.Services.AddScoped<SendEmailsAtMidnight>();
 //this is how you pass in parameters
 //builder.Services.AddTransient<string>(p => "");
 
-// Feature Flags
-builder.Services.Configure<FeatureFlags>(o =>
+// Environment Variables
+builder.Services.Configure<CustomConfiguration>(o =>
     {
-        o.EMAIL_ENABLED = envVars["EMAIL_ENABLED"] == "TRUE";
+        o.SMTP_SENDERNAME = Environment.GetEnvironmentVariable("SMTP_SENDERNAME") ?? envVars["SMTP_SENDERNAME"];
+        o.SMTP_USERNAME = Environment.GetEnvironmentVariable("SMTP_USERNAME") ?? envVars["SMTP_USERNAME"];
+        o.SMTP_PASSWORD = Environment.GetEnvironmentVariable("SMTP_PASSWORD") ?? envVars["SMTP_PASSWORD"];
+        o.DB = Environment.GetEnvironmentVariable("DB") ?? envVars["DB"];
+        o.EMAIL_ENABLED = (Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]) == "TRUE";
     }
 );
 
 // Services
-builder.Services.Configure<SmtpSettings>(options =>
-{
-    options.SenderName = envVars["SMTP_SENDERNAME"];
-    options.Username = envVars["SMTP_USERNAME"];
-    options.Password = envVars["SMTP_PASSWORD"];
-});
 builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles); // Prevent circular dependencies
-builder.Services.AddDbContext<PostgresContext>(options => options.UseNpgsql(envVars["DB"]));
+builder.Services.AddDbContext<PostgresContext>(options => options.UseNpgsql(Environment.GetEnvironmentVariable("DB") ?? envVars["DB"]));
 builder.Services.AddScoped<ICompanyService, CompanyService>();
 builder.Services.AddScoped<IShiftService, ShiftService>();
 builder.Services.AddScoped<IProjectShiftService, ProjectShiftService>();
@@ -61,6 +58,9 @@ var app = builder.Build();
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
+
+// Health Probe
+app.MapGet("/api/health", () => "healthy");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
