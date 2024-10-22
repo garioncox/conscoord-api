@@ -10,59 +10,59 @@ namespace conscoord_tests.Services;
 [TestFixture]
 public class ShiftClockInReminderTests
 {
-  [Test]
-  public async Task Invoke_SendsEmail_WhenNotClockedIn()
-  {
-    // Arrange
-    var mockShiftService = new Mock<IEmployeeShiftService>();
-    var mockEmailController = new Mock<IEmailService>() { CallBase = true } ;
-
-    mockEmailController.Setup(e => e.SendEmail(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                       .Returns(new OkResult());
-
-    var shift = new EmployeeShift
+    [Test]
+    public async Task Invoke_SendsEmail_WhenNotClockedIn()
     {
-      Emp = new Employee { Email = "test@example.com" },
-      ClockInTime = null
-    };
+        // Arrange
+        var mockShiftService = new Mock<IEmployeeShiftService>();
+        var mockEmailController = new Mock<IEmailService>() { CallBase = true };
 
-    mockShiftService.Setup(s => s.GetShiftsWithinTime(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-        .Returns(new List<EmployeeShift> { shift });
+        mockEmailController.Setup(e => e.SendEmail(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                           .Returns(new OkResult());
 
-    var reminder = new ShiftClockInReminder(mockShiftService.Object, mockEmailController.Object);
+        var shift = new EmployeeShift
+        {
+            Emp = new Employee { Email = "test@example.com" },
+            ClockInTime = null
+        };
 
-    // Act
-    await reminder.Invoke();
+        mockShiftService.Setup(s => s.GetShiftsWithinTime(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+            .Returns(new List<EmployeeShift> { shift });
 
-    // Assert
-    mockEmailController.Verify(e => e.SendEmail("test@example.com", EmailTemplates.NotClockedIn.Subject, EmailTemplates.NotClockedIn.MailBody), Times.Once);
-  }
+        var reminder = new ShiftClockInReminder(mockShiftService.Object, mockEmailController.Object);
 
-  [Test]
-  public async Task Invoke_DoesNotSendEmail_WhenClockedIn()
-  {
-    // Arrange
-    var mockShiftService = new Mock<IEmployeeShiftService>();
-    var mockEmailController = new Mock<IEmailService>() { CallBase = true };
+        // Act
+        await reminder.Invoke();
 
-    mockEmailController.Setup(e => e.SendEmail(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                   .Returns(new StatusCodeResult(405));
+        // Assert
+        mockEmailController.Verify(e => e.SendEmail("test@example.com", EmailTemplates.NotClockedIn.Subject, EmailTemplates.NotClockedIn.MailBody), Times.Once);
+    }
 
-    var shift = new EmployeeShift
+    [Test]
+    public async Task Invoke_DoesNotSendEmail_WhenClockedIn()
     {
-      Emp = new Employee { Email = "test@example.com" },
-      ClockInTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")
-    };
+        // Arrange
+        var mockShiftService = new Mock<IEmployeeShiftService>();
+        var mockEmailController = new Mock<IEmailService>() { CallBase = true };
 
-    mockShiftService.Setup(s => s.GetShiftsWithinTime(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-        .Returns(new List<EmployeeShift> { shift });
+        mockEmailController.Setup(e => e.SendEmail(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                       .Returns(new StatusCodeResult(405));
 
-    var reminder = new ShiftClockInReminder(mockShiftService.Object, mockEmailController.Object);
+        var shift = new EmployeeShift
+        {
+            Emp = new Employee { Email = "test@example.com" },
+            ClockInTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")
+        };
 
-    // Act
-    await reminder.Invoke();
+        mockShiftService.Setup(s => s.GetShiftsWithinTime(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+            .Returns(new List<EmployeeShift> { shift });
 
-    // Assert
-    mockEmailController.Verify(e => e.SendEmail(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-  }
+        var reminder = new ShiftClockInReminder(mockShiftService.Object, mockEmailController.Object);
+
+        // Act
+        await reminder.Invoke();
+
+        // Assert
+        mockEmailController.Verify(e => e.SendEmail(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+    }
 }
