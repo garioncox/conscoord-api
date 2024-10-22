@@ -7,11 +7,11 @@ using Coravel.Invocable;
 public class SendEmailsAtMidnight : IInvocable
 {
     private IEmployeeShiftService _employeeShiftService;
-    private EmailController _emailController;
+    private IEmailService _emailController;
     private List<EmployeeShift> _allFutureEmployeeShifts = new List<EmployeeShift>();
 
 
-    public SendEmailsAtMidnight(IEmployeeShiftService employeeShiftService, EmailController emailController)
+    public SendEmailsAtMidnight(IEmployeeShiftService employeeShiftService, IEmailService emailController)
     {
         _employeeShiftService = employeeShiftService;
         _emailController = emailController;

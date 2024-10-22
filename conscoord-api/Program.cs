@@ -54,7 +54,8 @@ builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IEmployeeShiftService, EmployeeShiftService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
-builder.Services.AddScoped<EmailController>();
+builder.Services.AddScoped<IEmailService, EmailController>();
+builder.Services.AddScoped<ShiftClockInReminder>();
 
 var app = builder.Build();
 
