@@ -7,18 +7,17 @@ metadata:
     cert-manager.io/cluster-issuer: cert-manager-webhook-duckdns-conscoord-production
 spec:
   tls:
-  - hosts:
-    - conscoord.duckdns.org
-    secretName: conscoord-production
+    - hosts:
+        - conscoord.duckdns.org
+      secretName: conscoord-production
   rules:
-  - host: conscoord.duckdns.org
-    http:
-      paths:
-      - path: /api
-        pathType: Prefix
-        backend:
-          service:
-            name: conscoord-api-service
-            port:
-              number: 8080
-              
+    - host: conscoord.duckdns.org
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: conscoord-api-service
+                port:
+                  number: 8080
