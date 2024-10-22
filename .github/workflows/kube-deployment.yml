@@ -48,6 +48,7 @@ jobs:
           export SMTP_USERNAME="${{ secrets.SMTP_USERNAME }}"
           export SMTP_PASSWORD="${{ secrets.SMTP_PASSWORD }}"
           export EMAIL_ENABLED="${{ vars.EMAIL_ENABLED }}"
+          export DUCKDNS_TOKEN="${{ secrets.DUCKDNS_TOKEN }}"
 
           for file in kube/*; do
               echo "Applying $file"
