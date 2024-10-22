@@ -1,4 +1,5 @@
 ﻿using conscoord_api.Data;
+using conscoord_api.Data.Interfaces;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +10,7 @@ namespace conscoord_api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class EmailController : ControllerBase
+public class EmailController : ControllerBase, IEmailService
 {
     private readonly ILogger<EmailController> _logger;
     private readonly CustomConfiguration _configurations;
