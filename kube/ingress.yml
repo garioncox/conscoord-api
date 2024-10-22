@@ -21,3 +21,4 @@ spec:
             name: conscoord-api-service
             port:
               number: 8080
+              
