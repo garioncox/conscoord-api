@@ -60,20 +60,20 @@ public class EmployeeShiftService : IEmployeeShiftService
             .ToList();
     }
 
-  public List<EmployeeShift> GetShiftsWithinTime(DateTime start, DateTime end)
-  {
-    var shifts = _context.EmployeeShifts
-        .Include(s => s.Shift)
-        .Include(e => e.Emp)
-        .AsEnumerable()
-        .Where(s =>
-        {
-          DateTime startTime;
-          bool parsed = DateTime.TryParseExact(s.Shift.StartTime, "yyyy/MM/dd HH:mm:ss", null, System.Globalization.DateTimeStyles.None, out startTime);
-          return parsed && startTime >= start && startTime <= end;
-        })
-        .ToList();
+    public List<EmployeeShift> GetShiftsWithinTime(DateTime start, DateTime end)
+    {
+        var shifts = _context.EmployeeShifts
+            .Include(s => s.Shift)
+            .Include(e => e.Emp)
+            .AsEnumerable()
+            .Where(s =>
+            {
+                DateTime startTime;
+                bool parsed = DateTime.TryParseExact(s.Shift.StartTime, "yyyy/MM/dd HH:mm:ss", null, System.Globalization.DateTimeStyles.None, out startTime);
+                return parsed && startTime >= start && startTime <= end;
+            })
+            .ToList();
 
-    return shifts;
-  }
+        return shifts;
+    }
 }
