@@ -4,12 +4,12 @@ metadata:
   name: conscoord-api-ingress
   namespace: kgb-conscoord
   annotations:
-    cert-manager.io/cluster-issuer: cert-manager-webhook-duckdns-conscoord-staging
+    cert-manager.io/cluster-issuer: cert-manager-webhook-duckdns-conscoord-production
 spec:
   tls:
   - hosts:
     - conscoord.duckdns.org
-    secretName: conscoord-staging
+    secretName: conscoord-production
   rules:
   - host: conscoord.duckdns.org
     http:
