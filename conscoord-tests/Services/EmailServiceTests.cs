@@ -11,7 +11,7 @@ namespace conscoord_tests.Services;
 public class ShiftClockInReminderTests
 {
   [Test]
-  public async Task Invoke_SendsEmail_WhenClockInTimeIsNull()
+  public async Task Invoke_SendsEmail_WhenNotClockedIn()
   {
     // Arrange
     var mockShiftService = new Mock<IEmployeeShiftService>();
@@ -39,7 +39,7 @@ public class ShiftClockInReminderTests
   }
 
   [Test]
-  public async Task Invoke_DoesNotSendEmail_WhenClockInTimeIsNotNull()
+  public async Task Invoke_DoesNotSendEmail_WhenClockedIn()
   {
     // Arrange
     var mockShiftService = new Mock<IEmployeeShiftService>();
