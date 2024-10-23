@@ -1,4 +1,4 @@
-﻿namespace conscoord_api.Data;
+namespace conscoord_api.Data;
 
 public partial class Employee
 {
@@ -11,6 +11,10 @@ public partial class Employee
     public string? Phonenumber { get; set; }
 
     public int? Roleid { get; set; }
+
+    public int? Companyid { get; set; }
+
+    public virtual Company? Company { get; set; }
 
     public virtual ICollection<EmployeeShift> EmployeeShifts { get; set; } = new List<EmployeeShift>();
 
