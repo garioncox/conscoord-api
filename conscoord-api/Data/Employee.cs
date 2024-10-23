@@ -12,6 +12,10 @@ public partial class Employee
 
     public int? Roleid { get; set; }
 
+    public int? Companyid { get; set; }
+
+    public virtual Company? Company { get; set; }
+
     public virtual ICollection<EmployeeShift> EmployeeShifts { get; set; } = new List<EmployeeShift>();
 
     public virtual Role? Role { get; set; }
