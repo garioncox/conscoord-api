@@ -1,7 +1,8 @@
-﻿namespace conscoord_api.Data.Interfaces;
+namespace conscoord_api.Data.Interfaces;
 
 public interface IEmployeeShiftService
 {
+    List<EmployeeShift> GetallEmployeeShifts();
     Task CreateEmployeeShift(EmployeeShift empShift);
     Task DeleteEmpShiftAsync(int shiftId);
     List<Shift> GetScheduledShiftsByEmpId(int empId);
