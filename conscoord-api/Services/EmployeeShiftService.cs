@@ -12,6 +12,11 @@ public class EmployeeShiftService : IEmployeeShiftService
         _context = context;
     }
 
+    public List<EmployeeShift> GetallEmployeeShifts()
+    {
+        return _context.EmployeeShifts.ToList();
+    }
+
     public async Task CreateEmployeeShift(EmployeeShift empShift)
     {
         _context.EmployeeShifts.Add(empShift);

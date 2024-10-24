@@ -57,6 +57,12 @@ public class EmployeeShiftController(IEmployeeShiftService service, IShiftServic
         await _empShiftService.DeleteEmpShiftAsync(Id);
     }
 
+    [HttpGet("getall")]
+    public List<EmployeeShift> GetShiftsByEmpId()
+    {
+        return _empShiftService.GetallEmployeeShifts();
+    }
+
     [HttpGet("getShifts/{empId}")]
     public List<Shift> GetShiftsByEmpId(int empId)
     {
