@@ -1,4 +1,4 @@
-﻿using conscoord_api.Data.DTOs;
+using conscoord_api.Data.DTOs;
 
 namespace conscoord_api.Data.Interfaces;
 

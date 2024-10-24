@@ -22,7 +22,7 @@ public class ShiftController : ControllerBase
     }
 
     [HttpGet("get/{shiftId}")]
-    public async Task<Shift> GetShiftByIdAsync(int shiftId) => 
+    public async Task<Shift> GetShiftByIdAsync(int shiftId) =>
         await _shiftService.GetShiftById(shiftId);
 
 

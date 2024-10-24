@@ -32,7 +32,7 @@ public class EmployeeShiftService : IEmployeeShiftService
 
     public async Task DeleteEmpShiftAsync(int shiftId)
     {
-        EmployeeShift? shift = _context.EmployeeShifts
+        var shift = _context.EmployeeShifts
             .Where(s => s.ShiftId == shiftId)
             .FirstOrDefault();
 
@@ -45,7 +45,7 @@ public class EmployeeShiftService : IEmployeeShiftService
 
     public List<EmployeeShift> GetFutureShifts()
     {
-        DateTime currentTime = DateTime.Now;
+        var currentTime = DateTime.Now;
         var futureShifts = _context.EmployeeShifts
           .Include(s => s.Shift)
           .Include(e => e.Emp)
@@ -65,20 +65,20 @@ public class EmployeeShiftService : IEmployeeShiftService
             .ToList();
     }
 
-  public List<EmployeeShift> GetShiftsWithinTime(DateTime start, DateTime end)
-  {
-    var shifts = _context.EmployeeShifts
-        .Include(s => s.Shift)
-        .Include(e => e.Emp)
-        .AsEnumerable()
-        .Where(s =>
-        {
-          DateTime startTime;
-          bool parsed = DateTime.TryParseExact(s.Shift.StartTime, "yyyy/MM/dd HH:mm:ss", null, System.Globalization.DateTimeStyles.None, out startTime);
-          return parsed && startTime >= start && startTime <= end;
-        })
-        .ToList();
+    public List<EmployeeShift> GetShiftsWithinTime(DateTime start, DateTime end)
+    {
+        var shifts = _context.EmployeeShifts
+            .Include(s => s.Shift)
+            .Include(e => e.Emp)
+            .AsEnumerable()
+            .Where(s =>
+            {
+                DateTime startTime;
+                var parsed = DateTime.TryParseExact(s.Shift.StartTime, "yyyy/MM/dd HH:mm:ss", null, System.Globalization.DateTimeStyles.None, out startTime);
+                return parsed && startTime >= start && startTime <= end;
+            })
+            .ToList();
 
-    return shifts;
-  }
+        return shifts;
+    }
 }

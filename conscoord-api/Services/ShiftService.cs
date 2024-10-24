@@ -14,7 +14,7 @@ public class ShiftService : IShiftService
 
     public async Task ArchiveShiftAsync(int shift_id)
     {
-        Shift? shift = await _context.Shifts
+        var shift = await _context.Shifts
             .Where(s => s.Id == shift_id)
             .FirstOrDefaultAsync();
 
@@ -61,7 +61,7 @@ public class ShiftService : IShiftService
 
     public Task DeleteShiftAsync(int shiftId)
     {
-        Shift? shift = _context.Shifts.FirstOrDefault(s => s.Id == shiftId);
+        var shift = _context.Shifts.FirstOrDefault(s => s.Id == shiftId);
         if (shift != null)
         {
             _context.Shifts.Remove(shift);

@@ -1,8 +1,8 @@
-﻿using conscoord_api.Data.Interfaces;
 using conscoord_api.Data;
-using Microsoft.AspNetCore.Mvc;
-using conscoord_api.Services;
 using conscoord_api.Data.DTOs;
+using conscoord_api.Data.Interfaces;
+using conscoord_api.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace conscoord_api.Controllers;
 

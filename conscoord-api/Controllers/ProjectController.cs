@@ -1,4 +1,4 @@
-﻿using conscoord_api.Data;
+using conscoord_api.Data;
 using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -41,9 +41,9 @@ public class ProjectController : ControllerBase
     [HttpPut("archive")]
     public async Task ArchiveProject([FromBody] Project project)
     {
-        Shift[] shifts = await _shiftService.GetShiftByProjectAsync(project);
+        var shifts = await _shiftService.GetShiftByProjectAsync(project);
 
-        foreach (Shift s in shifts)
+        foreach (var s in shifts)
         {
             await _shiftService.ArchiveShiftAsync(s.Id);
         }

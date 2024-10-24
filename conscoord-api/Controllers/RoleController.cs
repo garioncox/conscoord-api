@@ -1,5 +1,5 @@
-﻿using conscoord_api.Data.Interfaces;
 using conscoord_api.Data;
+using conscoord_api.Data.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace conscoord_api.Controllers;
@@ -23,7 +23,7 @@ public class RoleController : ControllerBase
     [HttpGet("getByEmail/{email}")]
     public async Task<ActionResult<Role>> GetRoleByEmailAsync(string email)
     {
-        Role? role = await _RoleService.GetRoleByEmailAsync(email);
+        var role = await _RoleService.GetRoleByEmailAsync(email);
 
         if (role == null)
         {

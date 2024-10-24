@@ -1,7 +1,7 @@
-﻿using conscoord_api.Data.Interfaces;
 using conscoord_api.Data;
-using Microsoft.EntityFrameworkCore;
 using conscoord_api.Data.DTOs;
+using conscoord_api.Data.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace conscoord_api.Services;
 
@@ -31,7 +31,7 @@ public class ProjectShiftService : IProjectShiftService
 
     public async Task DeleteProjectShiftAsync(int projectShiftID)
     {
-        ProjectShift? projectShift = _context.ProjectShifts
+        var projectShift = _context.ProjectShifts
             .Where(s => s.Id == projectShiftID)
             .FirstOrDefault();
 

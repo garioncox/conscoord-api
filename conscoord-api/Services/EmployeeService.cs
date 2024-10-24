@@ -45,7 +45,7 @@ public class EmployeeService : IEmployeeService
 
     public async Task ResignFromShift(int shift_id)
     {
-        EmployeeShift? shift = await _context.EmployeeShifts
+        var shift = await _context.EmployeeShifts
             .Where(es => es.ShiftId == shift_id)
             .FirstOrDefaultAsync();
 
