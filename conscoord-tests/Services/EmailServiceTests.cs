@@ -1,9 +1,9 @@
-﻿using Moq;
-using conscoord_api.Controllers;
-using conscoord_api.Data.Interfaces;
-using conscoord_api.Data;
 using conscoord_api;
+using conscoord_api.Controllers;
+using conscoord_api.Data;
+using conscoord_api.Data.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
 
 namespace conscoord_tests.Services;
 

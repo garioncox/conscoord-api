@@ -1,4 +1,4 @@
-﻿using conscoord_api.Data;
+using conscoord_api.Data;
 using conscoord_api.Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,7 +25,7 @@ public class ProjectService : IProjectService
 
     public Task DeleteProjectAsync(int id)
     {
-        Project? project = _context.Projects.FirstOrDefault(p => p.Id == id);
+        var project = _context.Projects.FirstOrDefault(p => p.Id == id);
         if (project != null)
         {
             _context.Projects.Remove(project);

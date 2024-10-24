@@ -20,7 +20,7 @@ public class SendEmailsAtMidnight : IInvocable
 
     public Task Invoke()
     {
-        foreach (EmployeeShift employeeShift in _allFutureEmployeeShifts)
+        foreach (var employeeShift in _allFutureEmployeeShifts)
         {
             Console.WriteLine("sending email to " + employeeShift.Emp.Email);
             if (employeeShift.Emp.Email != null)

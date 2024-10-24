@@ -1,12 +1,12 @@
+using System.Text.Json.Serialization;
+using conscoord_api;
 using conscoord_api.Controllers;
 using conscoord_api.Data;
 using conscoord_api.Data.Interfaces;
 using conscoord_api.Services;
-using Microsoft.EntityFrameworkCore;
 using Coravel;
 using dotenv.net;
-using System.Text.Json.Serialization;
-using conscoord_api;
+using Microsoft.EntityFrameworkCore;
 
 var envVars = DotEnv.Read();
 

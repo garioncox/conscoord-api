@@ -1,4 +1,4 @@
-﻿using conscoord_api.Controllers;
+using conscoord_api.Controllers;
 using conscoord_api.Data.Interfaces;
 using Coravel.Invocable;
 

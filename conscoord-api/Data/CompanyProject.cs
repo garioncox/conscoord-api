@@ -1,4 +1,4 @@
-﻿namespace conscoord_api.Data;
+namespace conscoord_api.Data;
 
 public partial class CompanyProject
 {
