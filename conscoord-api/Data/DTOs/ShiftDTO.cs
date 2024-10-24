@@ -1,4 +1,4 @@
-﻿namespace conscoord_api.Data.DTOs;
+namespace conscoord_api.Data.DTOs;
 
 public class ShiftDTO
 {
