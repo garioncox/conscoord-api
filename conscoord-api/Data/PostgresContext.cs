@@ -1,24 +1,24 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace conscoord_api.Data;
 
 public partial class PostgresContext : DbContext
 {
-  public PostgresContext(IOptions<CustomConfiguration> configuration)
-  {
-    _configuration = configuration.Value;
-  }
+    public PostgresContext(IOptions<CustomConfiguration> configuration)
+    {
+        _configuration = configuration.Value;
+    }
 
-  public PostgresContext(DbContextOptions<PostgresContext> options, IOptions<CustomConfiguration> configuration)
-       : base(options)
-  {
-    _configuration = configuration.Value;
-  }
+    public PostgresContext(DbContextOptions<PostgresContext> options, IOptions<CustomConfiguration> configuration)
+         : base(options)
+    {
+        _configuration = configuration.Value;
+    }
 
-  private CustomConfiguration _configuration;
+    private CustomConfiguration _configuration;
 
-  public virtual DbSet<Company> Companies { get; set; }
+    public virtual DbSet<Company> Companies { get; set; }
 
     public virtual DbSet<CompanyProject> CompanyProjects { get; set; }
 
@@ -34,12 +34,12 @@ public partial class PostgresContext : DbContext
 
     public virtual DbSet<Shift> Shifts { get; set; }
 
-  protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-  {
-    optionsBuilder.UseNpgsql(_configuration.DB);
-  }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseNpgsql(_configuration.DB);
+    }
 
-  protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasPostgresEnum("practicum2425", "status", new[] { "ACTIVE", "ARCHIVED", "COMPLETED" });
 

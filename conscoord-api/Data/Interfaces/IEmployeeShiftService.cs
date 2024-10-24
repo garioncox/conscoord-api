@@ -1,4 +1,4 @@
-﻿namespace conscoord_api.Data.Interfaces;
+namespace conscoord_api.Data.Interfaces;
 
 public interface IEmployeeShiftService
 {
