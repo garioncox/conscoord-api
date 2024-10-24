@@ -1,4 +1,4 @@
-﻿using conscoord_api.Data;
+using conscoord_api.Data;
 using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -55,6 +55,12 @@ public class EmployeeShiftController(IEmployeeShiftService service, IShiftServic
     public async Task DeleteEmpShift(int Id)
     {
         await _empShiftService.DeleteEmpShiftAsync(Id);
+    }
+
+    [HttpGet("getall")]
+    public List<EmployeeShift> GetShiftsByEmpId()
+    {
+        return _empShiftService.GetallEmployeeShifts();
     }
 
     [HttpGet("getShifts/{empId}")]
