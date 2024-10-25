@@ -65,13 +65,13 @@ public class ProjectController : ControllerBase
         await _projectService.DeleteProjectAsync(id);
     }
 
-    [HttpGet("getCompanyProducts")]
+    [HttpGet("getCompanyProjects/{empId}")]
     public async Task<ActionResult<List<Project>>> GetCompanyProjects(int empId)
     {
         var employee = await _employeeService.GetEmployeeByIdAsync(empId);
         if (employee == null)
         {
-            return  NotFound("Employee not found with that id");
+            return NotFound("Employee not found with that id");
         }
         var result = await _projectService.GetCompanyProjectsAsync(employee);
 
