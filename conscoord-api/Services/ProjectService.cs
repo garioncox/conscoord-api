@@ -44,4 +44,23 @@ public class ProjectService : IProjectService
         project.Status = Shift.STATUS_ARCHIVED;
         await EditProjectAsync(project);
     }
+
+    public async Task<List<Project>> GetCompanyProjectsAsync(Employee employee)
+    {
+        //we should prob find a better way to check roles as well
+        if (employee.Role?.Id != 2)
+        {
+            var projects = await _context.Projects
+                .Include(p => p.CompanyProjects)
+                .ThenInclude(cp => cp.Company)
+                .ThenInclude(c => c.Employees)
+                .Where(p => p.CompanyProjects
+                   .Any(cp => cp.Company.Employees
+                   .Any(e => e.Id == employee.Id))
+                ).ToListAsync();
+            return projects;
+        }
+
+        return new List<Project>();
+    }
 }
