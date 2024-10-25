@@ -11,10 +11,12 @@ public class ProjectController : ControllerBase
 {
     private readonly IProjectService _projectService;
     private readonly IShiftService _shiftService;
-    public ProjectController(IProjectService projectService, IShiftService shiftService)
+    private readonly IEmployeeService _employeeService;
+    public ProjectController(IProjectService projectService, IShiftService shiftService, IEmployeeService employeeService)
     {
         _projectService = projectService;
         _shiftService = shiftService;
+        _employeeService = employeeService;
     }
 
     [HttpGet("getAll")]
@@ -61,5 +63,22 @@ public class ProjectController : ControllerBase
     public async Task DeleteProject(int id)
     {
         await _projectService.DeleteProjectAsync(id);
+    }
+
+    [HttpGet("getCompanyProjects/{empId}")]
+    public async Task<ActionResult<List<Project>>> GetCompanyProjects(int empId)
+    {
+        var employee = await _employeeService.GetEmployeeByIdAsync(empId);
+        if (employee == null)
+        {
+            return NotFound("Employee not found with that id");
+        }
+        var result = await _projectService.GetCompanyProjectsAsync(employee);
+
+        if (result.Count == 0)
+        {
+            return NotFound("The employee has no associated projects");
+        }
+        return Ok(result);
     }
 }

@@ -55,4 +55,27 @@ public class EmployeeService : IEmployeeService
             await _context.SaveChangesAsync();
         }
     }
+
+    public async Task<List<Project>> GetCompanyProjects(int empId)
+    {
+        Employee? employee = await GetEmployeeByIdAsync(empId);
+        if (employee == null || employee.Role == null)
+        {
+            //find a better way to give an error
+            return new List<Project>(); 
+        }
+
+        //we should prob find a better way to check roles as well
+        if (employee.Role.Id == 3)
+        {
+            return await _context.Projects
+                .Include(p => p.CompanyProjects)
+                .ThenInclude(cp => cp.Company)
+                .ThenInclude(c => c.Employees)
+                .Where(e => e.Id == empId).ToListAsync();
+        }
+
+        //find a better way to give an error
+        return new List<Project>(); 
+    }
 }
