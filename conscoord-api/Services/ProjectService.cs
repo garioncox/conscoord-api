@@ -1,7 +1,6 @@
 using conscoord_api.Data;
 using conscoord_api.Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Ocsp;
 
 namespace conscoord_api.Services;
 
