@@ -49,13 +49,17 @@ public class ProjectService : IProjectService
     public async Task<List<Project>> GetCompanyProjectsAsync(Employee employee)
     {
         //we should prob find a better way to check roles as well
-        if (employee.Role?.Id == 3)
+        if (employee.Role?.Id != 2)
         {
-            return await _context.Projects
+            var projects = await _context.Projects
                 .Include(p => p.CompanyProjects)
                 .ThenInclude(cp => cp.Company)
                 .ThenInclude(c => c.Employees)
-                .Where(e => e.Id == employee.Id).ToListAsync();
+                .Where(p => p.CompanyProjects
+                   .Any(cp => cp.Company.Employees
+                   .Any(e => e.Id == employee.Id))
+                ).ToListAsync();
+            return projects;
         }
 
         return new List<Project>();
