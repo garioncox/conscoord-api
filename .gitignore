@@ -5,6 +5,8 @@
 
 # dotenv files
 conscoord-api/.env
+*.env
+.env
 
 # User-specific files
 *.rsuser
