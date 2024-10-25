@@ -7,4 +7,5 @@ public interface IProjectService
     public Task DeleteProjectAsync(int id);
     public Task EditProjectAsync(Project project);
     public Task ArchiveProjectAsync(Project project);
+    public Task<List<Project>> GetCompanyProjectsAsync(Employee employee);
 }

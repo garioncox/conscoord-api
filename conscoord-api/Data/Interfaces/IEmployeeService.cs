@@ -8,4 +8,5 @@ public interface IEmployeeService
     public Task<Employee?> GetEmployeeByIdAsync(int id);
     public Task AddEmployee(Employee employee);
     public Task EditEmployee(Employee employee);
+    public Task<List<Project>> GetCompanyProjects(int empid);
 }
