@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -17,7 +19,6 @@ public partial class PostgresContext : DbContext
     }
 
     private CustomConfiguration _configuration;
-
     public virtual DbSet<Company> Companies { get; set; }
 
     public virtual DbSet<CompanyProject> CompanyProjects { get; set; }
@@ -34,10 +35,10 @@ public partial class PostgresContext : DbContext
 
     public virtual DbSet<Shift> Shifts { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseNpgsql(_configuration.DB);
-    }
+  protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+  {
+    optionsBuilder.UseNpgsql(_configuration.DB);
+  }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -90,6 +91,7 @@ public partial class PostgresContext : DbContext
             entity.Property(e => e.Name)
                 .HasMaxLength(50)
                 .HasColumnName("name");
+            entity.Property(e => e.Payrate).HasColumnName("payrate");
             entity.Property(e => e.Phonenumber)
                 .HasMaxLength(13)
                 .HasColumnName("phonenumber");

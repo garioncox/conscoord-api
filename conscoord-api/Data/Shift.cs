@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace conscoord_api.Data;
 
 public partial class Shift
@@ -16,11 +19,10 @@ public partial class Shift
 
     public string Status { get; set; } = null!;
 
-    public static string STATUS_ACTIVE = "ACTIVE";
-    public static string STATUS_ARCHIVED = "ARCHIVED";
-    public static string STATUS_COMPLETED = "COMPLETED";
-
     public virtual ICollection<EmployeeShift> EmployeeShifts { get; set; } = new List<EmployeeShift>();
 
     public virtual ICollection<ProjectShift> ProjectShifts { get; set; } = new List<ProjectShift>();
+    public static string STATUS_ACTIVE = "ACTIVE";
+    public static string STATUS_ARCHIVED = "ARCHIVED";
+    public static string STATUS_COMPLETED = "COMPLETED";
 }
