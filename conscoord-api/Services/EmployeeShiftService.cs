@@ -23,6 +23,12 @@ public class EmployeeShiftService : IEmployeeShiftService
         await _context.SaveChangesAsync();
     }
 
+    public async Task UpdateEmpShift(EmployeeShift empShift)
+    {
+        _context.EmployeeShifts.Update(empShift);
+        await _context.SaveChangesAsync();
+    }
+
     public List<Shift> GetScheduledShiftsByEmpId(int empId)
     {
         return _context.Shifts

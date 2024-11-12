@@ -9,4 +9,5 @@ public interface IEmployeeShiftService
     List<EmployeeShift> GetFutureShifts();
     List<Shift> getSignedUpShift(string email);
     List<EmployeeShift> GetShiftsWithinTime(DateTime start, DateTime End);
+    Task UpdateEmpShift(EmployeeShift empShift);
 }
