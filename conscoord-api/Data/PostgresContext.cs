@@ -35,10 +35,10 @@ public partial class PostgresContext : DbContext
 
     public virtual DbSet<Shift> Shifts { get; set; }
 
-  protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-  {
-    optionsBuilder.UseNpgsql(_configuration.DB);
-  }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseNpgsql(_configuration.DB);
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -141,6 +141,7 @@ public partial class PostgresContext : DbContext
             entity.ToTable("project", "practicum2425");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Contactinfo).HasColumnName("contactinfo");
             entity.Property(e => e.Description)
                 .HasMaxLength(300)
                 .HasColumnName("description");
@@ -159,6 +160,10 @@ public partial class PostgresContext : DbContext
             entity.Property(e => e.Status)
                 .HasMaxLength(16)
                 .HasColumnName("status");
+
+            entity.HasOne(d => d.ContactinfoNavigation).WithMany(p => p.Projects)
+                .HasForeignKey(d => d.Contactinfo)
+                .HasConstraintName("fk_contactinfo");
         });
 
         modelBuilder.Entity<ProjectShift>(entity =>
