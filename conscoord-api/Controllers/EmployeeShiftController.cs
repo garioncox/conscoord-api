@@ -74,4 +74,10 @@ public class EmployeeShiftController(IEmployeeShiftService service, IShiftServic
     {
         return _empShiftService.getSignedUpShift(email);
     }
+
+    [HttpPut("edit")]
+    public Task UpdateEmpShift([FromBody] EditEmployeeShiftDTO updatedEmpShift)
+    {
+        return _empShiftService.UpdateEmpShift(updatedEmpShift);
+    }
 }
