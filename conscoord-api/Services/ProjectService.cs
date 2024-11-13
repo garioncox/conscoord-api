@@ -63,4 +63,9 @@ public class ProjectService : IProjectService
 
         return new List<Project>();
     }
+
+    public Task<List<Project>> GetProjectArchivedAsync()
+    {
+        return _context.Projects.Where(p => p.Status == Shift.STATUS_ACTIVE).ToListAsync();
+    }
 }
