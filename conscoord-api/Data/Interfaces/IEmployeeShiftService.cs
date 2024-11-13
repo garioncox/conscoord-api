@@ -1,3 +1,5 @@
+using conscoord_api.Data.DTOs;
+
 namespace conscoord_api.Data.Interfaces;
 
 public interface IEmployeeShiftService
@@ -9,5 +11,5 @@ public interface IEmployeeShiftService
     List<EmployeeShift> GetFutureShifts();
     List<Shift> getSignedUpShift(string email);
     List<EmployeeShift> GetShiftsWithinTime(DateTime start, DateTime End);
-    Task UpdateEmpShift(EmployeeShift empShift);
+    Task UpdateEmpShift(EditEmployeeShiftDTO empShift);
 }

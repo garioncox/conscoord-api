@@ -76,7 +76,7 @@ public class EmployeeShiftController(IEmployeeShiftService service, IShiftServic
     }
 
     [HttpPut("edit")]
-    public Task UpdateEmpShift([FromBody] EmployeeShift updatedEmpShift)
+    public Task UpdateEmpShift([FromBody] EditEmployeeShiftDTO updatedEmpShift)
     {
         return _empShiftService.UpdateEmpShift(updatedEmpShift);
     }

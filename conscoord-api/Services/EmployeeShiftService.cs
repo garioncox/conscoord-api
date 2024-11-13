@@ -1,4 +1,5 @@
 using conscoord_api.Data;
+using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,9 +24,20 @@ public class EmployeeShiftService : IEmployeeShiftService
         await _context.SaveChangesAsync();
     }
 
-    public async Task UpdateEmpShift(EmployeeShift empShift)
+    public async Task UpdateEmpShift(EditEmployeeShiftDTO empShift)
     {
-        _context.EmployeeShifts.Update(empShift);
+        var newEmpShift = await _context.EmployeeShifts
+            .SingleOrDefaultAsync(es => es.Id == empShift.id);
+
+        if (newEmpShift == null)
+        {
+            throw new ArgumentException("EmployeeShift not found.");
+        }
+
+        newEmpShift.ClockInTime = empShift.clockInTime;
+        newEmpShift.ClockOutTime = empShift.clockOutTime;
+
+        _context.EmployeeShifts.Update(newEmpShift);
         await _context.SaveChangesAsync();
     }
 
