@@ -22,8 +22,13 @@ public class ShiftController : ControllerBase
     }
 
     [HttpGet("get/{shiftId}")]
-    public async Task<Shift> GetShiftByIdAsync(int shiftId) =>
-        await _shiftService.GetShiftById(shiftId);
+    public async Task<ActionResult<Shift>> GetShiftByIdAsync(int shiftId)
+    {
+        var shift = await _shiftService.GetShiftById(shiftId);
+        if (shift == null) { return NotFound();  }
+        return shift;
+
+    }
 
 
     [HttpGet("getAll/archived")]
