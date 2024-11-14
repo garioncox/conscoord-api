@@ -25,7 +25,7 @@ public class ShiftController : ControllerBase
     public async Task<ActionResult<Shift>> GetShiftByIdAsync(int shiftId)
     {
         var shift = await _shiftService.GetShiftById(shiftId);
-        if (shift == null) { return NotFound();  }
+        if (shift == null) { return NotFound(); }
         return shift;
 
     }
