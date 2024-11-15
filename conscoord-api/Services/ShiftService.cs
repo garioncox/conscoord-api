@@ -74,4 +74,22 @@ public class ShiftService : IShiftService
         // TODO: KGB-111
         return Task.FromResult(new Shift[0]);
     }
+
+    public List<Shift> GetScheduledShiftsByEmpId(int id)
+    {
+        return _context.EmployeeShifts
+            .Include(e => e.Emp)
+            .Where(e => e.Emp.Id == id)
+            .Select(e => e.Shift)
+            .ToList();
+    }
+
+    public List<Shift> GetScheduledShiftsByEmail(string email)
+    {
+        return _context.EmployeeShifts
+            .Include(e => e.Emp)
+            .Where(e => e.Emp.Email == email)
+            .Select(e => e.Shift)
+            .ToList();
+    }
 }

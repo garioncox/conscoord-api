@@ -15,7 +15,7 @@ public class EmployeeShiftController(IEmployeeShiftService service, IShiftServic
     [HttpPost("add")]
     public async Task<ActionResult> CreateEmpShift([FromBody] EmployeeShiftDTO empShift)
     {
-        var signedUpFor = GetShiftsByEmpId(empShift.EmployeeId);
+        var signedUpFor = _shiftService.GetScheduledShiftsByEmpId(empShift.EmployeeId);
         var toSignUpFor = await _shiftService.GetShiftById(empShift.ShiftId);
         if (toSignUpFor == null)
         {
@@ -58,21 +58,15 @@ public class EmployeeShiftController(IEmployeeShiftService service, IShiftServic
     }
 
     [HttpGet("getall")]
-    public List<EmployeeShift> GetShiftsByEmpId()
+    public List<EmployeeShift> GetAllShifts()
     {
         return _empShiftService.GetallEmployeeShifts();
     }
 
-    [HttpGet("getShifts/{empId}")]
-    public List<Shift> GetShiftsByEmpId(int empId)
-    {
-        return _empShiftService.GetScheduledShiftsByEmpId(empId);
-    }
-
     [HttpGet("get/{email}")]
-    public List<Shift> getSignedUpShift(string email)
+    public async Task<List<EmployeeShift>> GetByEmail(string email)
     {
-        return _empShiftService.getSignedUpShift(email);
+        return await _empShiftService.GetEmployeeShiftsByEmail(email);
     }
 
     [HttpPut("edit")]
