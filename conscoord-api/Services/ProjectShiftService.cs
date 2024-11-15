@@ -42,4 +42,8 @@ public class ProjectShiftService : IProjectShiftService
         }
     }
 
+    public async Task<int> GetProjectShiftsForProject(int projectId)
+    {
+        return await _context.ProjectShifts.Where(ps => ps.ProjectId == projectId).CountAsync();
+    }
 }

@@ -22,6 +22,12 @@ public class ProjectShiftController : ControllerBase
         return await _ProjectShiftService.GetAllProjectShifts();
     }
 
+    [HttpGet("getShiftNumPerProject")]
+    public async Task<int> GetShiftNumPerProject(int projectId)
+    {
+        return await _ProjectShiftService.GetProjectShiftsForProject(projectId);
+    }
+
     [HttpPost("add")]
     public async Task CreateProjectShift(ProjectShiftDTO projectShift)
     {
