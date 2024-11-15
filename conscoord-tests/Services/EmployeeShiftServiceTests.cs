@@ -45,11 +45,12 @@ internal class EmployeeShiftServiceTests
         shiftServiceMock.Setup(m => m
             .GetShiftById(It.IsAny<int>()))
             .ReturnsAsync(shifts[0]);
-
-        var empShiftServiceMock = new Mock<IEmployeeShiftService>();
-        empShiftServiceMock.Setup(m => m
+        shiftServiceMock.Setup(m => m
             .GetScheduledShiftsByEmpId(It.IsAny<int>()))
             .Returns([shifts[1]]);
+
+        var empShiftServiceMock = new Mock<IEmployeeShiftService>();
+
 
         // ACT
         EmployeeShiftController empShiftController = new(empShiftServiceMock.Object, shiftServiceMock.Object);
@@ -57,7 +58,7 @@ internal class EmployeeShiftServiceTests
 
         // ASSERT
         shiftServiceMock.Verify(m => m.GetShiftById(It.IsAny<int>()), Times.Once());
-        empShiftServiceMock.Verify(m => m.GetScheduledShiftsByEmpId(It.IsAny<int>()), Times.Once());
+        shiftServiceMock.Verify(m => m.GetScheduledShiftsByEmpId(It.IsAny<int>()), Times.Once());
         empShiftServiceMock.Verify(m => m.CreateEmployeeShift(It.IsAny<EmployeeShift>()), Times.Never());
     }
 
@@ -86,11 +87,11 @@ internal class EmployeeShiftServiceTests
         shiftServiceMock.Setup(m => m
             .GetShiftById(It.IsAny<int>()))
             .ReturnsAsync(shifts[0]);
-
-        var empShiftServiceMock = new Mock<IEmployeeShiftService>();
-        empShiftServiceMock.Setup(m => m
+        shiftServiceMock.Setup(m => m
             .GetScheduledShiftsByEmpId(It.IsAny<int>()))
             .Returns([shifts[0]]);
+
+        var empShiftServiceMock = new Mock<IEmployeeShiftService>();
 
         // ACT
         EmployeeShiftController empShiftController = new(empShiftServiceMock.Object, shiftServiceMock.Object);
@@ -98,7 +99,7 @@ internal class EmployeeShiftServiceTests
 
         // ASSERT
         shiftServiceMock.Verify(m => m.GetShiftById(It.IsAny<int>()), Times.Once());
-        empShiftServiceMock.Verify(m => m.GetScheduledShiftsByEmpId(It.IsAny<int>()), Times.Once());
+        shiftServiceMock.Verify(m => m.GetScheduledShiftsByEmpId(It.IsAny<int>()), Times.Once());
         empShiftServiceMock.Verify(m => m.CreateEmployeeShift(It.IsAny<EmployeeShift>()), Times.Never());
     }
 }
