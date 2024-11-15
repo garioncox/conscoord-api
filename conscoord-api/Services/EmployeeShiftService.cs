@@ -2,7 +2,6 @@ using conscoord_api.Data;
 using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Asn1.Esf;
 
 namespace conscoord_api.Services;
 

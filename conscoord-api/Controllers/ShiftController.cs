@@ -30,12 +30,6 @@ public class ShiftController : ControllerBase
 
     }
 
-    // [HttpGet("getByEmpId/{empId}")]
-    // public List<Shift> GetShiftsByEmpId(int empId)
-    // {
-    //     return _shiftService.GetScheduledShiftsByEmpId(empId);
-    // }
-
     [HttpGet("getByEmail/{email}")]
     public List<Shift> getSignedUpShift(string email)
     {
@@ -76,10 +70,4 @@ public class ShiftController : ControllerBase
     {
         await _shiftService.EditShiftAsync(shift);
     }
-
-    // [HttpDelete("delete/{id}")]
-    // public async Task Delete(int id)
-    // {
-    //     await _shiftService.DeleteShiftAsync(id);
-    // }
 }
