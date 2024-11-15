@@ -2,6 +2,7 @@ using conscoord_api.Data;
 using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Asn1.Esf;
 
 namespace conscoord_api.Services;
 
@@ -41,13 +42,6 @@ public class EmployeeShiftService : IEmployeeShiftService
         await _context.SaveChangesAsync();
     }
 
-    public List<Shift> GetScheduledShiftsByEmpId(int empId)
-    {
-        return _context.Shifts
-            .Where(s => s.EmployeeShifts.Any(es => es.EmpId == empId))
-            .ToList();
-    }
-
     public async Task DeleteEmpShiftAsync(int shiftId)
     {
         var shift = _context.EmployeeShifts
@@ -74,15 +68,6 @@ public class EmployeeShiftService : IEmployeeShiftService
         return futureShifts;
     }
 
-    public List<Shift> getSignedUpShift(string email)
-    {
-        return _context.EmployeeShifts
-            .Include(e => e.Emp)
-            .Where(e => e.Emp.Email == email)
-            .Select(e => e.Shift)
-            .ToList();
-    }
-
     public List<EmployeeShift> GetShiftsWithinTime(DateTime start, DateTime end)
     {
         var shifts = _context.EmployeeShifts
@@ -98,5 +83,13 @@ public class EmployeeShiftService : IEmployeeShiftService
             .ToList();
 
         return shifts;
+    }
+
+    public Task<List<EmployeeShift>> GetEmployeeShiftsByEmail(string email)
+    {
+        return _context.EmployeeShifts
+            .Include(es => es.Emp)
+            .Where(es => es.Emp.Email == email)
+            .ToListAsync();
     }
 }
