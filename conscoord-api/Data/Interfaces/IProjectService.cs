@@ -8,4 +8,5 @@ public interface IProjectService
     public Task EditProjectAsync(Project project);
     public Task ArchiveProjectAsync(Project project);
     public Task<List<Project>> GetCompanyProjectsAsync(Employee employee);
+    public Task<List<Project>> GetProjectArchivedAsync();
 }

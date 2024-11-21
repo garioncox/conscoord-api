@@ -1,3 +1,4 @@
+using System.Reflection.Metadata.Ecma335;
 using conscoord_api.Data;
 using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
@@ -17,6 +18,12 @@ public class ProjectController : ControllerBase
         _projectService = projectService;
         _shiftService = shiftService;
         _employeeService = employeeService;
+    }
+
+    [HttpGet("getAll/Archived")]
+    public async Task<List<Project>> GetProjectArchivedAsync()
+    {
+        return await _projectService.GetProjectArchivedAsync();
     }
 
     [HttpGet("getAll")]
