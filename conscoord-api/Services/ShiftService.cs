@@ -92,4 +92,16 @@ public class ShiftService : IShiftService
             .Select(e => e.Shift)
             .ToList();
     }
+
+    public async Task<List<Shift>> GetShiftsByProject(int projectId)
+    {
+        var EmployeeShifts = await _context.ProjectShifts
+            .Where(es => es.ProjectId == projectId)
+            .ToListAsync();
+
+        var shiftIds = EmployeeShifts.Select(e => e.ShiftId).ToList();
+
+        return await  _context.Shifts
+            .Where(s => shiftIds.Contains(s.Id)).ToListAsync();
+    }
 }
