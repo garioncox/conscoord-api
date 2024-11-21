@@ -121,6 +121,9 @@ public partial class PostgresContext : DbContext
                 .HasMaxLength(20)
                 .HasColumnName("clock_out_time");
             entity.Property(e => e.EmpId).HasColumnName("emp_id");
+            entity.Property(e => e.Notes)
+                .HasMaxLength(500)
+                .HasColumnName("notes");
             entity.Property(e => e.ShiftId).HasColumnName("shift_id");
 
             entity.HasOne(d => d.Emp).WithMany(p => p.EmployeeShifts)
@@ -206,6 +209,9 @@ public partial class PostgresContext : DbContext
             entity.ToTable("shift", "practicum2425");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Archivedat)
+                .HasMaxLength(20)
+                .HasColumnName("archivedat");
             entity.Property(e => e.Description)
                 .HasMaxLength(200)
                 .HasColumnName("description");
