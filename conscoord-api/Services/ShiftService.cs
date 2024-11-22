@@ -21,6 +21,7 @@ public class ShiftService : IShiftService
         if (shift != null)
         {
             shift.Status = Shift.STATUS_ARCHIVED;
+            shift.Archivedat = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
             _context.Shifts.Update(shift);
             await _context.SaveChangesAsync();
         }
