@@ -14,5 +14,5 @@ public interface IShiftService
     public List<Shift> GetScheduledShiftsByEmpId(int id);
     public List<Shift> GetScheduledShiftsByEmail(string email);
 
-   
+
 }
