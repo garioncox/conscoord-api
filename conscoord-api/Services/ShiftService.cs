@@ -102,7 +102,7 @@ public class ShiftService : IShiftService
 
         var shiftIds = EmployeeShifts.Select(e => e.ShiftId).ToList();
 
-        return await  _context.Shifts
+        return await _context.Shifts
             .Where(s => shiftIds.Contains(s.Id)).ToListAsync();
     }
 }
