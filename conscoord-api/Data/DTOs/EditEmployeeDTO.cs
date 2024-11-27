@@ -7,4 +7,5 @@ public class EditEmployeeShiftDTO
     public required string clockOutTime { get; set; }
     public int EmployeeId { get; set; }
     public int ShiftId { get; set; }
+    public string? Notes { get; set; } = null;
 }

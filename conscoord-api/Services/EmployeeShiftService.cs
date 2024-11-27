@@ -36,6 +36,7 @@ public class EmployeeShiftService : IEmployeeShiftService
 
         newEmpShift.ClockInTime = empShift.clockInTime;
         newEmpShift.ClockOutTime = empShift.clockOutTime;
+        newEmpShift.Notes = empShift.Notes;
 
         _context.EmployeeShifts.Update(newEmpShift);
         await _context.SaveChangesAsync();
