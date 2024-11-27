@@ -41,7 +41,8 @@ public class ProjectController : ControllerBase
             StartDate = projectDTO.StartDate,
             Location = projectDTO.Location,
             Name = projectDTO.Name,
-            Status = Shift.STATUS_ACTIVE
+            Status = Shift.STATUS_ACTIVE,
+            Contactinfo = projectDTO.Contactinfo
         };
 
         await _projectService.CreateProject(project);
