@@ -44,7 +44,8 @@ public class EmployeeShiftController(IEmployeeShiftService service, IShiftServic
         EmployeeShift e = new()
         {
             EmpId = empShift.EmployeeId,
-            ShiftId = empShift.ShiftId
+            ShiftId = empShift.ShiftId,
+            Notes = empShift.Notes,
         };
 
         await _empShiftService.CreateEmployeeShift(e);
