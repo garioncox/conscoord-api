@@ -26,6 +26,11 @@ public class EmployeeService : IEmployeeService
             .FirstOrDefaultAsync();
     }
 
+    public async Task<List<Employee>> GetEmployeesSignedUpForShift(int shiftid)
+    {
+        return await _context.EmployeeShifts.Include(es => es.Emp).Where(es => es.ShiftId == shiftid).Select(es => es.Emp).ToListAsync();
+    }
+
     public async Task<List<Employee>> GetEmployeesListAsync()
     {
         return await _context.Employees.ToListAsync();
