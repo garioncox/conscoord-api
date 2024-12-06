@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace conscoord_api.Data;
 
 public partial class Shift
@@ -15,6 +18,8 @@ public partial class Shift
     public int RequestedEmployees { get; set; }
 
     public string Status { get; set; } = null!;
+
+    public string? Archivedat { get; set; }
 
     public static string STATUS_ACTIVE = "ACTIVE";
     public static string STATUS_ARCHIVED = "ARCHIVED";

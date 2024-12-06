@@ -1,4 +1,5 @@
 using conscoord_api.Data;
+using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,11 +24,22 @@ public class EmployeeShiftService : IEmployeeShiftService
         await _context.SaveChangesAsync();
     }
 
-    public List<Shift> GetScheduledShiftsByEmpId(int empId)
+    public async Task UpdateEmpShift(EditEmployeeShiftDTO empShift)
     {
-        return _context.Shifts
-            .Where(s => s.EmployeeShifts.Any(es => es.EmpId == empId))
-            .ToList();
+        var newEmpShift = await _context.EmployeeShifts
+            .SingleOrDefaultAsync(es => es.Id == empShift.id);
+
+        if (newEmpShift == null)
+        {
+            throw new ArgumentException("EmployeeShift not found.");
+        }
+
+        newEmpShift.ClockInTime = empShift.clockInTime;
+        newEmpShift.ClockOutTime = empShift.clockOutTime;
+        newEmpShift.Notes = empShift.Notes;
+
+        _context.EmployeeShifts.Update(newEmpShift);
+        await _context.SaveChangesAsync();
     }
 
     public async Task DeleteEmpShiftAsync(int shiftId)
@@ -56,15 +68,6 @@ public class EmployeeShiftService : IEmployeeShiftService
         return futureShifts;
     }
 
-    public List<Shift> getSignedUpShift(string email)
-    {
-        return _context.EmployeeShifts
-            .Include(e => e.Emp)
-            .Where(e => e.Emp.Email == email)
-            .Select(e => e.Shift)
-            .ToList();
-    }
-
     public List<EmployeeShift> GetShiftsWithinTime(DateTime start, DateTime end)
     {
         var shifts = _context.EmployeeShifts
@@ -80,5 +83,13 @@ public class EmployeeShiftService : IEmployeeShiftService
             .ToList();
 
         return shifts;
+    }
+
+    public Task<List<EmployeeShift>> GetEmployeeShiftsByEmail(string email)
+    {
+        return _context.EmployeeShifts
+            .Include(es => es.Emp)
+            .Where(es => es.Emp.Email == email)
+            .ToListAsync();
     }
 }

@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace conscoord_api.Data;
 
 public partial class Employee
@@ -14,9 +17,13 @@ public partial class Employee
 
     public int? Companyid { get; set; }
 
+    public decimal? Payrate { get; set; }
+
     public virtual Company? Company { get; set; }
 
     public virtual ICollection<EmployeeShift> EmployeeShifts { get; set; } = new List<EmployeeShift>();
+
+    public virtual ICollection<Project> Projects { get; set; } = new List<Project>();
 
     public virtual Role? Role { get; set; }
 }

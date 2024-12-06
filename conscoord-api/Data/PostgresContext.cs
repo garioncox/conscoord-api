@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -17,7 +19,6 @@ public partial class PostgresContext : DbContext
     }
 
     private CustomConfiguration _configuration;
-
     public virtual DbSet<Company> Companies { get; set; }
 
     public virtual DbSet<CompanyProject> CompanyProjects { get; set; }
@@ -90,6 +91,7 @@ public partial class PostgresContext : DbContext
             entity.Property(e => e.Name)
                 .HasMaxLength(50)
                 .HasColumnName("name");
+            entity.Property(e => e.Payrate).HasColumnName("payrate");
             entity.Property(e => e.Phonenumber)
                 .HasMaxLength(13)
                 .HasColumnName("phonenumber");
@@ -119,6 +121,9 @@ public partial class PostgresContext : DbContext
                 .HasMaxLength(20)
                 .HasColumnName("clock_out_time");
             entity.Property(e => e.EmpId).HasColumnName("emp_id");
+            entity.Property(e => e.Notes)
+                .HasMaxLength(500)
+                .HasColumnName("notes");
             entity.Property(e => e.ShiftId).HasColumnName("shift_id");
 
             entity.HasOne(d => d.Emp).WithMany(p => p.EmployeeShifts)
@@ -139,6 +144,7 @@ public partial class PostgresContext : DbContext
             entity.ToTable("project", "practicum2425");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Contactinfo).HasColumnName("contactinfo");
             entity.Property(e => e.Description)
                 .HasMaxLength(300)
                 .HasColumnName("description");
@@ -157,6 +163,10 @@ public partial class PostgresContext : DbContext
             entity.Property(e => e.Status)
                 .HasMaxLength(16)
                 .HasColumnName("status");
+
+            entity.HasOne(d => d.ContactinfoNavigation).WithMany(p => p.Projects)
+                .HasForeignKey(d => d.Contactinfo)
+                .HasConstraintName("fk_contactinfo");
         });
 
         modelBuilder.Entity<ProjectShift>(entity =>
@@ -199,6 +209,9 @@ public partial class PostgresContext : DbContext
             entity.ToTable("shift", "practicum2425");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Archivedat)
+                .HasMaxLength(20)
+                .HasColumnName("archivedat");
             entity.Property(e => e.Description)
                 .HasMaxLength(200)
                 .HasColumnName("description");

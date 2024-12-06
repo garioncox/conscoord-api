@@ -21,6 +21,7 @@ public class ShiftService : IShiftService
         if (shift != null)
         {
             shift.Status = Shift.STATUS_ARCHIVED;
+            shift.Archivedat = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
             _context.Shifts.Update(shift);
             await _context.SaveChangesAsync();
         }
@@ -73,5 +74,35 @@ public class ShiftService : IShiftService
     {
         // TODO: KGB-111
         return Task.FromResult(new Shift[0]);
+    }
+
+    public List<Shift> GetScheduledShiftsByEmpId(int id)
+    {
+        return _context.EmployeeShifts
+            .Include(e => e.Emp)
+            .Where(e => e.Emp.Id == id)
+            .Select(e => e.Shift)
+            .ToList();
+    }
+
+    public List<Shift> GetScheduledShiftsByEmail(string email)
+    {
+        return _context.EmployeeShifts
+            .Include(e => e.Emp)
+            .Where(e => e.Emp.Email == email)
+            .Select(e => e.Shift)
+            .ToList();
+    }
+
+    public async Task<List<Shift>> GetShiftsByProject(int projectId)
+    {
+        var EmployeeShifts = await _context.ProjectShifts
+            .Where(es => es.ProjectId == projectId)
+            .ToListAsync();
+
+        var shiftIds = EmployeeShifts.Select(e => e.ShiftId).ToList();
+
+        return await _context.Shifts
+            .Where(s => shiftIds.Contains(s.Id)).ToListAsync();
     }
 }

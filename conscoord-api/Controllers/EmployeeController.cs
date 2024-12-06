@@ -64,4 +64,15 @@ public class EmployeeController : Controller
     {
         await _EmployeeService.EditEmployee(employee);
     }
+
+    [HttpGet("GetByShift/{shiftId}")]
+    public async Task<ActionResult<List<Employee>>> GetEmployeeSignedUpForShift(int shiftId)
+    {
+        var response = await _EmployeeService.GetEmployeesSignedUpForShift(shiftId);
+        if (response == null)
+        {
+            return NotFound();
+        }
+        return Ok(response);
+    }
 }

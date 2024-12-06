@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace conscoord_api.Data;
 
 public partial class Role

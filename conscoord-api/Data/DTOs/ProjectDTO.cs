@@ -6,5 +6,6 @@ namespace conscoord_api.Data.DTOs
         public required string Location { get; set; }
         public required string StartDate { get; set; }
         public required string EndDate { get; set; }
+        public int? Contactinfo { get; set; }
     }
 }

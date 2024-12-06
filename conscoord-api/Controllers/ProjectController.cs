@@ -1,3 +1,4 @@
+using System.Reflection.Metadata.Ecma335;
 using conscoord_api.Data;
 using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
@@ -19,6 +20,12 @@ public class ProjectController : ControllerBase
         _employeeService = employeeService;
     }
 
+    [HttpGet("getAll/Archived")]
+    public async Task<List<Project>> GetProjectArchivedAsync()
+    {
+        return await _projectService.GetProjectArchivedAsync();
+    }
+
     [HttpGet("getAll")]
     public async Task<List<Project>> GetProjectListAsync()
     {
@@ -34,7 +41,8 @@ public class ProjectController : ControllerBase
             StartDate = projectDTO.StartDate,
             Location = projectDTO.Location,
             Name = projectDTO.Name,
-            Status = Shift.STATUS_ACTIVE
+            Status = Shift.STATUS_ACTIVE,
+            Contactinfo = projectDTO.Contactinfo
         };
 
         await _projectService.CreateProject(project);

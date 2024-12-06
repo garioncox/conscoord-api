@@ -6,5 +6,6 @@ namespace conscoord_api.Data.DTOs
         public required string Email { get; set; }
         public required string Phonenumber { get; set; }
         public int Companyid { get; set; }
+        public decimal Payrate { get; set; }
     }
 }
