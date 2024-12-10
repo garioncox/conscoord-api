@@ -53,7 +53,8 @@ public class EmployeeController : Controller
         {
             Phonenumber = employeeDTO.Phonenumber,
             Email = employeeDTO.Email,
-            Name = employeeDTO.Name
+            Name = employeeDTO.Name,
+            Companyid = employeeDTO.Companyid,
         };
         await _EmployeeService.AddEmployee(employee);
     }
