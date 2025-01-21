@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using conscoord_api.Data;
 using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
@@ -20,6 +21,20 @@ public class EmployeeController : Controller
     public async Task<List<Employee>> GetEmployeeListAsync()
     {
         return await _EmployeeService.GetEmployeesListAsync();
+    }
+
+    [HttpGet("getCurrentUser")]
+    public async Task<ActionResult<Employee>> GetCurrentUser()
+    {
+        var user = HttpContext.User;
+        if (user.Identity?.IsAuthenticated == false) { return NotFound(); }
+
+        var userEmail = user?.FindFirst(ClaimTypes.Email)?.Value;
+
+        var employee = await _EmployeeService.GetEmployeeByEmailAsync(userEmail ?? "");
+
+        if (employee == null) { return NotFound(); }
+        return Ok(employee);
     }
 
     [HttpGet("get/{id}")]
