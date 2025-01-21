@@ -30,10 +30,21 @@ public class EmployeeController : Controller
         if (user.Identity?.IsAuthenticated == false) { return NotFound(); }
 
         var userEmail = user?.FindFirst(ClaimTypes.Email)?.Value;
-
         var employee = await _EmployeeService.GetEmployeeByEmailAsync(userEmail ?? "");
 
-        if (employee == null) { return NotFound(); }
+        // Create employee if not in DB
+        if (employee == null)
+        {
+            EmployeeDTO dto = new()
+            {
+                Name = user?.FindFirst(ClaimTypes.Name)?.Value ?? "",
+                Email = user?.FindFirst(ClaimTypes.Email)?.Value ?? "",
+                Phonenumber = ""
+            };
+            await AddEmployee(dto);
+            employee = await _EmployeeService.GetEmployeeByEmailAsync(userEmail ?? "");
+        }
+        
         return Ok(employee);
     }
 
