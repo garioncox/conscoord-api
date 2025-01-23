@@ -1,8 +1,8 @@
+using System.Security.Claims;
 using conscoord_api.Data;
 using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace conscoord_api.Controllers;
 
@@ -20,6 +20,31 @@ public class EmployeeController : Controller
     public async Task<List<Employee>> GetEmployeeListAsync()
     {
         return await _EmployeeService.GetEmployeesListAsync();
+    }
+
+    [HttpGet("getCurrentUser")]
+    public async Task<ActionResult<Employee>> GetCurrentUser()
+    {
+        var user = HttpContext.User;
+        if (user.Identity?.IsAuthenticated == false) { return NotFound(); }
+
+        var userEmail = user?.FindFirst(ClaimTypes.Email)?.Value;
+        var employee = await _EmployeeService.GetEmployeeByEmailAsync(userEmail ?? "");
+
+        // Create employee if not in DB
+        if (employee == null)
+        {
+            EmployeeDTO dto = new()
+            {
+                Name = user?.FindFirst(ClaimTypes.Name)?.Value ?? "",
+                Email = user?.FindFirst(ClaimTypes.Email)?.Value ?? "",
+                Phonenumber = ""
+            };
+            await AddEmployee(dto);
+            employee = await _EmployeeService.GetEmployeeByEmailAsync(userEmail ?? "");
+        }
+
+        return Ok(employee);
     }
 
     [HttpGet("get/{id}")]

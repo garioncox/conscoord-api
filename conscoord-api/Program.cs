@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text.Json.Serialization;
 using conscoord_api;
 using conscoord_api.Controllers;
@@ -6,21 +7,28 @@ using conscoord_api.Data.Interfaces;
 using conscoord_api.Services;
 using Coravel;
 using dotenv.net;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var envVars = DotEnv.Read();
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddCors(options =>
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+.AddJwtBearer(options =>
 {
-    options.AddPolicy("AllowAll", builder =>
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        builder.AllowAnyOrigin()
-               .AllowAnyMethod()
-               .AllowAnyHeader();
-    });
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidIssuer = "https://dev-zas6rizyxopiwv2b.us.auth0.com/",
+        ValidAudience = "BOZHiKTbFJOrquI2E4QMI2qARqMW9OgC"
+    };
+    options.Authority = "https://dev-zas6rizyxopiwv2b.us.auth0.com/";
 });
+builder.Services.AddAuthorization();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -64,6 +72,19 @@ app.UseStaticFiles();
 
 // Health Probe
 app.MapGet("/api/health", () => "healthy");
+app.MapGet("/api/auth", (ClaimsPrincipal user) =>
+{
+    if (user.Identity?.IsAuthenticated == true)
+    {
+        var authUser = user?.FindFirst(ClaimTypes.Email)?.Value;
+        Console.WriteLine($"Authenticated user: {authUser}");
+
+        return $"Authenticated user: {authUser}";
+    }
+
+    Console.WriteLine("User not authenticated");
+    return "User not authenticated";
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -86,11 +107,11 @@ app.Services.UseScheduler(scheduler =>
 app.UseCors(x => x
     .AllowAnyMethod()
     .AllowAnyHeader()
-    .SetIsOriginAllowed(origin => true)
-    .AllowCredentials());
+    .AllowAnyOrigin());
 
 app.UseRouting();
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.MapFallbackToFile("/index.html");
