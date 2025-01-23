@@ -44,7 +44,7 @@ public class EmployeeController : Controller
             await AddEmployee(dto);
             employee = await _EmployeeService.GetEmployeeByEmailAsync(userEmail ?? "");
         }
-        
+
         return Ok(employee);
     }
 

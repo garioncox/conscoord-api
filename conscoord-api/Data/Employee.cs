@@ -15,7 +15,7 @@ public partial class Employee
 
     public int? Roleid { get; set; }
 
-    public int? Companyid { get; set; }
+    public int? Companyid { get; set; } = null;
 
     public decimal? Payrate { get; set; }
 
