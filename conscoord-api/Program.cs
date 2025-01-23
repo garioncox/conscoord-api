@@ -30,16 +30,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 });
 builder.Services.AddAuthorization();
 
-// builder.Services.AddCors(options =>
-// {
-//     options.AddPolicy("AllowAll", builder =>
-//     {
-//         builder.AllowAnyOrigin()
-//                .AllowAnyMethod()
-//                .AllowAnyHeader();
-//     });
-// });
-
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -117,8 +107,6 @@ app.Services.UseScheduler(scheduler =>
 app.UseCors(x => x
     .AllowAnyMethod()
     .AllowAnyHeader()
-    // .SetIsOriginAllowed(origin => true)
-    // .AllowCredentials());
     .AllowAnyOrigin());
 
 app.UseRouting();
