@@ -4,7 +4,6 @@ using conscoord_api.Data;
 using conscoord_api.Data.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
 using NSubstitute;
 using Xunit;
 
@@ -40,8 +39,8 @@ public class EmployeeControllerTests
         // Assert
         Assert.That(actual.Result, Is.InstanceOf<NotFoundResult>());
 
-        await mockEmployeeService.Received(0).GetEmployeeByEmailAsync(It.IsAny<string>());
-        await mockEmployeeService.Received(0).AddEmployee(It.IsAny<Employee>());
+        await mockEmployeeService.Received(0).GetEmployeeByEmailAsync(Arg.Any<string>());
+        await mockEmployeeService.Received(0).AddEmployee(Arg.Any<Employee>());
     }
 
     [Test]
@@ -82,7 +81,7 @@ public class EmployeeControllerTests
         Assert.That(((Employee)okResult?.Value)?.Id, Is.EqualTo(mockEmployee.Id));
 
         await mockEmployeeService.Received(1).GetEmployeeByEmailAsync(mockEmployee.Email);
-        await mockEmployeeService.Received(0).AddEmployee(It.IsAny<Employee>());
+        await mockEmployeeService.Received(0).AddEmployee(Arg.Any<Employee>());
     }
 
     [Fact]
@@ -124,6 +123,6 @@ public class EmployeeControllerTests
         Assert.That(((Employee)okResult?.Value)?.Id, Is.EqualTo(mockEmployee.Id));
 
         await mockEmployeeService.Received(2).GetEmployeeByEmailAsync(mockEmployee.Email);
-        await mockEmployeeService.Received(1).AddEmployee(It.IsAny<Employee>());
+        await mockEmployeeService.Received(1).AddEmployee(Arg.Any<Employee>());
     }
 }
