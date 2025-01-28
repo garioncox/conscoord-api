@@ -1,6 +1,7 @@
 using conscoord_api.Data;
 using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace conscoord_api.Services;
@@ -91,5 +92,51 @@ public class EmployeeShiftService : IEmployeeShiftService
             .Include(es => es.Emp)
             .Where(es => es.Emp.Email == email)
             .ToListAsync();
+    }
+
+    public async Task<List<EmployeeHistoryDTO>> GetHistoryByEmail(string email)
+    {
+        var empshifts = await _context.EmployeeShifts
+            .Include(es => es.Emp)
+            .Include(es => es.Shift).Where(es => es.Emp.Email == email)
+            .ToListAsync();
+
+        if (empshifts == null || !empshifts.Any())
+        {
+            Console.WriteLine("No shifts found for this email.");
+            return new List<EmployeeHistoryDTO>();
+        }
+
+        List<EmployeeHistoryDTO> value = empshifts.Select(es => {
+            DateTime clockouttime;
+            DateTime clockintime;
+
+            var isClockOutParsed = DateTime.TryParseExact(es.ClockOutTime, "HH:mm",
+                System.Globalization.CultureInfo.InvariantCulture,
+                System.Globalization.DateTimeStyles.None, out clockouttime);
+
+            var isClockInParsed = DateTime.TryParseExact(es.ClockInTime, "HH:mm",
+                System.Globalization.CultureInfo.InvariantCulture,
+                System.Globalization.DateTimeStyles.None, out clockintime);
+
+            var hoursWorked = TimeSpan.Zero;
+            if (isClockOutParsed && isClockInParsed)
+            {
+                hoursWorked = clockouttime - clockintime;
+            }
+
+            Console.WriteLine($"clockout: {clockouttime}");
+
+            return new EmployeeHistoryDTO()
+            {
+                location = es.Shift.Location,
+                hours = hoursWorked.TotalHours, 
+                date = es.Shift.StartTime
+            };
+        }).ToList();
+
+        Console.WriteLine($"final return: {value[0].date}");
+
+        return value;
     }
 }

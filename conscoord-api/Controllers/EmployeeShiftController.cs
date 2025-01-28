@@ -75,4 +75,19 @@ public class EmployeeShiftController(IEmployeeShiftService service, IShiftServic
     {
         return _empShiftService.UpdateEmpShift(updatedEmpShift);
     }
+
+    [HttpGet("get/history/{email}")]
+
+    public async Task<IActionResult> GetHistoryByEmail(string email)
+    {
+        var result =  await _empShiftService.GetHistoryByEmail(email);
+        Console.WriteLine($"controller: {result[0].location}");
+
+        if (result is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(result);
+    }
 }
