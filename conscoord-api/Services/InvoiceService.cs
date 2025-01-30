@@ -31,7 +31,8 @@ on s.id = ps.shift_id
 join practicum2425.employee_shift es
 on es.shift_id = s.id
 join practicum2425.employee e
-on e.id = es.emp_id ; ").ToList();
+on e.id = es.emp_id
+where e.clockInTime is not null && e.clockOutTime is not null;").ToList();
 
         Console.WriteLine(allInvoiceInfo);
         //List<InvoiceInfoDTO> invoices = filteredProjects.Select(cp => new InvoiceInfoDTO
