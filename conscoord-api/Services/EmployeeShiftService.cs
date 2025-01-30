@@ -1,7 +1,6 @@
 using conscoord_api.Data;
 using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace conscoord_api.Services;
@@ -106,38 +105,36 @@ public class EmployeeShiftService : IEmployeeShiftService
 
         if (empshifts == null || !empshifts.Any())
         {
-            Console.WriteLine("No shifts found for this email.");
             return new List<EmployeeHistoryDTO>();
         }
 
-        List<EmployeeHistoryDTO> value = empshifts.Select(es => {
-            if (es.ClockInTime is null && es.ClockOutTime is null)
+        List<EmployeeHistoryDTO> value = empshifts.Select(es =>
+        {
+            if (es.ClockInTime is null || es.ClockOutTime is null)
             {
                 return new EmployeeHistoryDTO()
                 {
-                    location = es.Shift.Location,
+                    location = es.Shift.Location ?? "",
                     hours = "--",
                     date = es.Shift.StartTime,
-                    projectName = es.Shift.ProjectShifts.FirstOrDefault()?.Project.Name  
+                    projectName = es.Shift.ProjectShifts.FirstOrDefault()?.Project.Name ?? ""
                 };
             }
 
-            var ClockOutParsed = DateTime.ParseExact(es.ClockOutTime, [ "H:mm", "HH:mm"], null);
-            var ClockInParsed = DateTime.ParseExact(es.ClockInTime, ["H:mm","HH:mm"], null);
+            var ClockOutParsed = DateTime.ParseExact(es.ClockOutTime, ["H:mm", "HH:mm"], null);
+            var ClockInParsed = DateTime.ParseExact(es.ClockInTime, ["H:mm", "HH:mm"], null);
             var hoursWorked = ClockOutParsed - ClockInParsed;
 
             return new EmployeeHistoryDTO()
             {
-                location = es.Shift.Location,
-                hours = ((hoursWorked.TotalHours + 24) % 24).ToString(), 
+                location = es.Shift.Location ?? "",
+                hours = ((hoursWorked.TotalHours + 24) % 24).ToString(),
                 date = es.Shift.StartTime,
-                projectName = es.Shift.ProjectShifts.FirstOrDefault()?.Project.Name
+                projectName = es.Shift.ProjectShifts.FirstOrDefault()?.Project.Name ?? ""
             };
 
-            
-        }).ToList();
 
-        Console.WriteLine($"final return: {value[0].date}");
+        }).ToList();
 
         return value;
     }
