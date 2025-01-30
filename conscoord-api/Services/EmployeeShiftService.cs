@@ -92,4 +92,50 @@ public class EmployeeShiftService : IEmployeeShiftService
             .Where(es => es.Emp.Email == email)
             .ToListAsync();
     }
+
+    public async Task<List<EmployeeHistoryDTO>> GetHistoryByEmail(string email)
+    {
+        var empshifts = await _context.EmployeeShifts
+    .Include(es => es.Emp)
+    .Include(es => es.Shift)
+        .ThenInclude(s => s.ProjectShifts)
+        .ThenInclude(ps => ps.Project)
+    .Where(es => es.Emp.Email == email)
+    .ToListAsync();
+
+        if (empshifts == null || !empshifts.Any())
+        {
+            return new List<EmployeeHistoryDTO>();
+        }
+
+        List<EmployeeHistoryDTO> value = empshifts.Select(es =>
+        {
+            if (es.ClockInTime is null || es.ClockOutTime is null)
+            {
+                return new EmployeeHistoryDTO()
+                {
+                    location = es.Shift.Location ?? "",
+                    hours = "--",
+                    date = es.Shift.StartTime,
+                    projectName = es.Shift.ProjectShifts.FirstOrDefault()?.Project.Name ?? ""
+                };
+            }
+
+            var ClockOutParsed = DateTime.ParseExact(es.ClockOutTime, ["H:mm", "HH:mm"], null);
+            var ClockInParsed = DateTime.ParseExact(es.ClockInTime, ["H:mm", "HH:mm"], null);
+            var hoursWorked = ClockOutParsed - ClockInParsed;
+
+            return new EmployeeHistoryDTO()
+            {
+                location = es.Shift.Location ?? "",
+                hours = ((hoursWorked.TotalHours + 24) % 24).ToString(),
+                date = es.Shift.StartTime,
+                projectName = es.Shift.ProjectShifts.FirstOrDefault()?.Project.Name ?? ""
+            };
+
+
+        }).ToList();
+
+        return value;
+    }
 }

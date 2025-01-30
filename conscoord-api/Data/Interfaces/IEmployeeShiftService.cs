@@ -11,4 +11,5 @@ public interface IEmployeeShiftService
     List<EmployeeShift> GetShiftsWithinTime(DateTime start, DateTime End);
     Task UpdateEmpShift(EditEmployeeShiftDTO empShift);
     Task<List<EmployeeShift>> GetEmployeeShiftsByEmail(string email);
+    Task<List<EmployeeHistoryDTO>> GetHistoryByEmail(string email);
 }
