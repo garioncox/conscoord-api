@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using conscoord_api.Data.DTOs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -34,6 +35,7 @@ public partial class PostgresContext : DbContext
     public virtual DbSet<Role> Roles { get; set; }
 
     public virtual DbSet<Shift> Shifts { get; set; }
+    public virtual DbSet<InvoiceFromDB> InvoiceData {get;set;}
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -54,6 +56,11 @@ public partial class PostgresContext : DbContext
             entity.Property(e => e.Name)
                 .HasMaxLength(50)
                 .HasColumnName("name");
+        });
+
+        modelBuilder.Entity<InvoiceFromDB>(entity =>
+        {
+            entity.HasKey(e => e.projectId).HasName("p_key");
         });
 
         modelBuilder.Entity<CompanyProject>(entity =>

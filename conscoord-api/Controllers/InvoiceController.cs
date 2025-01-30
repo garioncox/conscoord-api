@@ -1,3 +1,5 @@
+using conscoord_api.Data.DTOs;
+using conscoord_api.Data.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
@@ -5,8 +7,18 @@ namespace conscoord_api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class PDFController : ControllerBase
+public class InvoiceController : ControllerBase
 {
+
+
+    [HttpGet]
+    public Task<List<InvoiceInfoDTO>> GetInvoiceInfoByCompanyTimePeriod(int companyId, IInvoiceService interfaceService)
+    {
+        DateTime date2020 = new DateTime(2020, 7, 15, 10, 30, 0, DateTimeKind.Utc);
+        DateTime date2026 = new DateTime(2026, 3, 22, 17, 45, 0, DateTimeKind.Utc);
+        return interfaceService.GetInvoiceInfoByCompanyTimePeriod(companyId, date2020, date2026);
+    }
+
     [HttpPost]
     public void GeneratePDF()
     {
