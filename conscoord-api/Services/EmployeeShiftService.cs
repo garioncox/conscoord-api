@@ -97,9 +97,12 @@ public class EmployeeShiftService : IEmployeeShiftService
     public async Task<List<EmployeeHistoryDTO>> GetHistoryByEmail(string email)
     {
         var empshifts = await _context.EmployeeShifts
-            .Include(es => es.Emp)
-            .Include(es => es.Shift).Where(es => es.Emp.Email == email)
-            .ToListAsync();
+    .Include(es => es.Emp)
+    .Include(es => es.Shift)
+        .ThenInclude(s => s.ProjectShifts)
+        .ThenInclude(ps => ps.Project)
+    .Where(es => es.Emp.Email == email)
+    .ToListAsync();
 
         if (empshifts == null || !empshifts.Any())
         {
@@ -108,31 +111,30 @@ public class EmployeeShiftService : IEmployeeShiftService
         }
 
         List<EmployeeHistoryDTO> value = empshifts.Select(es => {
-            DateTime clockouttime;
-            DateTime clockintime;
-
-            var isClockOutParsed = DateTime.TryParseExact(es.ClockOutTime, "HH:mm",
-                System.Globalization.CultureInfo.InvariantCulture,
-                System.Globalization.DateTimeStyles.None, out clockouttime);
-
-            var isClockInParsed = DateTime.TryParseExact(es.ClockInTime, "HH:mm",
-                System.Globalization.CultureInfo.InvariantCulture,
-                System.Globalization.DateTimeStyles.None, out clockintime);
-
-            var hoursWorked = TimeSpan.Zero;
-            if (isClockOutParsed && isClockInParsed)
+            if (es.ClockInTime is null && es.ClockOutTime is null)
             {
-                hoursWorked = clockouttime - clockintime;
+                return new EmployeeHistoryDTO()
+                {
+                    location = es.Shift.Location,
+                    hours = "--",
+                    date = es.Shift.StartTime,
+                    projectName = es.Shift.ProjectShifts.FirstOrDefault()?.Project.Name  
+                };
             }
 
-            Console.WriteLine($"clockout: {clockouttime}");
+            var ClockOutParsed = DateTime.ParseExact(es.ClockOutTime, [ "H:mm", "HH:mm"], null);
+            var ClockInParsed = DateTime.ParseExact(es.ClockInTime, ["H:mm","HH:mm"], null);
+            var hoursWorked = ClockOutParsed - ClockInParsed;
 
             return new EmployeeHistoryDTO()
             {
                 location = es.Shift.Location,
-                hours = hoursWorked.TotalHours, 
-                date = es.Shift.StartTime
+                hours = ((hoursWorked.TotalHours + 24) % 24).ToString(), 
+                date = es.Shift.StartTime,
+                projectName = es.Shift.ProjectShifts.FirstOrDefault()?.Project.Name
             };
+
+            
         }).ToList();
 
         Console.WriteLine($"final return: {value[0].date}");
