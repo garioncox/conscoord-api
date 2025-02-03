@@ -12,11 +12,13 @@ public class InvoiceController : ControllerBase
 
 
     [HttpGet]
-    public Task<List<InvoiceInfoDTO>> GetInvoiceInfoByCompanyTimePeriod(int companyId, IInvoiceService interfaceService)
+    public async Task<ActionResult<List<InvoiceInfoDTO>>> GetInvoiceInfoByCompanyTimePeriod(int companyId, IInvoiceService interfaceService)
     {
         DateTime date2020 = new DateTime(2020, 7, 15, 10, 30, 0, DateTimeKind.Utc);
         DateTime date2026 = new DateTime(2026, 3, 22, 17, 45, 0, DateTimeKind.Utc);
-        return interfaceService.GetInvoiceInfoByCompanyTimePeriod(companyId, date2020, date2026);
+        
+        var result = await interfaceService.GetInvoiceInfoByCompanyTimePeriod(companyId, date2020, date2026);
+        return Ok(result);
     }
 
     [HttpPost]

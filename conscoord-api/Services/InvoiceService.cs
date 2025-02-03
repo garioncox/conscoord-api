@@ -32,9 +32,31 @@ join practicum2425.employee_shift es
 on es.shift_id = s.id
 join practicum2425.employee e
 on e.id = es.emp_id
-where e.clockInTime is not null && e.clockOutTime is not null;").ToList();
+where es.clock_in_time is not null and es.clock_out_time is not null;").ToList();
 
-        Console.WriteLine(allInvoiceInfo);
+        List<InvoiceInfoDTO> result = new List<InvoiceInfoDTO>();
+        foreach (var invoiceInfo in allInvoiceInfo)
+        {
+            InvoiceInfoDTO info = new InvoiceInfoDTO();
+            info.projectId = invoiceInfo.projectId;
+            info.projectName = invoiceInfo.projectName;
+
+            info.shiftsByProject = new();
+
+            var ClockOutParsed = DateTime.ParseExact(invoiceInfo.clockouttime, ["H:mm", "HH:mm"], null);
+            var ClockInParsed = DateTime.ParseExact(invoiceInfo.clockintime, ["H:mm", "HH:mm"], null);
+            var hoursWorked = ClockOutParsed - ClockInParsed;
+
+            employeeInfo employeeInfo = new() {
+                employeeId = invoiceInfo.employeeId,
+                employeePayRate = invoiceInfo.payrate ?? 75,
+                hoursWorked = (hoursWorked.TotalHours + 24) % 24
+            };
+
+            result.Add(info);
+        }
+        return result;
+
         //List<InvoiceInfoDTO> invoices = filteredProjects.Select(cp => new InvoiceInfoDTO
         //{
         //    projectId = cp.Id,
