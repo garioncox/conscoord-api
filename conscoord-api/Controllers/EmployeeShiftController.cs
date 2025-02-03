@@ -80,8 +80,7 @@ public class EmployeeShiftController(IEmployeeShiftService service, IShiftServic
 
     public async Task<IActionResult> GetHistoryByEmail(string email)
     {
-        var result =  await _empShiftService.GetHistoryByEmail(email);
-        Console.WriteLine($"controller: {result[0].location}");
+        var result = await _empShiftService.GetHistoryByEmail(email);
 
         if (result is null)
         {
