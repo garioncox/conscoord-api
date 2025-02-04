@@ -1,6 +1,7 @@
 using conscoord_api.Data;
 using conscoord_api.Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Utilities;
 
 namespace conscoord_api.Services;
 
@@ -15,8 +16,8 @@ public class InvoiceService : IInvoiceService
 
     public async Task<List<InvoiceInfoDTO>> GetInvoiceInfoByCompanyTimePeriod(int companyId, DateTime startDate, DateTime endDate)
     {
-        var allInvoiceInfo = _context.InvoiceData
-            .FromSqlRaw(@"select p.id as projectId,p.""location"" as projectName,
+        var allInvoiceInfo = _context.InvoiceData.FromSqlRaw
+            (@"select p.id as projectId,p.""location"" as projectName,
 s.id as shiftId,s.""location"" as shiftName,
 e.id as employeeId, e.name as employeeName, e.payrate, es.clock_in_time as clockInTime, es.clock_out_time as clockOutTime
 from practicum2425.project p
@@ -30,44 +31,49 @@ join practicum2425.employee_shift es
 on es.shift_id = s.id
 join practicum2425.employee e
 on e.id = es.emp_id
-where es.clock_in_time is not null and es.clock_out_time is not null;").ToList();
+where es.clock_in_time is not null and es.clock_out_time is not null;").AsNoTracking().ToList();
 
         List<InvoiceInfoDTO> result = new List<InvoiceInfoDTO>();
-        foreach (var invoiceInfo in allInvoiceInfo)
+        Dictionary<int, int> projectIdToIndex = new Dictionary<int, int>();
+
+        foreach (var row in allInvoiceInfo)
         {
-            InvoiceInfoDTO info = new()
+            //check if project exists
+            if (!projectIdToIndex.ContainsKey(row.projectId))
             {
-                projectId = invoiceInfo.projectId,
-                projectName = invoiceInfo.projectName,
+                var employees = new List<employeeInfo> { new employeeInfo { employeeId = row.employeeId, employeeName = row.employeeName, employeePayRate = 75, hoursWorked = 8 } };
+                var rowsShift = new shiftInfo { shiftId = row.shiftId, shiftLocation = row.shiftName, employeesByShift = employees };
 
-                shiftsByProject = new()
-            };
+                var project = new InvoiceInfoDTO
+                {
+                    projectId = row.projectId,
+                    projectName = row.projectName,
+                    shiftsByProject = new List<shiftInfo> { rowsShift }
+                };
 
-            var ClockOutParsed = DateTime.ParseExact(invoiceInfo.clockouttime, ["H:mm", "HH:mm"], null);
-            var ClockInParsed = DateTime.ParseExact(invoiceInfo.clockintime, ["H:mm", "HH:mm"], null);
-            var hoursWorked = ClockOutParsed - ClockInParsed;
-
-            List<employeeInfo> emp = new();
-
-            employeeInfo employeeInfo = new()
+                result.Add(project);
+                projectIdToIndex[row.projectId] = result.Count - 1;
+            }
+            else 
             {
-                employeeId = invoiceInfo.employeeId,
-                employeePayRate = invoiceInfo.payrate ?? 75,
-                employeeName = invoiceInfo.employeeName,
-                hoursWorked = (hoursWorked.TotalHours + 24) % 24
-            };
-            emp.Add(employeeInfo);
+                var project = result[projectIdToIndex[row.projectId]];
+                var rowsEmployee = new employeeInfo { employeeId = row.employeeId, employeeName = row.employeeName, employeePayRate = 75, hoursWorked = 8 };
 
-            shiftInfo shift = new()
-            {
-                shiftId = invoiceInfo.shiftId,
-                shiftLocation = invoiceInfo.shiftName,
-                employeesByShift = emp,
-            };
-
-            info.shiftsByProject.Add(shift);
-            result.Add(info);
+                //check if the shift exists within the project
+                var existingShift = project.shiftsByProject.FirstOrDefault(s => s.shiftId == row.shiftId);
+                if (existingShift == null) 
+                {
+                    var employees = new List<employeeInfo> { new employeeInfo { employeeId = row.employeeId, employeeName = row.employeeName, employeePayRate = 75, hoursWorked = 8 } };
+                    var rowsShift = new shiftInfo { shiftId = row.shiftId, shiftLocation = row.shiftName, employeesByShift = employees };
+                    project.shiftsByProject.Add(rowsShift);
+                }
+                else 
+                {
+                    existingShift.employeesByShift.Add(new employeeInfo { employeeId = row.employeeId, employeeName = row.employeeName, employeePayRate = 75, hoursWorked = 8 });
+                }
+            }
         }
+
         return result;
     }
 }
