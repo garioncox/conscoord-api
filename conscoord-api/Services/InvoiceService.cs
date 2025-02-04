@@ -48,8 +48,9 @@ where es.clock_in_time is not null and es.clock_out_time is not null;").ToList()
             var hoursWorked = ClockOutParsed - ClockInParsed;
 
             List<employeeInfo> emp = new();
-            
-            employeeInfo employeeInfo = new() {
+
+            employeeInfo employeeInfo = new()
+            {
                 employeeId = invoiceInfo.employeeId,
                 employeePayRate = invoiceInfo.payrate ?? 75,
                 employeeName = invoiceInfo.employeeName,
@@ -68,36 +69,5 @@ where es.clock_in_time is not null and es.clock_out_time is not null;").ToList()
             result.Add(info);
         }
         return result;
-
-        //List<InvoiceInfoDTO> invoices = filteredProjects.Select(cp => new InvoiceInfoDTO
-        //{
-        //    projectId = cp.Id,
-        //    projectName = cp.Name,
-        //    shiftsByProject = cp.ProjectShifts
-        //     .Where(ps => DateTime.TryParseExact(ps.Shift.EndTime, "yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime endTime)
-        //                  && endTime > startDate && endTime < endDate)
-
-        //     .Select(ps => new shiftInfo
-        //     {
-        //         shiftId = ps.Shift.Id,
-        //         shiftLocation = ps.Shift.Location,
-        //         employeesByShift = ps.Shift.EmployeeShifts.Select(es =>
-        //         {
-        //             var ClockOutParsed = DateTime.ParseExact(es.ClockOutTime, ["H:mm", "HH:mm"], null);
-        //             var ClockInParsed = DateTime.ParseExact(es.ClockInTime, ["H:mm", "HH:mm"], null);
-        //             var hoursWorked = ClockOutParsed - ClockInParsed;
-
-        //             return new employeeInfo
-        //             {
-        //                 employeeId = es.Emp.Id,
-        //                 employeeName = es.Emp.Name,
-        //                 employeePayRate = es.Emp.Payrate ?? 0,
-        //                 hoursWorked = ((hoursWorked.TotalHours + 24) % 24)
-        //             };
-        //         }).ToList()
-        //     }).ToList()
-        //}).ToList();
-
-        return new List<InvoiceInfoDTO>();
     }
 }
