@@ -33,40 +33,52 @@ on e.id = es.emp_id
 where es.clock_in_time is not null and es.clock_out_time is not null;").ToList();
 
         List<InvoiceInfoDTO> result = new List<InvoiceInfoDTO>();
+        Dictionary<int, int> projects = new();
+        Dictionary<int, int> shifts = new();
         foreach (var invoiceInfo in allInvoiceInfo)
         {
-            InvoiceInfoDTO info = new()
-            {
-                projectId = invoiceInfo.projectId,
-                projectName = invoiceInfo.projectName,
-
-                shiftsByProject = new()
-            };
-
             var ClockOutParsed = DateTime.ParseExact(invoiceInfo.clockouttime, ["H:mm", "HH:mm"], null);
             var ClockInParsed = DateTime.ParseExact(invoiceInfo.clockintime, ["H:mm", "HH:mm"], null);
             var hoursWorked = ClockOutParsed - ClockInParsed;
 
-            List<employeeInfo> emp = new();
-
-            employeeInfo employeeInfo = new()
+            employeeInfo employee = new employeeInfo()
             {
                 employeeId = invoiceInfo.employeeId,
-                employeePayRate = invoiceInfo.payrate ?? 75,
                 employeeName = invoiceInfo.employeeName,
+                employeePayRate = invoiceInfo.payrate ?? 75,
                 hoursWorked = (hoursWorked.TotalHours + 24) % 24
             };
-            emp.Add(employeeInfo);
 
-            shiftInfo shift = new()
+            var shift = new shiftInfo()
             {
                 shiftId = invoiceInfo.shiftId,
                 shiftLocation = invoiceInfo.shiftName,
-                employeesByShift = emp,
+                employeesByShift = new()
             };
 
-            info.shiftsByProject.Add(shift);
-            result.Add(info);
+            if (!projects.ContainsKey(invoiceInfo.projectId))
+            {
+                var project = new InvoiceInfoDTO()
+                {
+                    projectId = invoiceInfo.projectId,
+                    projectName = invoiceInfo.projectName,
+                    shiftsByProject = new()
+                };
+                //todo check and add to shift dictionary
+                project.shiftsByProject.Add(shift);
+                //todo instaed of zero use the shift index
+                project.shiftsByProject[0].employeesByShift.Add(employee);
+
+                result.Add(project);
+                projects[invoiceInfo.projectId] = result.Count()-1;
+            }
+            else
+            {
+                var projectindex = projects[invoiceInfo.projectId];
+                result[projectindex].shiftsByProject.Add(shift);
+                //todo check shift dictionary
+                result[projectindex].shiftsByProject[0].employeesByShift.Add(employee);
+            }
         }
         return result;
     }
