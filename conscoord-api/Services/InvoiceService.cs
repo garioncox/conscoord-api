@@ -1,6 +1,4 @@
-using System.Globalization;
 using conscoord_api.Data;
-using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -37,11 +35,13 @@ where es.clock_in_time is not null and es.clock_out_time is not null;").ToList()
         List<InvoiceInfoDTO> result = new List<InvoiceInfoDTO>();
         foreach (var invoiceInfo in allInvoiceInfo)
         {
-            InvoiceInfoDTO info = new InvoiceInfoDTO();
-            info.projectId = invoiceInfo.projectId;
-            info.projectName = invoiceInfo.projectName;
+            InvoiceInfoDTO info = new()
+            {
+                projectId = invoiceInfo.projectId,
+                projectName = invoiceInfo.projectName,
 
-            info.shiftsByProject = new();
+                shiftsByProject = new()
+            };
 
             var ClockOutParsed = DateTime.ParseExact(invoiceInfo.clockouttime, ["H:mm", "HH:mm"], null);
             var ClockInParsed = DateTime.ParseExact(invoiceInfo.clockintime, ["H:mm", "HH:mm"], null);
