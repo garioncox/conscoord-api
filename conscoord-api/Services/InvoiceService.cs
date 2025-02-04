@@ -47,12 +47,24 @@ where es.clock_in_time is not null and es.clock_out_time is not null;").ToList()
             var ClockInParsed = DateTime.ParseExact(invoiceInfo.clockintime, ["H:mm", "HH:mm"], null);
             var hoursWorked = ClockOutParsed - ClockInParsed;
 
+            List<employeeInfo> emp = new();
+            
             employeeInfo employeeInfo = new() {
                 employeeId = invoiceInfo.employeeId,
                 employeePayRate = invoiceInfo.payrate ?? 75,
+                employeeName = invoiceInfo.employeeName,
                 hoursWorked = (hoursWorked.TotalHours + 24) % 24
             };
+            emp.Add(employeeInfo);
 
+            shiftInfo shift = new()
+            {
+                shiftId = invoiceInfo.shiftId,
+                shiftLocation = invoiceInfo.shiftName,
+                employeesByShift = emp,
+            };
+
+            info.shiftsByProject.Add(shift);
             result.Add(info);
         }
         return result;
