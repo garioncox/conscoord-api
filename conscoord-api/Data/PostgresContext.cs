@@ -20,6 +20,7 @@ public partial class PostgresContext : DbContext
     }
 
     private CustomConfiguration _configuration;
+
     public virtual DbSet<Company> Companies { get; set; }
 
     public virtual DbSet<CompanyProject> CompanyProjects { get; set; }
@@ -127,10 +128,13 @@ public partial class PostgresContext : DbContext
             entity.Property(e => e.ClockOutTime)
                 .HasMaxLength(20)
                 .HasColumnName("clock_out_time");
+            entity.Property(e => e.Didnotwork).HasColumnName("didnotwork");
             entity.Property(e => e.EmpId).HasColumnName("emp_id");
+            entity.Property(e => e.Hasbeeninvoiced).HasColumnName("hasbeeninvoiced");
             entity.Property(e => e.Notes)
                 .HasMaxLength(500)
                 .HasColumnName("notes");
+            entity.Property(e => e.Reportedcanceled).HasColumnName("reportedcanceled");
             entity.Property(e => e.ShiftId).HasColumnName("shift_id");
 
             entity.HasOne(d => d.Emp).WithMany(p => p.EmployeeShifts)
