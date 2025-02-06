@@ -121,7 +121,6 @@ public class InvoiceController : ControllerBase
         document.Save(filename);
 
         string currentFilePath = System.IO.Path.GetFullPath(".");
-        Console.WriteLine(currentFilePath);
         var fileBytes = System.IO.File.ReadAllBytes(currentFilePath + "/Invoice.pdf") ;
         return File(fileBytes, "application/pdf", "Invoice.pdf");
 
