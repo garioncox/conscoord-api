@@ -20,8 +20,8 @@ public class InvoiceController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost]
-    public void GeneratePDF()
+    [HttpGet("generateInvoice")]
+    public IActionResult GeneratePDF()
     {
         PdfDocument document = new PdfDocument();
         PdfPage page = document.AddPage();
@@ -120,7 +120,9 @@ public class InvoiceController : ControllerBase
         string filename = "Invoice.pdf";
         document.Save(filename);
 
-        Console.WriteLine($"Invoice generated and saved as {filename}");
+        string currentFilePath = System.IO.Path.GetFullPath(".");
+        var fileBytes = System.IO.File.ReadAllBytes(currentFilePath + "/Invoice.pdf") ;
+        return File(fileBytes, "application/pdf", "Invoice.pdf");
 
     }
 }
