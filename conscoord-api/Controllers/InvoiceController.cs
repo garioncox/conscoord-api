@@ -21,99 +21,178 @@ public class InvoiceController : ControllerBase
     }
 
     [HttpGet("generateInvoice")]
-    public IActionResult GeneratePDF()
+    public async Task<IActionResult> GeneratePDF(IInvoiceService interfaceService)
     {
+        double hoursCounter = 0;
+        double grandTotal = 0;
+        int maxYPosition = 750;
+        DateTime date1 = new DateTime(2022, 5, 15);
+        DateTime date2 = new DateTime(2029, 11, 3);
+        List<InvoiceInfoDTO> invoicedata = await interfaceService.GetInvoiceInfoByCompanyTimePeriod(2, date1, date2);
+
+        foreach (InvoiceInfoDTO data in invoicedata)
+        {
+            foreach (var shift in data.shiftsByProject)
+            {
+                foreach (var employee in shift.employeesByShift)
+                {
+                    grandTotal += employee.hoursWorked * 75;  
+                }
+            }
+        }
+
+
         PdfDocument document = new PdfDocument();
         PdfPage page = document.AddPage();
         XGraphics gfx = XGraphics.FromPdfPage(page);
 
         // Define fonts
         XFont titleFont = new XFont("Verdana", 18, XFontStyleEx.Bold);
-        XFont headerFont = new XFont("Verdana", 14, XFontStyleEx.Bold);
-        XFont normalFont = new XFont("Verdana", 12);
-        XFont totalFont = new XFont("Verdana", 16, XFontStyleEx.Bold);
+        XFont headerFont = new XFont("Arial", 14, XFontStyleEx.Bold);
+        XFont subHeaderFont = new XFont("Arial", 12, XFontStyleEx.Bold);
+        XFont normalFont = new XFont("Arial", 10, XFontStyleEx.Regular);
+        XBrush headerBrush = XBrushes.DarkBlue;
+        XBrush subHeaderBrush = XBrushes.DimGray;
+        XBrush textBrush = XBrushes.Black;
 
-        // Title
-        gfx.DrawString("Invoice", titleFont, XBrushes.Black,
-            new XRect(0, 40, page.Width, page.Height),
-            XStringFormats.TopCenter);
+        // Title Section
+        gfx.DrawString("Invoice Example", titleFont, XBrushes.DarkBlue,
+            new XRect(40, 40, page.Width - 80, page.Height),
+            XStringFormats.TopCenter);  // Center the title, make it dark blue for emphasis
 
-        // Company Name
-        gfx.DrawString("Acme Corporation", titleFont, XBrushes.Black,
-            new XRect(0, 80, page.Width, page.Height),
-            XStringFormats.TopCenter);
+        // Start Position
+        double yPosition = 70;
 
-        // Invoice Details (Project 1)
-        double yPosition = 120; // Start position for first project
-        gfx.DrawString("Project 1: Web Development", headerFont, XBrushes.Black,
-            new XRect(40, yPosition, page.Width, page.Height),
-            XStringFormats.TopLeft);
-        yPosition += 20;
-        gfx.DrawString("Days worked: 5", normalFont, XBrushes.Black,
-            new XRect(40, yPosition, page.Width, page.Height),
-            XStringFormats.TopLeft);
-        yPosition += 20;
-        gfx.DrawString("Rate: $200/day", normalFont, XBrushes.Black,
-            new XRect(40, yPosition, page.Width, page.Height),
-            XStringFormats.TopLeft);
-        yPosition += 20;
-        gfx.DrawString("Total: $1000", normalFont, XBrushes.Black,
-            new XRect(40, yPosition, page.Width, page.Height),
-            XStringFormats.TopLeft);
+        // Horizontal Line for Separation
+        gfx.DrawLine(XPens.DarkGray, 40, yPosition, page.Width - 40, yPosition);
 
-        // Horizontal Line After Project 1
-        yPosition += 30; // Add space before the line
-        gfx.DrawLine(XPens.Black, 40, yPosition, page.Width - 40, yPosition);
-
-        // Project 2
-        yPosition += 10;
-        gfx.DrawString("Project 2: Mobile App Development", headerFont, XBrushes.Black,
-            new XRect(40, yPosition, page.Width, page.Height),
-            XStringFormats.TopLeft);
+        // From Section
         yPosition += 20;
-        gfx.DrawString("Days worked: 7", normalFont, XBrushes.Black,
-            new XRect(40, yPosition, page.Width, page.Height),
+        gfx.DrawString("From:", subHeaderFont, XBrushes.Black,
+            new XRect(60, yPosition, page.Width - 80, page.Height),
             XStringFormats.TopLeft);
-        yPosition += 20;
-        gfx.DrawString("Rate: $250/day", normalFont, XBrushes.Black,
-            new XRect(40, yPosition, page.Width, page.Height),
+        gfx.DrawString("Highway UHP", normalFont, XBrushes.Black,
+            new XRect(60, yPosition + 20, page.Width - 80, page.Height),
             XStringFormats.TopLeft);
-        yPosition += 20;
-        gfx.DrawString("Total: $1750", normalFont, XBrushes.Black,
-            new XRect(40, yPosition, page.Width, page.Height),
+        gfx.DrawString("4501 S 2700 W, Salt Lake City, UT 84129", normalFont, XBrushes.Black,
+            new XRect(60, yPosition + 40, page.Width - 80, page.Height),
+            XStringFormats.TopLeft);
+        gfx.DrawString("(801) 965-4518", normalFont, XBrushes.Black,
+            new XRect(60, yPosition + 55, page.Width - 80, page.Height),
             XStringFormats.TopLeft);
 
-        // Horizontal Line After Project 2
+        // For Section
+        gfx.DrawString("For:", subHeaderFont, XBrushes.Black,
+            new XRect(270, yPosition, page.Width - 80, page.Height),
+            XStringFormats.TopLeft);
+        yPosition += 20;
+        gfx.DrawString("Company 123", normalFont, XBrushes.Black,
+            new XRect(270, yPosition, page.Width - 80, page.Height),
+            XStringFormats.TopLeft);
+
+        // Horizontal Line
+        yPosition += 70;
+        gfx.DrawLine(XPens.DarkGray, 40, yPosition, page.Width - 40, yPosition);
+
+        // Info Section
+        yPosition += 20;
+        gfx.DrawString("Invoice # 123456870", normalFont, XBrushes.Black,
+            new XRect(60, yPosition, page.Width - 80, page.Height),
+            XStringFormats.TopLeft);
+        yPosition += 20;
+        gfx.DrawString($"Date: {DateTime.Today.ToString("d")}", normalFont, XBrushes.Black,
+            new XRect(60, yPosition, page.Width - 80, page.Height),
+            XStringFormats.TopLeft);
+        yPosition += 20;
+        gfx.DrawString($"Due: {grandTotal:C}", normalFont, XBrushes.Black,  
+            new XRect(60, yPosition, page.Width - 80, page.Height),
+            XStringFormats.TopLeft);
+
+        // Horizontal Line
         yPosition += 30;
-        gfx.DrawLine(XPens.Black, 40, yPosition, page.Width - 40, yPosition);
+        gfx.DrawLine(XPens.DarkGray, 40, yPosition, page.Width - 40, yPosition);
 
-        // Project 3
-        yPosition += 10;
-        gfx.DrawString("Project 3: Database Optimization", headerFont, XBrushes.Black,
-            new XRect(40, yPosition, page.Width, page.Height),
-            XStringFormats.TopLeft);
+        // Table Headers for Description, Hours, Rate
         yPosition += 20;
-        gfx.DrawString("Days worked: 3", normalFont, XBrushes.Black,
-            new XRect(40, yPosition, page.Width, page.Height),
+        gfx.DrawString("Description", subHeaderFont, XBrushes.Black,
+            new XRect(40, yPosition, 200, page.Height),
             XStringFormats.TopLeft);
-        yPosition += 20;
-        gfx.DrawString("Rate: $300/day", normalFont, XBrushes.Black,
-            new XRect(40, yPosition, page.Width, page.Height),
-            XStringFormats.TopLeft);
-        yPosition += 20;
-        gfx.DrawString("Total: $900", normalFont, XBrushes.Black,
-            new XRect(40, yPosition, page.Width, page.Height),
-            XStringFormats.TopLeft);
+        gfx.DrawString("Hours", subHeaderFont, XBrushes.Black,
+            new XRect(310, yPosition, 100, page.Height),
+            XStringFormats.TopRight);
+        gfx.DrawString("Rate($)", subHeaderFont, XBrushes.Black,
+            new XRect(page.Width - 230, yPosition, 100, page.Height),
+            XStringFormats.TopRight);
+        gfx.DrawString("Amt($)", subHeaderFont, XBrushes.Black,
+            new XRect(page.Width - 150, yPosition, 100, page.Height),
+            XStringFormats.TopRight);
 
-        // Horizontal Line After Project 3
-        yPosition += 30;
-        gfx.DrawLine(XPens.Black, 40, yPosition, page.Width - 40, yPosition);
+        // Horizontal Line
+        yPosition += 20;
+        gfx.DrawLine(XPens.DarkGray, 40, yPosition, page.Width - 40, yPosition);
+
+        foreach (InvoiceInfoDTO data in invoicedata)
+        {
+            yPosition += 20;
+            checkIfNewPageNeeded(maxYPosition, document, ref page, ref gfx, ref yPosition);
+
+            gfx.DrawString(data.projectId + " - " + data.projectName, headerFont, headerBrush,
+                new XRect(40, yPosition, page.Width - 80, page.Height),
+                XStringFormats.TopLeft);
+
+            foreach (var shift in data.shiftsByProject)
+            {
+                yPosition += 20;
+                checkIfNewPageNeeded(maxYPosition, document, ref page, ref gfx, ref yPosition);
+
+                gfx.DrawString("Shift: " + shift.shiftId + " - " + shift.shiftLocation, subHeaderFont, subHeaderBrush,
+                    new XRect(60, yPosition, page.Width - 80, page.Height),
+                    XStringFormats.TopLeft);
+
+                foreach (var employee in shift.employeesByShift)
+                {
+                    yPosition += 20;
+                    checkIfNewPageNeeded(maxYPosition, document, ref page, ref gfx, ref yPosition);
+
+                    gfx.DrawString($"Employee: {employee.employeeId} - {employee.employeeName}", normalFont, textBrush,
+                        new XRect(80, yPosition, page.Width - 200, page.Height),
+                        XStringFormats.TopLeft);
+
+                    gfx.DrawString($"{employee.hoursWorked}", normalFont, textBrush,
+                        new XRect(310, yPosition, 100, page.Height),
+                        XStringFormats.TopRight);
+                    gfx.DrawString("75", subHeaderFont, XBrushes.Black,
+                        new XRect(page.Width - 230, yPosition, 100, page.Height),
+                        XStringFormats.TopRight);
+                    gfx.DrawString($"{ employee.hoursWorked * 75}", subHeaderFont, XBrushes.Black,
+                        new XRect(page.Width - 150, yPosition, 100, page.Height),
+                        XStringFormats.TopRight);
+
+                    hoursCounter += employee.hoursWorked;
+                }
+            }
+
+            // Horizontal Line
+            yPosition += 30;
+            gfx.DrawLine(XPens.DarkGray, 40, yPosition, page.Width - 40, yPosition);
+        }
+
 
         // Grand Total (Bottom Right)
-        double grandTotal = 1000 + 1750 + 900;
+        grandTotal = hoursCounter * 75;
         yPosition += 40;
-        gfx.DrawString("Grand Total: $" + grandTotal, totalFont, XBrushes.Black,
-            new XRect(page.Width - 200, yPosition, 200, 40),
+        checkIfNewPageNeeded(maxYPosition, document, ref page, ref gfx, ref yPosition);
+
+        yPosition += 20;
+
+        gfx.DrawString($"Grand Total: ", titleFont, XBrushes.Black,
+            new XRect(60, yPosition, 200, 40),
+            XStringFormats.TopLeft);
+        gfx.DrawString($"{hoursCounter}", titleFont, XBrushes.Black,
+            new XRect(310, yPosition, 100, page.Height),
+            XStringFormats.TopRight);
+        gfx.DrawString($"{grandTotal:C}", titleFont, XBrushes.Black,
+            new XRect(page.Width - 150, yPosition, 100, page.Height),
             XStringFormats.TopRight);
 
         // Save the document
@@ -121,8 +200,24 @@ public class InvoiceController : ControllerBase
         document.Save(filename);
 
         string currentFilePath = System.IO.Path.GetFullPath(".");
-        var fileBytes = System.IO.File.ReadAllBytes(currentFilePath + "/Invoice.pdf") ;
+        var fileBytes = System.IO.File.ReadAllBytes(currentFilePath + "/" + filename);
+
+        if (System.IO.File.Exists(System.IO.Path.Combine(currentFilePath, filename)))
+        {
+            System.IO.File.Delete(System.IO.Path.Combine(currentFilePath, filename));
+        }
+
         return File(fileBytes, "application/pdf", "Invoice.pdf");
 
+    }
+
+    private static void checkIfNewPageNeeded(int maxYPosition, PdfDocument document, ref PdfPage page, ref XGraphics gfx, ref double yPosition)
+    {
+        if (yPosition > maxYPosition)
+        {
+            page = document.AddPage();
+            gfx = XGraphics.FromPdfPage(page);
+            yPosition = 40;
+        }
     }
 }
