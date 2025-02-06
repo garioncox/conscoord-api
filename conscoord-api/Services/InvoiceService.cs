@@ -83,7 +83,7 @@ public class InvoiceService : IInvoiceService
                 }
             }
         }
-
+        await Task.CompletedTask;
         return result;
     }
 }
