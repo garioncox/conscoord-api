@@ -1,4 +1,5 @@
 using System.Reflection.Metadata.Ecma335;
+using System.Security.Claims;
 using conscoord_api.Data;
 using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
@@ -35,6 +36,18 @@ public class ProjectController : ControllerBase
     [HttpPost("add")]
     public async Task CreateProject([FromBody] ProjectDTO projectDTO)
     {
+        var user = HttpContext.User;
+        Console.WriteLine(user.Identity?.IsAuthenticated);
+        if (user.Identity?.IsAuthenticated == false) { return; }
+
+        var userEmail = user?.FindFirst(ClaimTypes.Email)?.Value;
+        var employee = await _employeeService.GetEmployeeByEmailAsync(userEmail ?? "");
+
+        if (employee is null || employee.Roleid != 3)
+        {
+            return;
+        }
+
         Project project = new Project()
         {
             EndDate = projectDTO.EndDate,
@@ -45,7 +58,7 @@ public class ProjectController : ControllerBase
             Contactinfo = projectDTO.Contactinfo
         };
 
-        await _projectService.CreateProject(project);
+        await _projectService.CreateProject(project, employee.Companyid ?? 1);
     }
 
     [HttpPut("archive")]
