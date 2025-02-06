@@ -2,6 +2,7 @@ namespace conscoord_api.Data.DTOs;
 public class InvoiceFromDB
 {
     public int projectId { get; set; }
+    public string shiftEnd { get; set; } = null!;
     public string projectName { get; set; } = null!;
     public int shiftId { get; set; }
     public string shiftName { get; set; } = null!;
