@@ -45,17 +45,18 @@ public class InvoiceService : IInvoiceService
 
             var endDateValid = DateTime.TryParseExact(row.shiftEnd, "yyyy/MM/dd HH:mm:ss", null, System.Globalization.DateTimeStyles.None, out var shiftEndDate);
 
-            if (shiftEndDate >= startDate && shiftEndDate < endDate)
+            if (shiftEndDate < startDate || shiftEndDate > endDate)
             {
                 continue;
             }
 
+            var rowsEmployee = new employeeInfo { employeeId = row.employeeId, employeeName = row.employeeName, employeePayRate = row.payrate ?? 75, hoursWorked = hoursWorked };
+            var employees = new List<employeeInfo> { rowsEmployee };
+            var rowsShift = new shiftInfo { shiftId = row.shiftId, shiftLocation = row.shiftName, employeesByShift = employees };
+
             //check if project exists
             if (!projectIdToIndex.ContainsKey(row.projectId))
             {
-                var employees = new List<employeeInfo> { new employeeInfo { employeeId = row.employeeId, employeeName = row.employeeName, employeePayRate = 75, hoursWorked = hoursWorked } };
-                var rowsShift = new shiftInfo { shiftId = row.shiftId, shiftLocation = row.shiftName, employeesByShift = employees };
-
                 var project = new InvoiceInfoDTO
                 {
                     projectId = row.projectId,
@@ -69,19 +70,16 @@ public class InvoiceService : IInvoiceService
             else
             {
                 var project = result[projectIdToIndex[row.projectId]];
-                var rowsEmployee = new employeeInfo { employeeId = row.employeeId, employeeName = row.employeeName, employeePayRate = 75, hoursWorked = hoursWorked };
 
                 //check if the shift exists within the project
                 var existingShift = project.shiftsByProject.FirstOrDefault(s => s.shiftId == row.shiftId);
-                if (existingShift == null)
+                if (existingShift is null)
                 {
-                    var employees = new List<employeeInfo> { new employeeInfo { employeeId = row.employeeId, employeeName = row.employeeName, employeePayRate = 75, hoursWorked = hoursWorked } };
-                    var rowsShift = new shiftInfo { shiftId = row.shiftId, shiftLocation = row.shiftName, employeesByShift = employees };
                     project.shiftsByProject.Add(rowsShift);
                 }
                 else
                 {
-                    existingShift.employeesByShift.Add(new employeeInfo { employeeId = row.employeeId, employeeName = row.employeeName, employeePayRate = 75, hoursWorked = hoursWorked });
+                    existingShift.employeesByShift.Add(rowsEmployee);
                 }
             }
         }

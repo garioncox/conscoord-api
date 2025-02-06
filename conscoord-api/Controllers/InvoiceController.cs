@@ -18,17 +18,12 @@ public class InvoiceController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<InvoiceInfoDTO>>> GetInvoiceInfoByCompanyTimePeriod(int companyId, string StartDate, string EndDate)
     {
-        if (StartDate.Length != 16 || EndDate.Length != 16)
-        {
-            return BadRequest("please make sure that the date format is YYYY/MM/DD HH:mm format");
-        }
-
-        var startDateValid = DateTime.TryParseExact(StartDate, "yyyy/MM/dd HH:mm", null, System.Globalization.DateTimeStyles.None, out var startDate);
-        var endDateValid = DateTime.TryParseExact(EndDate, "yyyy/MM/dd HH:mm", null, System.Globalization.DateTimeStyles.None, out var endDate);
+        var startDateValid = DateTime.TryParseExact(StartDate, ["yyyy/MM/dd", "yyyy/MM/d"], null, System.Globalization.DateTimeStyles.None, out var startDate);
+        var endDateValid = DateTime.TryParseExact(EndDate, ["yyyy/MM/dd","yyyy/MM/d"], null, System.Globalization.DateTimeStyles.None, out var endDate);
 
         if (!startDateValid || !endDateValid)
         {
-            return BadRequest("please make sure that the date format is YYYY/MM/DD HH:mm format");
+            return BadRequest("Please make sure that the date format is YYYY/MM/DD format");
         }
 
         var result = await _invoiceService.GetInvoiceInfoByCompanyTimePeriod(companyId, startDate, endDate);
