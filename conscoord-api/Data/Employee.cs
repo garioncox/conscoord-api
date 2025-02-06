@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace conscoord_api.Data;
@@ -15,7 +15,7 @@ public partial class Employee
 
     public int? Roleid { get; set; }
 
-    public int? Companyid { get; set; } = null;
+    public int? Companyid { get; set; }
 
     public decimal? Payrate { get; set; }
 
