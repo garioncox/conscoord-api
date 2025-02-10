@@ -11,6 +11,7 @@ public partial class Role
     public static string PSO_ROLE = "PSO";
     public static string CLIENT_ROLE = "CLIENT";
     public static string ADMIN_ROLE = "ADMIN";
+    public static string[] ALL_ROLES = [PSO_ROLE, CLIENT_ROLE, ADMIN_ROLE];
 
     public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
 }
