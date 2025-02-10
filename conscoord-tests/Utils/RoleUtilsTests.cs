@@ -117,7 +117,7 @@ public class RoleUtilsTests
     }
 
     [Test]
-    public async Task AuthenticatedUser_WithClientRoleInDb_WithPSORoleSpecified_HasPerms()
+    public async Task AuthenticatedUser_WithClientRoleInDb_WithPSORoleSpecified_HasNoPerms()
     {
         // ARRANGE
         Role mockRole = new() { Id = 0, Rolename = Role.CLIENT_ROLE };
