@@ -17,9 +17,17 @@ public class ProjectService : IProjectService
         return await _context.Projects.ToListAsync();
     }
 
-    public async Task CreateProject(Project project)
+    public async Task CreateProject(Project project, int companyId)
     {
         _context.Projects.Add(project);
+        await _context.SaveChangesAsync();
+        var newProject = await _context.Projects.FirstOrDefaultAsync(x => x.Location == project.Location && x.StartDate == project.StartDate);
+
+        if (newProject != null)
+        {
+            _context.CompanyProjects.Add(new CompanyProject() { CompanyId = companyId, ProjectId=newProject.Id});
+        }
+
         await _context.SaveChangesAsync();
     }
 

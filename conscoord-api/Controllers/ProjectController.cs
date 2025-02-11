@@ -1,7 +1,8 @@
-using System.Reflection.Metadata.Ecma335;
+using System.Security.Claims;
 using conscoord_api.Data;
 using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
+using conscoord_api.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace conscoord_api.Controllers;
@@ -13,11 +14,13 @@ public class ProjectController : ControllerBase
     private readonly IProjectService _projectService;
     private readonly IShiftService _shiftService;
     private readonly IEmployeeService _employeeService;
-    public ProjectController(IProjectService projectService, IShiftService shiftService, IEmployeeService employeeService)
+    private readonly RoleUtils _roleUtils;
+    public ProjectController(RoleUtils roleservice, IProjectService projectService, IShiftService shiftService, IEmployeeService employeeService)
     {
         _projectService = projectService;
         _shiftService = shiftService;
         _employeeService = employeeService;
+        _roleUtils = roleservice;
     }
 
     [HttpGet("getAll/Archived")]
@@ -35,6 +38,17 @@ public class ProjectController : ControllerBase
     [HttpPost("add")]
     public async Task CreateProject([FromBody] ProjectDTO projectDTO)
     {
+        var user = HttpContext.User;
+        var hasPerms = await _roleUtils.HasPerms(user, [Role.ADMIN_ROLE, Role.CLIENT_ROLE]);
+
+        if (!hasPerms) { return; }
+
+        var userEmail = user?.FindFirst(ClaimTypes.Email)?.Value;
+        var employee = await _employeeService.GetEmployeeByEmailAsync(userEmail ?? "");
+
+        if (employee is null) { return; }
+        if (employee?.Companyid is null) { return; }
+
         Project project = new Project()
         {
             EndDate = projectDTO.EndDate,
@@ -45,7 +59,7 @@ public class ProjectController : ControllerBase
             Contactinfo = projectDTO.Contactinfo
         };
 
-        await _projectService.CreateProject(project);
+        await _projectService.CreateProject(project, (int) employee.Companyid);
     }
 
     [HttpPut("archive")]
