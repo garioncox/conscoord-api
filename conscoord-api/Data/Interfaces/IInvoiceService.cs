@@ -1,7 +1,8 @@
-namespace conscoord_api.Data.Interfaces
+using conscoord_api.Data.DTOs;
+
+namespace conscoord_api.Data.Interfaces;
+
+public interface IInvoiceService
 {
-    public interface IInvoiceService
-    {
-        Task<List<InvoiceInfoDTO>> GetInvoiceInfoByCompanyTimePeriod(int companyId, DateTime startDate, DateTime endDate);
-    }
+    Task<List<InvoiceInfoDTO>> GetInvoiceInfoByCompanyTimePeriod(InvoiceDTO DTO);
 }
