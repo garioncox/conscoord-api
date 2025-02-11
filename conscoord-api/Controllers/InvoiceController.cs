@@ -1,6 +1,7 @@
 using conscoord_api.Data;
 using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
+using conscoord_api.Utils;
 using Microsoft.AspNetCore.Mvc;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
@@ -10,10 +11,13 @@ namespace conscoord_api.Controllers;
 [Route("api/[controller]")]
 public class InvoiceController : ControllerBase
 {
-    IInvoiceService _invoiceService;
-    public InvoiceController(IInvoiceService invoiceService)
+    private readonly IInvoiceService _invoiceService;
+    private readonly RoleUtils _RoleUtils;
+
+    public InvoiceController(IInvoiceService invoiceService, RoleUtils roleUtils)
     {
         _invoiceService = invoiceService;
+        _RoleUtils = roleUtils;
     }
 
     [HttpGet]
@@ -34,6 +38,10 @@ public class InvoiceController : ControllerBase
     [HttpPost("generateInvoice")]
     public async Task<IActionResult> GeneratePDF(IInvoiceService interfaceService, InvoiceDTO DTO)
     {
+        var user = HttpContext.User;
+        var hasPerms = await _RoleUtils.HasPerms(user, [Role.ADMIN_ROLE]);
+        if (!hasPerms) { return NotFound(); }
+
         var startDateValid = DateTime.TryParseExact(
             DTO.startDate,
             new string[] { "yyyy/MM/dd", "yyyy/MM/dd" },
@@ -66,7 +74,7 @@ public class InvoiceController : ControllerBase
             {
                 foreach (var employee in shift.employeesByShift)
                 {
-                    grandTotal += employee.hoursWorked * 75;  
+                    grandTotal += employee.hoursWorked * 75;
                 }
             }
         }
@@ -134,7 +142,7 @@ public class InvoiceController : ControllerBase
             new XRect(60, yPosition, page.Width - 80, page.Height),
             XStringFormats.TopLeft);
         yPosition += 20;
-        gfx.DrawString($"Due: {grandTotal:C}", normalFont, XBrushes.Black,  
+        gfx.DrawString($"Due: {grandTotal:C}", normalFont, XBrushes.Black,
             new XRect(60, yPosition, page.Width - 80, page.Height),
             XStringFormats.TopLeft);
 
@@ -194,7 +202,7 @@ public class InvoiceController : ControllerBase
                     gfx.DrawString("75", subHeaderFont, XBrushes.Black,
                         new XRect(page.Width - 230, yPosition, 100, page.Height),
                         XStringFormats.TopRight);
-                    gfx.DrawString($"{ employee.hoursWorked * 75}", subHeaderFont, XBrushes.Black,
+                    gfx.DrawString($"{employee.hoursWorked * 75}", subHeaderFont, XBrushes.Black,
                         new XRect(page.Width - 150, yPosition, 100, page.Height),
                         XStringFormats.TopRight);
 
