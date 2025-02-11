@@ -21,10 +21,12 @@ public class ProjectService : IProjectService
     public async Task CreateProject(Project project, int companyId)
     {
         _context.Projects.Add(project);
+        await _context.SaveChangesAsync();
         var newProject = await _context.Projects.FirstOrDefaultAsync(x => x.Location == project.Location && x.StartDate == project.StartDate);
 
         if (newProject != null)
         {
+            Console.WriteLine("something went wrong");
             _context.CompanyProjects.Add(new CompanyProject() { CompanyId = companyId, ProjectId=newProject.Id});
         }
 
