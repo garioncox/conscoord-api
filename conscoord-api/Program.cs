@@ -5,6 +5,7 @@ using conscoord_api.Controllers;
 using conscoord_api.Data;
 using conscoord_api.Data.Interfaces;
 using conscoord_api.Services;
+using conscoord_api.Utils;
 using Coravel;
 using dotenv.net;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -65,6 +66,7 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IEmailService, EmailController>();
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 builder.Services.AddScoped<ShiftClockInReminder>();
+builder.Services.AddScoped<RoleUtils>();
 
 var app = builder.Build();
 
