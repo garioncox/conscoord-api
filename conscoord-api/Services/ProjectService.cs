@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using conscoord_api.Data;
 using conscoord_api.Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -26,7 +25,6 @@ public class ProjectService : IProjectService
 
         if (newProject != null)
         {
-            Console.WriteLine("something went wrong");
             _context.CompanyProjects.Add(new CompanyProject() { CompanyId = companyId, ProjectId=newProject.Id});
         }
 
