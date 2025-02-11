@@ -46,7 +46,8 @@ public class ProjectController : ControllerBase
         var userEmail = user?.FindFirst(ClaimTypes.Email)?.Value;
         var employee = await _employeeService.GetEmployeeByEmailAsync(userEmail ?? "");
 
-        if (employee is null || employee?.Companyid is null) { return; }
+        if (employee is null) { return; }
+        if (employee?.Companyid is null) { return; }
 
         Project project = new Project()
         {
