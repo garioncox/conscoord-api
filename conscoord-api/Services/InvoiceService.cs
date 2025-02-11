@@ -1,4 +1,5 @@
 using conscoord_api.Data;
+using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,8 +14,11 @@ public class InvoiceService : IInvoiceService
         _context = context;
     }
 
-    public async Task<List<InvoiceInfoDTO>> GetInvoiceInfoByCompanyTimePeriod(int companyId, DateTime startDate, DateTime endDate)
+    public async Task<List<InvoiceInfoDTO>> GetInvoiceInfoByCompanyTimePeriod(InvoiceDTO DTO)
     {
+        var startDateValidate = DateTime.TryParseExact(DTO.startDate, ["yyyy/MM/dd", "yyyy/MM/d"], null, System.Globalization.DateTimeStyles.None, out var startDate);
+        var endDateValidate = DateTime.TryParseExact(DTO.endDate, ["yyyy/MM/dd", "yyyy/MM/d"], null, System.Globalization.DateTimeStyles.None, out var endDate);
+
         var allInvoiceInfo = _context.InvoiceData.FromSqlRaw
             (@"select p.id as projectId,p.""location"" as projectName, s.end_time as shiftEnd,
                 s.id as shiftId,s.""location"" as shiftName, 
@@ -30,7 +34,7 @@ public class InvoiceService : IInvoiceService
                 on es.shift_id = s.id
                 join practicum2425.employee e
                 on e.id = es.emp_id
-                where es.clock_in_time is not null and es.clock_out_time is not null and cp.company_id = {0};", companyId)
+                where es.clock_in_time is not null and es.clock_out_time is not null and cp.company_id = {0};", DTO.companyId)
             .AsNoTracking().ToList();
 
         List<InvoiceInfoDTO> result = new List<InvoiceInfoDTO>();

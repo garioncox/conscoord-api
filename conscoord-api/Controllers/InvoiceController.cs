@@ -1,4 +1,5 @@
 using conscoord_api.Data;
+using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using PdfSharp.Drawing;
@@ -16,29 +17,48 @@ public class InvoiceController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<InvoiceInfoDTO>>> GetInvoiceInfoByCompanyTimePeriod(int companyId, string StartDate, string EndDate)
+    public async Task<ActionResult<List<InvoiceInfoDTO>>> GetInvoiceInfoByCompanyTimePeriod(InvoiceDTO DTO)
     {
-        var startDateValid = DateTime.TryParseExact(StartDate, ["yyyy/MM/dd", "yyyy/MM/d"], null, System.Globalization.DateTimeStyles.None, out var startDate);
-        var endDateValid = DateTime.TryParseExact(EndDate, ["yyyy/MM/dd","yyyy/MM/d"], null, System.Globalization.DateTimeStyles.None, out var endDate);
+        var startDateValid = DateTime.TryParseExact(DTO.startDate, ["yyyy/MM/dd", "yyyy/MM/d"], null, System.Globalization.DateTimeStyles.None, out var startDate);
+        var endDateValid = DateTime.TryParseExact(DTO.endDate, ["yyyy/MM/dd", "yyyy/MM/d"], null, System.Globalization.DateTimeStyles.None, out var endDate);
 
         if (!startDateValid || !endDateValid)
         {
             return BadRequest("Please make sure that the date format is YYYY/MM/DD format");
         }
 
-        var result = await _invoiceService.GetInvoiceInfoByCompanyTimePeriod(companyId, startDate, endDate);
+        var result = await _invoiceService.GetInvoiceInfoByCompanyTimePeriod(DTO);
         return Ok(result);
     }
 
-    [HttpGet("generateInvoice")]
-    public async Task<IActionResult> GeneratePDF(IInvoiceService interfaceService)
+    [HttpPost("generateInvoice")]
+    public async Task<IActionResult> GeneratePDF(IInvoiceService interfaceService, InvoiceDTO DTO)
     {
+        var startDateValid = DateTime.TryParseExact(
+            DTO.startDate,
+            new string[] { "yyyy/MM/dd", "yyyy/MM/dd" },
+            null,
+            System.Globalization.DateTimeStyles.None,
+            out var startDate
+        );
+
+        var endDateValid = DateTime.TryParseExact(
+            DTO.endDate,
+            new string[] { "yyyy/MM/dd", "yyyy/MM/dd" },
+            null,
+            System.Globalization.DateTimeStyles.None,
+            out var endDate
+        );
+
+        if (!startDateValid || !endDateValid)
+        {
+            return BadRequest("Please make sure that the date format is YYYY/MM/DD format");
+        }
+
         double hoursCounter = 0;
         double grandTotal = 0;
         int maxYPosition = 750;
-        DateTime date1 = new DateTime(2022, 5, 15);
-        DateTime date2 = new DateTime(2029, 11, 3);
-        List<InvoiceInfoDTO> invoicedata = await interfaceService.GetInvoiceInfoByCompanyTimePeriod(2, date1, date2);
+        List<InvoiceInfoDTO> invoicedata = await interfaceService.GetInvoiceInfoByCompanyTimePeriod(DTO);
 
         foreach (InvoiceInfoDTO data in invoicedata)
         {
