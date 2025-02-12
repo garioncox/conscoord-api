@@ -1,21 +1,27 @@
 using conscoord_api.Data;
 using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
+using conscoord_api.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace conscoord_api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class EmployeeShiftController(IEmployeeShiftService service, IShiftService shiftService) : ControllerBase
+public class EmployeeShiftController(IEmployeeShiftService service, IShiftService shiftService, RoleUtils roleUtils) : ControllerBase
 {
     private readonly IEmployeeShiftService _empShiftService = service;
     private readonly IShiftService _shiftService = shiftService;
+    private readonly RoleUtils _roleUtils = roleUtils;
 
     [HttpPost("add")]
     public async Task<ActionResult> CreateEmpShift([FromBody] EmployeeShiftDTO empShift)
     {
-        var signedUpFor = _shiftService.GetScheduledShiftsByEmpId(empShift.EmployeeId);
+        var user = HttpContext.User;
+        var hasPerms = await _roleUtils.HasPerms(user, Role.ALL_ROLES);
+        if (!hasPerms) { return BadRequest("User not be logged in"); }
+
+        var signedUpFor = _shiftService.GetScheduledShiftsByEmpId(empShift.EmpId);
         var toSignUpFor = await _shiftService.GetShiftById(empShift.ShiftId);
         if (toSignUpFor == null)
         {
@@ -31,7 +37,7 @@ public class EmployeeShiftController(IEmployeeShiftService service, IShiftServic
             DateTime se = DateTime.Parse(s.EndTime);
             if (ts > ss && ts < se || te > ss && te < se)
             {
-                return StatusCode(500);
+                return BadRequest($"Shift overlaps with existing shift [{s.Id}]");
             }
 
             // Check to see if we are signing up for the same shift
@@ -43,9 +49,11 @@ public class EmployeeShiftController(IEmployeeShiftService service, IShiftServic
 
         EmployeeShift e = new()
         {
-            EmpId = empShift.EmployeeId,
+            EmpId = empShift.EmpId,
             ShiftId = empShift.ShiftId,
-            Notes = empShift.Notes,
+            Hasbeeninvoiced = false,
+            Didnotwork = false,
+            Reportedcanceled = false
         };
 
         await _empShiftService.CreateEmployeeShift(e);
@@ -71,9 +79,13 @@ public class EmployeeShiftController(IEmployeeShiftService service, IShiftServic
     }
 
     [HttpPut("edit")]
-    public Task UpdateEmpShift([FromBody] EditEmployeeShiftDTO updatedEmpShift)
+    public async Task UpdateEmpShift([FromBody] EditEmployeeShiftDTO updatedEmpShift)
     {
-        return _empShiftService.UpdateEmpShift(updatedEmpShift);
+        var user = HttpContext.User;
+        var hasPerms = await _roleUtils.HasPerms(user, Role.ALL_ROLES);
+        if (!hasPerms) { return; }
+
+        await _empShiftService.UpdateEmpShift(updatedEmpShift);
     }
 
     [HttpGet("get/history/{email}")]
