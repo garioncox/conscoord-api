@@ -16,4 +16,15 @@ public class CompanyService : ICompanyService
     {
         return await _context.Companies.ToListAsync();
     }
+
+    public async Task AddCompany(string companyName)
+    {
+        Company company = new Company()
+        {
+            Name = companyName,
+        };
+
+        _context.Companies.Add(company);
+        await _context.SaveChangesAsync();
+    }
 }

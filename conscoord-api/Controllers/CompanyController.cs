@@ -19,4 +19,10 @@ public class CompanyController : ControllerBase
     {
         return await _CompanyService.GetCompanyListAsync();
     }
+
+    [HttpPost]
+    public async Task AddCompany(string companyName)
+    {
+        await _CompanyService.AddCompany(companyName);
+    }
 }
