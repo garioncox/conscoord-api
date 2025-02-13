@@ -1,8 +1,11 @@
+using System.Security.Claims;
 using conscoord_api.Controllers;
 using conscoord_api.Data;
 using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
+using conscoord_api.Utils;
 using Moq;
+using NSubstitute;
 
 namespace conscoord_tests.Services;
 
@@ -37,7 +40,7 @@ internal class EmployeeShiftServiceTests
 
         EmployeeShiftDTO DTO = new()
         {
-            EmployeeId = 1,
+            EmpId = 1,
             ShiftId = 0
         };
 
@@ -51,9 +54,11 @@ internal class EmployeeShiftServiceTests
 
         var empShiftServiceMock = new Mock<IEmployeeShiftService>();
 
+        var roleUtilsMock = Substitute.For<RoleUtils>();
+        roleUtilsMock.HasPerms(Arg.Any<ClaimsPrincipal>(), Arg.Any<string[]>()).Returns(true);
 
         // ACT
-        EmployeeShiftController empShiftController = new(empShiftServiceMock.Object, shiftServiceMock.Object);
+        EmployeeShiftController empShiftController = new(empShiftServiceMock.Object, shiftServiceMock.Object, roleUtilsMock);
         await empShiftController.CreateEmpShift(DTO);
 
         // ASSERT
@@ -79,7 +84,7 @@ internal class EmployeeShiftServiceTests
 
         EmployeeShiftDTO DTO = new()
         {
-            EmployeeId = 1,
+            EmpId = 1,
             ShiftId = 0
         };
 
@@ -93,8 +98,11 @@ internal class EmployeeShiftServiceTests
 
         var empShiftServiceMock = new Mock<IEmployeeShiftService>();
 
+        var roleUtilsMock = Substitute.For<RoleUtils>();
+        roleUtilsMock.HasPerms(Arg.Any<ClaimsPrincipal>(), Arg.Any<string[]>()).Returns(true);
+
         // ACT
-        EmployeeShiftController empShiftController = new(empShiftServiceMock.Object, shiftServiceMock.Object);
+        EmployeeShiftController empShiftController = new(empShiftServiceMock.Object, shiftServiceMock.Object, roleUtilsMock);
         await empShiftController.CreateEmpShift(DTO);
 
         // ASSERT

@@ -79,7 +79,7 @@ public class EmployeeShiftController(IEmployeeShiftService service, IShiftServic
     }
 
     [HttpPut("edit")]
-    public async Task UpdateEmpShift([FromBody] EditEmployeeShiftDTO updatedEmpShift)
+    public async Task UpdateEmpShift([FromBody] EmployeeShiftDTO updatedEmpShift)
     {
         var user = HttpContext.User;
         var hasPerms = await _roleUtils.HasPerms(user, Role.ALL_ROLES);
