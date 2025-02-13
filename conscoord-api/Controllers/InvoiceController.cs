@@ -65,10 +65,10 @@ public class InvoiceController : ControllerBase
 
         double hoursCounter = 0;
         double grandTotal = 0;
-        int maxYPosition = 750;
-        List<InvoiceInfoDTO> invoicedata = await interfaceService.GetInvoiceInfoByCompanyTimePeriod(DTO);
+        var maxYPosition = 750;
+        var invoicedata = await interfaceService.GetInvoiceInfoByCompanyTimePeriod(DTO);
 
-        foreach (InvoiceInfoDTO data in invoicedata)
+        foreach (var data in invoicedata)
         {
             foreach (var shift in data.shiftsByProject)
             {
@@ -81,7 +81,7 @@ public class InvoiceController : ControllerBase
 
 
         PdfDocument document = new PdfDocument();
-        PdfPage page = document.AddPage();
+        var page = document.AddPage();
         XGraphics gfx = XGraphics.FromPdfPage(page);
 
         // Define fonts
@@ -169,7 +169,7 @@ public class InvoiceController : ControllerBase
         yPosition += 20;
         gfx.DrawLine(XPens.DarkGray, 40, yPosition, page.Width - 40, yPosition);
 
-        foreach (InvoiceInfoDTO data in invoicedata)
+        foreach (var data in invoicedata)
         {
             yPosition += 20;
             checkIfNewPageNeeded(maxYPosition, document, ref page, ref gfx, ref yPosition);
@@ -234,10 +234,10 @@ public class InvoiceController : ControllerBase
             XStringFormats.TopRight);
 
         // Save the document
-        string filename = "Invoice.pdf";
+        var filename = "Invoice.pdf";
         document.Save(filename);
 
-        string currentFilePath = System.IO.Path.GetFullPath(".");
+        var currentFilePath = System.IO.Path.GetFullPath(".");
         var fileBytes = System.IO.File.ReadAllBytes(currentFilePath + "/" + filename);
 
         if (System.IO.File.Exists(System.IO.Path.Combine(currentFilePath, filename)))
