@@ -1,4 +1,5 @@
 using conscoord_api.Data;
+using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
 using conscoord_api.Utils;
 using Microsoft.AspNetCore.Mvc;
@@ -23,13 +24,8 @@ public class CompanyController : ControllerBase
         return await _CompanyService.GetCompanyListAsync();
     }
 
-    public class AddCompanyRequest
-    {
-        public string CompanyName { get; set; }
-    }
-
     [HttpPost("add")]
-    public async Task AddCompany([FromBody] AddCompanyRequest request)
+    public async Task AddCompany([FromBody] CompanyRequestDTO request)
     {
         var user = HttpContext.User;
         var hasPerms = await _RoleUtils.HasPerms(user, [Role.ADMIN_ROLE]);
