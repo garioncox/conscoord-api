@@ -2,8 +2,8 @@ namespace conscoord_api.Data.DTOs;
 
 public class EmployeeHistoryDTO
 {
-    public string hours { get; set; }
-    public string location { get; set; }
-    public string date { get; set; }
-    public string projectName { get; set; }
+    public required string hours { get; set; }
+    public required string location { get; set; }
+    public required string date { get; set; }
+    public required string projectName { get; set; }
 }

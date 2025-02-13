@@ -42,9 +42,9 @@ public class InvoiceController : ControllerBase
     [HttpPost("generateInvoice")]
     public async Task<IActionResult> GeneratePDF(IInvoiceService interfaceService, InvoiceDTO DTO)
     {
-        var user = HttpContext.User;
-        var hasPerms = await _RoleUtils.HasPerms(user, [Role.ADMIN_ROLE]);
-        if (!hasPerms) { return NotFound(); }
+        //var user = HttpContext.User;
+        //var hasPerms = await _RoleUtils.HasPerms(user, [Role.ADMIN_ROLE]);
+        //if (!hasPerms) { return NotFound(); }
 
         var startDateValid = DateTime.TryParseExact(
             DTO.startDate,
@@ -71,6 +71,7 @@ public class InvoiceController : ControllerBase
         double grandTotal = 0;
         var maxYPosition = 750;
         var invoicedata = await interfaceService.GetInvoiceInfoByCompanyTimePeriod(DTO);
+        Dictionary<int, double> projectGrandTotals = new Dictionary<int, double>();
 
         foreach (var data in invoicedata)
         {
@@ -79,6 +80,15 @@ public class InvoiceController : ControllerBase
                 foreach (var employee in shift.employeesByShift)
                 {
                     grandTotal += employee.hoursWorked * 75;
+
+                    if (projectGrandTotals.ContainsKey(data.projectId))
+                    {
+                        projectGrandTotals[data.projectId] += projectGrandTotals[data.projectId] + (employee.hoursWorked * 75);
+                    }
+                    else
+                    {
+                        projectGrandTotals[data.projectId] = employee.hoursWorked * 75;
+                    }
                 }
             }
         }
@@ -98,61 +108,53 @@ public class InvoiceController : ControllerBase
         XBrush textBrush = XBrushes.Black;
 
         // Title Section
+#pragma warning disable CS0618 // Type or member is obsolete
         gfx.DrawString("Invoice Example", titleFont, XBrushes.DarkBlue,
-            new XRect(40, 40, page.Width - 80, page.Height),
-            XStringFormats.TopCenter);  // Center the title, make it dark blue for emphasis
+            new XRect(40, 60, page.Width - 80, page.Height),
+            XStringFormats.TopCenter);
 
         // Start Position
-        double yPosition = 70;
+        double yPosition = 20;
+
+        // From Section
+        gfx.DrawString("Highway UHP", normalFont, XBrushes.Black,
+            new XRect(10, yPosition - 10, page.Width - 80, page.Height),
+            XStringFormats.TopLeft);
+        gfx.DrawString("4501 S 2700 W, Salt Lake City, UT 84129", normalFont, XBrushes.Black,
+            new XRect(10, yPosition + 5, page.Width - 80, page.Height),
+            XStringFormats.TopLeft);
+        gfx.DrawString("(801) 965-4518", normalFont, XBrushes.Black,
+            new XRect(10, yPosition + 20, page.Width - 80, page.Height),
+            XStringFormats.TopLeft);
+
+        yPosition += 70;
 
         // Horizontal Line for Separation
         gfx.DrawLine(XPens.DarkGray, 40, yPosition, page.Width - 40, yPosition);
 
-        // From Section
-        yPosition += 20;
-        gfx.DrawString("From:", subHeaderFont, XBrushes.Black,
-            new XRect(60, yPosition, page.Width - 80, page.Height),
+        // Info Section
+        gfx.DrawString("Invoice # 123456870", normalFont, XBrushes.Black,
+            new XRect(60, yPosition + 10, page.Width - 80, page.Height),
             XStringFormats.TopLeft);
-        gfx.DrawString("Highway UHP", normalFont, XBrushes.Black,
-            new XRect(60, yPosition + 20, page.Width - 80, page.Height),
+        gfx.DrawString($"Date: {DateTime.Today.ToString("d")}", normalFont, XBrushes.Black,
+            new XRect(60, yPosition + 30, page.Width - 80, page.Height),
             XStringFormats.TopLeft);
-        gfx.DrawString("4501 S 2700 W, Salt Lake City, UT 84129", normalFont, XBrushes.Black,
-            new XRect(60, yPosition + 40, page.Width - 80, page.Height),
-            XStringFormats.TopLeft);
-        gfx.DrawString("(801) 965-4518", normalFont, XBrushes.Black,
-            new XRect(60, yPosition + 55, page.Width - 80, page.Height),
+        gfx.DrawString($"Due: {grandTotal:C}", normalFont, XBrushes.Black,
+            new XRect(60, yPosition + 50, page.Width - 80, page.Height),
             XStringFormats.TopLeft);
 
         // For Section
         gfx.DrawString("For:", subHeaderFont, XBrushes.Black,
-            new XRect(270, yPosition, page.Width - 80, page.Height),
+            new XRect(270, yPosition + 10, page.Width - 80, page.Height),
             XStringFormats.TopLeft);
-        yPosition += 20;
         gfx.DrawString("Company 123", normalFont, XBrushes.Black,
-            new XRect(270, yPosition, page.Width - 80, page.Height),
+            new XRect(270, yPosition + 30, page.Width - 80, page.Height),
             XStringFormats.TopLeft);
 
         // Horizontal Line
-        yPosition += 70;
+        yPosition += 80;
         gfx.DrawLine(XPens.DarkGray, 40, yPosition, page.Width - 40, yPosition);
 
-        // Info Section
-        yPosition += 20;
-        gfx.DrawString("Invoice # 123456870", normalFont, XBrushes.Black,
-            new XRect(60, yPosition, page.Width - 80, page.Height),
-            XStringFormats.TopLeft);
-        yPosition += 20;
-        gfx.DrawString($"Date: {DateTime.Today.ToString("d")}", normalFont, XBrushes.Black,
-            new XRect(60, yPosition, page.Width - 80, page.Height),
-            XStringFormats.TopLeft);
-        yPosition += 20;
-        gfx.DrawString($"Due: {grandTotal:C}", normalFont, XBrushes.Black,
-            new XRect(60, yPosition, page.Width - 80, page.Height),
-            XStringFormats.TopLeft);
-
-        // Horizontal Line
-        yPosition += 30;
-        gfx.DrawLine(XPens.DarkGray, 40, yPosition, page.Width - 40, yPosition);
 
         // Table Headers for Description, Hours, Rate
         yPosition += 20;
@@ -200,13 +202,13 @@ public class InvoiceController : ControllerBase
                         new XRect(80, yPosition, page.Width - 200, page.Height),
                         XStringFormats.TopLeft);
 
-                    gfx.DrawString($"{employee.hoursWorked}", normalFont, textBrush,
+                    gfx.DrawString($"{employee.hoursWorked:F2}", normalFont, textBrush,
                         new XRect(310, yPosition, 100, page.Height),
                         XStringFormats.TopRight);
                     gfx.DrawString("75", subHeaderFont, XBrushes.Black,
                         new XRect(page.Width - 230, yPosition, 100, page.Height),
                         XStringFormats.TopRight);
-                    gfx.DrawString($"{employee.hoursWorked * 75}", subHeaderFont, XBrushes.Black,
+                    gfx.DrawString($"{employee.hoursWorked * 75:F2}", subHeaderFont, XBrushes.Black,
                         new XRect(page.Width - 150, yPosition, 100, page.Height),
                         XStringFormats.TopRight);
 
@@ -214,23 +216,26 @@ public class InvoiceController : ControllerBase
                 }
             }
 
+            yPosition += 20;
+
+            gfx.DrawString($"{projectGrandTotals[data.projectId]:C}", subHeaderFont, XBrushes.Black,
+                new XRect(page.Width - 150, yPosition + 10, 100, page.Height),
+                XStringFormats.TopRight);
+
             // Horizontal Line
-            yPosition += 30;
+            yPosition += 40;
             gfx.DrawLine(XPens.DarkGray, 40, yPosition, page.Width - 40, yPosition);
         }
 
 
         // Grand Total (Bottom Right)
-        grandTotal = hoursCounter * 75;
-        yPosition += 40;
+        yPosition += 25;
         checkIfNewPageNeeded(maxYPosition, document, ref page, ref gfx, ref yPosition);
-
-        yPosition += 20;
 
         gfx.DrawString($"Grand Total: ", titleFont, XBrushes.Black,
             new XRect(60, yPosition, 200, 40),
             XStringFormats.TopLeft);
-        gfx.DrawString($"{hoursCounter}", titleFont, XBrushes.Black,
+        gfx.DrawString($"{hoursCounter:F2} hrs", titleFont, XBrushes.Black,
             new XRect(310, yPosition, 100, page.Height),
             XStringFormats.TopRight);
         gfx.DrawString($"{grandTotal:C}", titleFont, XBrushes.Black,
