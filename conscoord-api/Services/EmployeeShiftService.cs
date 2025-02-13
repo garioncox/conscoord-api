@@ -24,19 +24,22 @@ public class EmployeeShiftService : IEmployeeShiftService
         await _context.SaveChangesAsync();
     }
 
-    public async Task UpdateEmpShift(EditEmployeeShiftDTO empShift)
+    public async Task UpdateEmpShift(EmployeeShiftDTO empShift)
     {
         var newEmpShift = await _context.EmployeeShifts
-            .SingleOrDefaultAsync(es => es.Id == empShift.id);
+            .SingleOrDefaultAsync(es => es.Id == empShift.Id);
 
         if (newEmpShift == null)
         {
             throw new ArgumentException("EmployeeShift not found.");
         }
 
-        newEmpShift.ClockInTime = empShift.clockInTime;
-        newEmpShift.ClockOutTime = empShift.clockOutTime;
+        newEmpShift.ClockInTime = empShift.ClockInTime;
+        newEmpShift.ClockOutTime = empShift.ClockOutTime;
+        newEmpShift.Didnotwork = empShift.Didnotwork;
+        newEmpShift.Hasbeeninvoiced = empShift.Hasbeeninvoiced;
         newEmpShift.Notes = empShift.Notes;
+        newEmpShift.Reportedcanceled = empShift.Reportedcanceled;
 
         _context.EmployeeShifts.Update(newEmpShift);
         await _context.SaveChangesAsync();

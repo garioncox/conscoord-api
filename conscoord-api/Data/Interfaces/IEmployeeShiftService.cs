@@ -9,7 +9,7 @@ public interface IEmployeeShiftService
     Task DeleteEmpShiftAsync(int shiftId);
     List<EmployeeShift> GetFutureShifts();
     List<EmployeeShift> GetShiftsWithinTime(DateTime start, DateTime End);
-    Task UpdateEmpShift(EditEmployeeShiftDTO empShift);
+    Task UpdateEmpShift(EmployeeShiftDTO empShift);
     Task<List<EmployeeShift>> GetEmployeeShiftsByEmail(string email);
     Task<List<EmployeeHistoryDTO>> GetHistoryByEmail(string email);
 }
