@@ -40,7 +40,6 @@ public class ProjectController : ControllerBase
     {
         var user = HttpContext.User;
         var hasPerms = await _roleUtils.HasPerms(user, [Role.ADMIN_ROLE, Role.CLIENT_ROLE]);
-
         if (!hasPerms) { return; }
 
         var userEmail = user?.FindFirst(ClaimTypes.Email)?.Value;

@@ -72,12 +72,6 @@ public class EmployeeShiftController(IEmployeeShiftService service, IShiftServic
         return _empShiftService.GetallEmployeeShifts();
     }
 
-    [HttpGet("getByShiftId")]
-    public List<EmployeeShift> GetAllShiftsByShiftId(int shiftId)
-    {
-        return _empShiftService.GetallEmployeeShiftsByShiftId(shiftId);
-    }
-
     [HttpGet("get/{email}")]
     public async Task<List<EmployeeShift>> GetByEmail(string email)
     {

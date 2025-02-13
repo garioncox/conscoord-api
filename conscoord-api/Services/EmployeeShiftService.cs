@@ -18,11 +18,6 @@ public class EmployeeShiftService : IEmployeeShiftService
         return _context.EmployeeShifts.ToList();
     }
 
-    public List<EmployeeShift> GetallEmployeeShiftsByShiftId(int shiftId)
-    {
-        return _context.EmployeeShifts.Where(e => e.ShiftId == shiftId).ToList();
-    }
-
     public async Task CreateEmployeeShift(EmployeeShift empShift)
     {
         _context.EmployeeShifts.Add(empShift);
