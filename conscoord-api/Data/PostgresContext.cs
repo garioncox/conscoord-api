@@ -36,7 +36,7 @@ public partial class PostgresContext : DbContext
     public virtual DbSet<Role> Roles { get; set; }
 
     public virtual DbSet<Shift> Shifts { get; set; }
-    public virtual DbSet<InvoiceFromDB> InvoiceData {get;set;}
+    public virtual DbSet<InvoiceFromDB> InvoiceData { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

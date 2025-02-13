@@ -59,7 +59,7 @@ public class ProjectController : ControllerBase
             Contactinfo = projectDTO.Contactinfo
         };
 
-        await _projectService.CreateProject(project, (int) employee.Companyid);
+        await _projectService.CreateProject(project, (int)employee.Companyid);
     }
 
     [HttpPut("archive")]

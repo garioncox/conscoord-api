@@ -25,7 +25,7 @@ public class ProjectService : IProjectService
 
         if (newProject != null)
         {
-            _context.CompanyProjects.Add(new CompanyProject() { CompanyId = companyId, ProjectId=newProject.Id});
+            _context.CompanyProjects.Add(new CompanyProject() { CompanyId = companyId, ProjectId = newProject.Id });
         }
 
         await _context.SaveChangesAsync();
