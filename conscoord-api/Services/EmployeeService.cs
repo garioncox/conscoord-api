@@ -19,6 +19,16 @@ public class EmployeeService : IEmployeeService
             .FirstOrDefaultAsync();
     }
 
+    public async Task<List<Employee>> GetEmployeesByShiftIdAsync(int shiftId)
+    {
+        List<EmployeeShift> empShifts = _context.EmployeeShifts.Where(e => e.ShiftId == shiftId).ToList();
+        List<int> empShiftIds = empShifts.Select(es => es.EmpId).ToList();
+
+        return await _context.Employees
+            .Where(e => empShiftIds.Contains(e.Id))
+            .ToListAsync();
+    }
+
     public async Task<Employee?> GetEmployeeByEmailAsync(string email)
     {
         return await _context.Employees

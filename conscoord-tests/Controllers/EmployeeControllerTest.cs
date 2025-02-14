@@ -2,6 +2,7 @@ using System.Security.Claims;
 using conscoord_api.Controllers;
 using conscoord_api.Data;
 using conscoord_api.Data.Interfaces;
+using conscoord_api.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
@@ -17,7 +18,10 @@ public class EmployeeControllerTests
     {
         // ARRANGE
         var mockEmployeeService = Substitute.For<IEmployeeService>();
-        var controller = new EmployeeController(mockEmployeeService);
+        var mockRoleUtils = Substitute.For<RoleUtils>();
+        mockRoleUtils.HasPerms(Arg.Any<ClaimsPrincipal>(), Arg.Any<string[]>()).Returns(true);
+
+        var controller = new EmployeeController(mockRoleUtils, mockEmployeeService);
         var context = Substitute.For<HttpContext>();
         var user = Substitute.For<ClaimsPrincipal>();
         var identity = Substitute.For<ClaimsIdentity>();
@@ -50,7 +54,10 @@ public class EmployeeControllerTests
         Employee mockEmployee = new() { Id = 1, Email = "test@demo.com" };
 
         var mockEmployeeService = Substitute.For<IEmployeeService>();
-        var controller = new EmployeeController(mockEmployeeService);
+        var mockRoleUtils = Substitute.For<RoleUtils>();
+        mockRoleUtils.HasPerms(Arg.Any<ClaimsPrincipal>(), Arg.Any<string[]>()).Returns(true);
+
+        var controller = new EmployeeController(mockRoleUtils, mockEmployeeService);
         var context = Substitute.For<HttpContext>();
         var user = Substitute.For<ClaimsPrincipal>();
         var identity = Substitute.For<ClaimsIdentity>();
@@ -91,7 +98,10 @@ public class EmployeeControllerTests
         Employee mockEmployee = new() { Id = 1, Email = "test@demo.com", Name = "john doe" };
 
         var mockEmployeeService = Substitute.For<IEmployeeService>();
-        var controller = new EmployeeController(mockEmployeeService);
+        var mockRoleUtils = Substitute.For<RoleUtils>();
+        mockRoleUtils.HasPerms(Arg.Any<ClaimsPrincipal>(), Arg.Any<string[]>()).Returns(true);
+
+        var controller = new EmployeeController(mockRoleUtils, mockEmployeeService);
         var context = Substitute.For<HttpContext>();
         var user = Substitute.For<ClaimsPrincipal>();
         var identity = Substitute.For<ClaimsIdentity>();

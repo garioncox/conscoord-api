@@ -2,6 +2,7 @@ using System.Security.Claims;
 using conscoord_api.Data;
 using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
+using conscoord_api.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace conscoord_api.Controllers;
@@ -11,15 +12,29 @@ namespace conscoord_api.Controllers;
 public class EmployeeController : Controller
 {
     private readonly IEmployeeService _EmployeeService;
-    public EmployeeController(IEmployeeService service)
+    private readonly RoleUtils _roleUtils;
+
+    public EmployeeController(RoleUtils roleservice, IEmployeeService service)
     {
         _EmployeeService = service;
+        _roleUtils = roleservice;
     }
 
     [HttpGet("getAll")]
     public async Task<List<Employee>> GetEmployeeListAsync()
     {
         return await _EmployeeService.GetEmployeesListAsync();
+    }
+
+    [HttpGet("getAll/{shift_id}")]
+    public async Task<List<Employee>> GetEmployeesByShiftId(int shift_id)
+    {
+        var user = HttpContext.User;
+        var hasPerms = await _roleUtils.HasPerms(user, [Role.ADMIN_ROLE, Role.CLIENT_ROLE]);
+        if (!hasPerms) { return []; }
+
+        Console.WriteLine("received request with shiftID: " + shift_id);
+        return await _EmployeeService.GetEmployeesByShiftIdAsync(shift_id);
     }
 
     [HttpGet("getCurrentUser")]
