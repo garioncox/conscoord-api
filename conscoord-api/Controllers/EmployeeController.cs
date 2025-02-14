@@ -26,7 +26,7 @@ public class EmployeeController : Controller
         return await _EmployeeService.GetEmployeesListAsync();
     }
 
-    [HttpPost("getAll/{shift_id}")]
+    [HttpGet("getAll/{shift_id}")]
     public async Task<List<Employee>> GetEmployeesByShiftId(int shift_id)
     {
         var user = HttpContext.User;
