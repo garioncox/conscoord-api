@@ -26,16 +26,15 @@ public class EmployeeController : Controller
         return await _EmployeeService.GetEmployeesListAsync();
     }
 
-    [HttpPost("getAllByShiftId")]
-    public async Task<List<Employee>> GetEmployeesByShiftId([FromBody] ShiftIdDto shiftIdDto)
+    [HttpPost("getAll/{shift_id}")]
+    public async Task<List<Employee>> GetEmployeesByShiftId(int shift_id)
     {
         var user = HttpContext.User;
         var hasPerms = await _roleUtils.HasPerms(user, [Role.ADMIN_ROLE, Role.CLIENT_ROLE]);
         if (!hasPerms) { return []; }
 
-        int shiftID = shiftIdDto.ShiftId;
-        Console.WriteLine("received request with shiftID: " + shiftID);
-        return await _EmployeeService.GetEmployeesByShiftIdAsync(shiftID);
+        Console.WriteLine("received request with shiftID: " + shift_id);
+        return await _EmployeeService.GetEmployeesByShiftIdAsync(shift_id);
     }
 
     [HttpGet("getCurrentUser")]

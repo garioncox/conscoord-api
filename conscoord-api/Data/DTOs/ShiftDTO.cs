@@ -9,8 +9,3 @@ public class ShiftDTO
     public int RequestedEmployees { get; set; }
     public required string Status { get; set; }
 }
-
-public class ShiftIdDto
-{
-    public int ShiftId { get; set; }
-}
