@@ -42,9 +42,9 @@ public class InvoiceController : ControllerBase
     [HttpPost("generateInvoice")]
     public async Task<IActionResult> GeneratePDF(IInvoiceService interfaceService, InvoiceDTO DTO)
     {
-        //var user = HttpContext.User;
-        //var hasPerms = await _RoleUtils.HasPerms(user, [Role.ADMIN_ROLE]);
-        //if (!hasPerms) { return NotFound(); }
+        var user = HttpContext.User;
+        var hasPerms = await _RoleUtils.HasPerms(user, [Role.ADMIN_ROLE]);
+        if (!hasPerms) { return NotFound(); }
 
         var startDateValid = DateTime.TryParseExact(
             DTO.startDate,
