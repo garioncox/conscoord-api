@@ -23,9 +23,9 @@ public class InvoiceController : ControllerBase
     [HttpPost("getInvoicePreview")]
     public async Task<ActionResult<List<InvoiceInfoDTO>>> GetInvoiceInfoByCompanyTimePeriod(InvoiceDTO DTO)
     {
-        // var user = HttpContext.User;
-        // var hasPerms = await _RoleUtils.HasPerms(user, [Role.ADMIN_ROLE]);
-        // if (!hasPerms) { return NotFound(); }
+        var user = HttpContext.User;
+        var hasPerms = await _RoleUtils.HasPerms(user, [Role.ADMIN_ROLE]);
+        if (!hasPerms) { return NotFound(); }
 
         var startDateValid = DateTime.TryParseExact(DTO.startDate, ["yyyy/MM/dd", "yyyy/MM/d"], null, System.Globalization.DateTimeStyles.None, out var startDate);
         var endDateValid = DateTime.TryParseExact(DTO.endDate, ["yyyy/MM/dd", "yyyy/MM/d"], null, System.Globalization.DateTimeStyles.None, out var endDate);
@@ -70,6 +70,11 @@ public class InvoiceController : ControllerBase
         if (!startDateValid || !endDateValid)
         {
             return BadRequest("Please make sure that the date format is YYYY/MM/DD format");
+        }
+
+        if (startDate > endDate)
+        {
+            return BadRequest("Please make sure the Start Date is before the End Date");
         }
 
         double hoursCounter = 0;
