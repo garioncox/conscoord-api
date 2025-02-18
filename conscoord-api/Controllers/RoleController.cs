@@ -11,8 +11,8 @@ namespace conscoord_api.Controllers;
 public class RoleController : ControllerBase
 {
     private readonly IRoleService _RoleService;
-    private readonly RoleUtils _RoleUtils;
-    public RoleController(IRoleService service, RoleUtils roleUtils)
+    private readonly IRoleUtils _RoleUtils;
+    public RoleController(IRoleService service, IRoleUtils roleUtils)
     {
         _RoleService = service;
         _RoleUtils = roleUtils;

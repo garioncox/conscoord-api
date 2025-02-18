@@ -14,8 +14,8 @@ public class ProjectController : ControllerBase
     private readonly IProjectService _projectService;
     private readonly IShiftService _shiftService;
     private readonly IEmployeeService _employeeService;
-    private readonly RoleUtils _roleUtils;
-    public ProjectController(RoleUtils roleservice, IProjectService projectService, IShiftService shiftService, IEmployeeService employeeService)
+    private readonly IRoleUtils _roleUtils;
+    public ProjectController(IRoleUtils roleservice, IProjectService projectService, IShiftService shiftService, IEmployeeService employeeService)
     {
         _projectService = projectService;
         _shiftService = shiftService;
