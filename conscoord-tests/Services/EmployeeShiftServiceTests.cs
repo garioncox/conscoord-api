@@ -4,6 +4,8 @@ using conscoord_api.Data;
 using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
 using conscoord_api.Utils;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NSubstitute;
 
@@ -54,12 +56,28 @@ internal class EmployeeShiftServiceTests
 
         var empShiftServiceMock = new Mock<IEmployeeShiftService>();
 
-        var roleUtilsMock = Substitute.For<RoleUtils>();
+        var roleUtilsMock = Substitute.For<IRoleUtils>();
         roleUtilsMock.HasPerms(Arg.Any<ClaimsPrincipal>(), Arg.Any<string[]>()).Returns(true);
 
+        EmployeeShiftController controller = new(empShiftServiceMock.Object, shiftServiceMock.Object, roleUtilsMock);
+
+        var context = Substitute.For<HttpContext>();
+        var user = Substitute.For<ClaimsPrincipal>();
+        var identity = Substitute.For<ClaimsIdentity>();
+
+        identity.IsAuthenticated.Returns(true);
+
+        user.Identity.Returns(identity);
+
+        context.User.Returns(user);
+
+        controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = context
+        };
+
         // ACT
-        EmployeeShiftController empShiftController = new(empShiftServiceMock.Object, shiftServiceMock.Object, roleUtilsMock);
-        await empShiftController.CreateEmpShift(DTO);
+        await controller.CreateEmpShift(DTO);
 
         // ASSERT
         shiftServiceMock.Verify(m => m.GetShiftById(It.IsAny<int>()), Times.Once());
@@ -98,12 +116,25 @@ internal class EmployeeShiftServiceTests
 
         var empShiftServiceMock = new Mock<IEmployeeShiftService>();
 
-        var roleUtilsMock = Substitute.For<RoleUtils>();
+        var roleUtilsMock = Substitute.For<IRoleUtils>();
         roleUtilsMock.HasPerms(Arg.Any<ClaimsPrincipal>(), Arg.Any<string[]>()).Returns(true);
 
+        var context = Substitute.For<HttpContext>();
+        var user = Substitute.For<ClaimsPrincipal>();
+        var identity = Substitute.For<ClaimsIdentity>();
+
+        EmployeeShiftController controller = new(empShiftServiceMock.Object, shiftServiceMock.Object, roleUtilsMock);
+
+        identity.IsAuthenticated.Returns(true);
+        user.Identity.Returns(identity);
+        context.User.Returns(user);
+        controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = context
+        };
+
         // ACT
-        EmployeeShiftController empShiftController = new(empShiftServiceMock.Object, shiftServiceMock.Object, roleUtilsMock);
-        await empShiftController.CreateEmpShift(DTO);
+        await controller.CreateEmpShift(DTO);
 
         // ASSERT
         shiftServiceMock.Verify(m => m.GetShiftById(It.IsAny<int>()), Times.Once());

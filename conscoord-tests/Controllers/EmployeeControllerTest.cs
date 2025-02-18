@@ -18,7 +18,7 @@ public class EmployeeControllerTests
     {
         // ARRANGE
         var mockEmployeeService = Substitute.For<IEmployeeService>();
-        var mockRoleUtils = Substitute.For<RoleUtils>();
+        var mockRoleUtils = Substitute.For<IRoleUtils>();
         mockRoleUtils.HasPerms(Arg.Any<ClaimsPrincipal>(), Arg.Any<string[]>()).Returns(true);
 
         var controller = new EmployeeController(mockRoleUtils, mockEmployeeService);
@@ -54,7 +54,7 @@ public class EmployeeControllerTests
         Employee mockEmployee = new() { Id = 1, Email = "test@demo.com" };
 
         var mockEmployeeService = Substitute.For<IEmployeeService>();
-        var mockRoleUtils = Substitute.For<RoleUtils>();
+        var mockRoleUtils = Substitute.For<IRoleUtils>();
         mockRoleUtils.HasPerms(Arg.Any<ClaimsPrincipal>(), Arg.Any<string[]>()).Returns(true);
 
         var controller = new EmployeeController(mockRoleUtils, mockEmployeeService);
