@@ -25,12 +25,12 @@ public class CompanyController : ControllerBase
     }
 
     [HttpPost("add")]
-    public async Task AddCompany([FromBody] CompanyRequestDTO request)
+    public async Task<int> AddCompany([FromBody] CompanyRequestDTO request)
     {
         var user = HttpContext.User;
         var hasPerms = await _RoleUtils.HasPerms(user, [Role.ADMIN_ROLE]);
-        if (!hasPerms) { return; }
+        if (!hasPerms) { return 0; }
 
-        await _CompanyService.AddCompany(request.CompanyName);
+        return await _CompanyService.AddCompany(request.CompanyName);
     }
 }
