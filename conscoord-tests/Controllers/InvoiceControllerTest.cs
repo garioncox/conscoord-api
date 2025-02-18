@@ -1,6 +1,5 @@
 using System.Security.Claims;
 using conscoord_api.Controllers;
-using conscoord_api.Data;
 using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
 using Microsoft.AspNetCore.Mvc;
