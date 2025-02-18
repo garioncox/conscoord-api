@@ -1,7 +1,6 @@
 using conscoord_api.Data;
 using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
-using conscoord_api.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using PdfSharp.Drawing;
@@ -48,9 +47,9 @@ public class InvoiceController : ControllerBase
     [HttpPost("generateInvoice")]
     public async Task<IActionResult> GeneratePDF(IInvoiceService interfaceService, InvoiceDTO DTO)
     {
-        // var user = HttpContext.User;
-        // var hasPerms = await _RoleUtils.HasPerms(user, [Role.ADMIN_ROLE]);
-        // if (!hasPerms) { return NotFound(); }
+        var user = HttpContext.User;
+        var hasPerms = await _RoleUtils.HasPerms(user, [Role.ADMIN_ROLE]);
+        if (!hasPerms) { return NotFound(); }
 
         var startDateValid = DateTime.TryParseExact(
             DTO.startDate,
