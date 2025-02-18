@@ -21,20 +21,9 @@ public class EmployeeControllerTests
         var mockRoleUtils = Substitute.For<IRoleUtils>();
         mockRoleUtils.HasPerms(Arg.Any<ClaimsPrincipal>(), Arg.Any<string[]>()).Returns(true);
 
-        var controller = new EmployeeController(mockRoleUtils, mockEmployeeService);
-        var context = Substitute.For<HttpContext>();
-        var user = Substitute.For<ClaimsPrincipal>();
-        var identity = Substitute.For<ClaimsIdentity>();
-
-        identity.IsAuthenticated.Returns(false);
-
-        user.Identity.Returns(identity);
-
-        context.User.Returns(user);
-
-        controller.ControllerContext = new ControllerContext
+        var controller = new EmployeeController(mockRoleUtils, mockEmployeeService)
         {
-            HttpContext = context
+            ControllerContext = TestControllerContext.GetContext(false)
         };
 
         // ACT
