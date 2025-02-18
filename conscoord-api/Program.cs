@@ -66,7 +66,7 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IEmailService, EmailController>();
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 builder.Services.AddScoped<ShiftClockInReminder>();
-builder.Services.AddScoped<RoleUtils>();
+builder.Services.AddScoped<IRoleUtils, RoleUtils>();
 
 var app = builder.Build();
 

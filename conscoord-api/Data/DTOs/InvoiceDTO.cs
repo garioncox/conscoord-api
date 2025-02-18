@@ -1,8 +1,8 @@
 namespace conscoord_api.Data.DTOs;
 
-public class InvoiceDTO
+public class InvoiceDTO(int companyId, string startDate, string endDate)
 {
-    public int companyId { get; set; }
-    public required string startDate { get; set; }
-    public required string endDate { get; set; }
+    public int companyId { get; set; } = companyId;
+    public string startDate { get; set; } = startDate;
+    public string endDate { get; set; } = endDate;
 }
