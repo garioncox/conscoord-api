@@ -3,6 +3,7 @@ using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
 using conscoord_api.Utils;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
 namespace conscoord_api.Controllers;
@@ -47,9 +48,9 @@ public class InvoiceController : ControllerBase
     [HttpPost("generateInvoice")]
     public async Task<IActionResult> GeneratePDF(IInvoiceService interfaceService, InvoiceDTO DTO)
     {
-        var user = HttpContext.User;
-        var hasPerms = await _RoleUtils.HasPerms(user, [Role.ADMIN_ROLE]);
-        if (!hasPerms) { return NotFound(); }
+        // var user = HttpContext.User;
+        // var hasPerms = await _RoleUtils.HasPerms(user, [Role.ADMIN_ROLE]);
+        // if (!hasPerms) { return NotFound(); }
 
         var startDateValid = DateTime.TryParseExact(
             DTO.startDate,
@@ -82,6 +83,8 @@ public class InvoiceController : ControllerBase
         var maxYPosition = 750;
         var invoicedata = await interfaceService.GetInvoiceInfoByCompanyTimePeriod(DTO);
         Dictionary<int, double> projectGrandTotals = new Dictionary<int, double>();
+
+        if (invoicedata.IsNullOrEmpty()) { return BadRequest($"No shifts are contained in this time period"); }
 
         foreach (var data in invoicedata)
         {
