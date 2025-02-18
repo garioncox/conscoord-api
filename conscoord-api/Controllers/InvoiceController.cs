@@ -12,9 +12,9 @@ namespace conscoord_api.Controllers;
 public class InvoiceController : ControllerBase
 {
     private readonly IInvoiceService _invoiceService;
-    private readonly RoleUtils _RoleUtils;
+    private readonly IRoleUtils _RoleUtils;
 
-    public InvoiceController(IInvoiceService invoiceService, RoleUtils roleUtils)
+    public InvoiceController(IInvoiceService invoiceService, IRoleUtils roleUtils)
     {
         _invoiceService = invoiceService;
         _RoleUtils = roleUtils;
@@ -33,6 +33,11 @@ public class InvoiceController : ControllerBase
         if (!startDateValid || !endDateValid)
         {
             return BadRequest("Please make sure that the date format is YYYY/MM/DD format");
+        }
+
+        if (startDate > endDate)
+        {
+            return BadRequest("Please make sure the Start Date is before the End Date");
         }
 
         var result = await _invoiceService.GetInvoiceInfoByCompanyTimePeriod(DTO);
@@ -65,6 +70,11 @@ public class InvoiceController : ControllerBase
         if (!startDateValid || !endDateValid)
         {
             return BadRequest("Please make sure that the date format is YYYY/MM/DD format");
+        }
+
+        if (startDate > endDate)
+        {
+            return BadRequest("Please make sure the Start Date is before the End Date");
         }
 
         double hoursCounter = 0;
