@@ -1,7 +1,9 @@
 using conscoord_api.Data;
 using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
+using conscoord_api.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace conscoord_api.Controllers;
 
@@ -10,9 +12,13 @@ namespace conscoord_api.Controllers;
 public class ShiftController : ControllerBase
 {
     private readonly IShiftService _shiftService;
-    public ShiftController(IShiftService service)
+    private readonly IEmployeeShiftService _employeeShiftService;
+    private readonly IRoleUtils _roleUtils;
+    public ShiftController(IRoleUtils roleUtils, IShiftService service, IEmployeeShiftService employeeShiftService)
     {
         _shiftService = service;
+        _employeeShiftService = employeeShiftService;
+        _roleUtils = roleUtils;
     }
 
     [HttpGet("getAll")]
@@ -75,5 +81,31 @@ public class ShiftController : ControllerBase
     public async Task EditShift([FromBody] Shift shift)
     {
         await _shiftService.EditShiftAsync(shift);
+    }
+
+    [HttpGet("getDatesWithErrors")]
+    public async Task<List<string>> GetDatesWithErrors()
+    {
+        var user = HttpContext.User;
+        var hasPerms = await _roleUtils.HasPerms(user, [Role.ADMIN_ROLE]);
+        if (!hasPerms) { return []; }
+
+        var shifts = await _shiftService.GetAllShifts();
+        var empShifts = _employeeShiftService.GetallEmployeeShifts();
+
+        List<int> errorShiftIds = empShifts
+            .Where(e => e.ClockInTime.IsNullOrEmpty())
+            .Select(e => e.ShiftId)
+            .ToList();
+
+        List<Shift> shiftsWithErrors = shifts
+            .Where(s => errorShiftIds.Contains(s.Id))
+            .ToList();
+
+        List<string> errorDates = shiftsWithErrors
+            .Select(s => s.StartTime.Split(" ")[0])
+            .ToList();
+
+        return errorDates;
     }
 }
