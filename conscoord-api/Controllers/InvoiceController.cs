@@ -23,9 +23,9 @@ public class InvoiceController : ControllerBase
     [HttpPost("getInvoicePreview")]
     public async Task<ActionResult<List<InvoiceInfoDTO>>> GetInvoiceInfoByCompanyTimePeriod(InvoiceDTO DTO)
     {
-        var user = HttpContext.User;
-        var hasPerms = await _RoleUtils.HasPerms(user, [Role.ADMIN_ROLE]);
-        if (!hasPerms) { return NotFound(); }
+        //var user = HttpContext.User;
+        //var hasPerms = await _RoleUtils.HasPerms(user, [Role.ADMIN_ROLE]);
+        //if (!hasPerms) { return NotFound(); }
 
         var startDateValid = DateTime.TryParseExact(DTO.startDate, ["yyyy/MM/dd", "yyyy/MM/d"], null, System.Globalization.DateTimeStyles.None, out var startDate);
         var endDateValid = DateTime.TryParseExact(DTO.endDate, ["yyyy/MM/dd", "yyyy/MM/d"], null, System.Globalization.DateTimeStyles.None, out var endDate);
@@ -71,6 +71,11 @@ public class InvoiceController : ControllerBase
         double grandTotal = 0;
         var maxYPosition = 750;
         var invoicedata = await interfaceService.GetInvoiceInfoByCompanyTimePeriod(DTO);
+        if (invoicedata.Count == 0)
+        {
+            return BadRequest("There are no shifts in this time period");
+        }
+
         Dictionary<int, double> projectGrandTotals = new Dictionary<int, double>();
 
         foreach (var data in invoicedata)
@@ -218,8 +223,12 @@ public class InvoiceController : ControllerBase
 
             yPosition += 20;
 
+            gfx.DrawString("Project Total: ", subHeaderFont, XBrushes.Black,
+                new XRect(page.Width - 220, yPosition + 5, 100, page.Height),
+                XStringFormats.TopRight);
+
             gfx.DrawString($"{projectGrandTotals[data.projectId]:C}", subHeaderFont, XBrushes.Black,
-                new XRect(page.Width - 150, yPosition + 10, 100, page.Height),
+                new XRect(page.Width - 150, yPosition + 5, 100, page.Height),
                 XStringFormats.TopRight);
 
             // Horizontal Line

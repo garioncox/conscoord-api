@@ -20,4 +20,5 @@ public class employeeInfo
     public required string employeeName { get; set; }
     public decimal employeePayRate { get; set; }
     public double hoursWorked { get; set; }
+    public bool? hasbeeninvoiced { get; set; }
 }
