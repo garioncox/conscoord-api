@@ -83,19 +83,17 @@ public class ShiftController : ControllerBase
         await _shiftService.EditShiftAsync(shift);
     }
 
-    [HttpGet("getAll/datesWithErrors")]
-    public async Task<ActionResult<List<string>>> GetDatesWithErrors()
+    [HttpGet("getAll/errored/{companyId}")]
+    public async Task<ActionResult<List<string>>> GetDatesWithErrors(int companyId)
     {
         var user = HttpContext.User;
         var hasPerms = await _roleUtils.HasPerms(user, [Role.ADMIN_ROLE]);
         if (!hasPerms) { return BadRequest("User is not logged in"); }
 
-        var shifts = await _shiftService.GetAllShifts();
-        var empShifts = _employeeShiftService.GetallEmployeeShifts();
-
+        var shifts = await _shiftService.GetShiftsWithErrorsByCompany(companyId);
         var errorDates = shifts
-            .Where(s => empShifts.Any(e => e.ShiftId == s.Id && (e.ClockInTime.IsNullOrEmpty() || e.ClockOutTime.IsNullOrEmpty())))
             .Select(s => s.StartTime.Split(" ")[0])
+            .Distinct()
             .ToList();
 
         return Ok(errorDates);
