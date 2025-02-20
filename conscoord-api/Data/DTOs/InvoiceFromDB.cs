@@ -11,6 +11,6 @@ public class InvoiceFromDB
     public decimal? payrate { get; set; } = 75;
     public string? clockintime { get; set; } = null;
     public string? clockouttime { get; set; } = null;
-    public bool? hasbeeninvoiced { get; set; } = false;
+    public bool? has_been_invoiced { get; set; } = false;
 }
 

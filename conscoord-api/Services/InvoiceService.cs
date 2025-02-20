@@ -23,7 +23,7 @@ public class InvoiceService : IInvoiceService
 
         string SQLQuery = @$"select p.id as projectId,p.""location"" as projectName, s.end_time as shiftEnd,
                 s.id as shiftId,s.""location"" as shiftName, 
-                e.id as employeeId, e.name as employeeName, e.payrate, es.clock_in_time as clockInTime, es.clock_out_time as clockOutTime, es.hasbeeninvoiced 
+                e.id as employeeId, e.name as employeeName, e.payrate, es.clock_in_time as clockInTime, es.clock_out_time as clockOutTime, es.has_been_invoiced 
                 from practicum2425.project p
                 join practicum2425.company_project cp
                 on cp.project_id = p.id
@@ -37,10 +37,10 @@ public class InvoiceService : IInvoiceService
                 on e.id = es.emp_id
                 where es.clock_in_time is not null and es.clock_out_time is not null and cp.company_id = {DTO.companyId}";
 
-        if(DTO.includeInvoicedShifts)
+        if (DTO.includeInvoicedShifts)
         { SQLQuery += ";"; }
         else
-        { SQLQuery += " and es.hasbeeninvoiced = false;"; }
+        { SQLQuery += " and es.has_been_invoiced = false;"; }
 
         var allInvoiceInfo = _context.InvoiceData.FromSqlRaw(SQLQuery)
                 .AsNoTracking()
@@ -64,7 +64,7 @@ public class InvoiceService : IInvoiceService
                 continue;
             }
 
-            var rowsEmployee = new employeeInfo { employeeId = row.employeeId, employeeName = row.employeeName, employeePayRate = row.payrate ?? 75, hoursWorked = hoursWorked, hasbeeninvoiced = row.hasbeeninvoiced };
+            var rowsEmployee = new employeeInfo { employeeId = row.employeeId, employeeName = row.employeeName, employeePayRate = row.payrate ?? 75, hoursWorked = hoursWorked, has_been_invoiced = row.has_been_invoiced };
             var employees = new List<employeeInfo> { rowsEmployee };
             var rowsShift = new shiftInfo { shiftId = row.shiftId, shiftLocation = row.shiftName, employeesByShift = employees };
 
