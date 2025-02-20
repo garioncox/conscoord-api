@@ -51,9 +51,9 @@ public class EmployeeShiftController(IEmployeeShiftService service, IShiftServic
         {
             EmpId = empShift.EmpId,
             ShiftId = empShift.ShiftId,
-            Hasbeeninvoiced = false,
-            Didnotwork = false,
-            Reportedcanceled = false
+            HasBeenInvoiced = false,
+            DidNotWork = false,
+            ReportedCanceled = false
         };
 
         await _empShiftService.CreateEmployeeShift(e);

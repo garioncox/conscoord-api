@@ -72,7 +72,7 @@ public class InvoiceService : IInvoiceService
 
             if (dbEmpShift is not null)
             {
-                dbEmpShift.Hasbeeninvoiced = true;
+                dbEmpShift.HasBeenInvoiced = true;
                 await _context.SaveChangesAsync();
             }
 

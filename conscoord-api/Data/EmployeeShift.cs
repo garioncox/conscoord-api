@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace conscoord_api.Data;
@@ -17,11 +17,13 @@ public partial class EmployeeShift
 
     public string? Notes { get; set; }
 
-    public bool? Hasbeeninvoiced { get; set; }
+    public bool? HasBeenInvoiced { get; set; }
 
-    public bool? Didnotwork { get; set; }
+    public bool? DidNotWork { get; set; }
 
-    public bool? Reportedcanceled { get; set; }
+    public bool? ReportedCanceled { get; set; }
+
+    public bool? IsResidual { get; set; }
 
     public virtual Employee Emp { get; set; } = null!;
 

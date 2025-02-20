@@ -36,10 +36,10 @@ public class EmployeeShiftService : IEmployeeShiftService
 
         newEmpShift.ClockInTime = empShift.ClockInTime;
         newEmpShift.ClockOutTime = empShift.ClockOutTime;
-        newEmpShift.Didnotwork = empShift.Didnotwork;
-        newEmpShift.Hasbeeninvoiced = empShift.Hasbeeninvoiced;
+        newEmpShift.DidNotWork = empShift.Didnotwork;
+        newEmpShift.HasBeenInvoiced = empShift.Hasbeeninvoiced;
         newEmpShift.Notes = empShift.Notes;
-        newEmpShift.Reportedcanceled = empShift.Reportedcanceled;
+        newEmpShift.ReportedCanceled = empShift.Reportedcanceled;
 
         _context.EmployeeShifts.Update(newEmpShift);
         await _context.SaveChangesAsync();
