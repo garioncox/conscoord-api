@@ -11,8 +11,8 @@ namespace conscoord_api.Controllers;
 public class CompanyController : ControllerBase
 {
     private readonly ICompanyService _CompanyService;
-    private readonly RoleUtils _RoleUtils;
-    public CompanyController(ICompanyService service, RoleUtils roleUtils)
+    private readonly IRoleUtils _RoleUtils;
+    public CompanyController(ICompanyService service, IRoleUtils roleUtils)
     {
         _RoleUtils = roleUtils;
         _CompanyService = service;
