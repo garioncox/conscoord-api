@@ -6,6 +6,7 @@ public interface IShiftService
     public Task<List<Shift>> GetAllArchivedAndCompletedShifts();
     public Task<Shift?> GetShiftById(int id);
     public Task<Shift[]> GetShiftByProjectAsync(Project project);
+    public Task<List<Shift>> GetShiftsWithErrorsByCompany(int companyId);
     public Task<List<Shift>> GetShiftsByProject(int projectId);
     public Task CreateShift(Shift shift);
     public Task ArchiveShiftAsync(int shiftId);
@@ -13,6 +14,4 @@ public interface IShiftService
     public Task DeleteShiftAsync(int shiftId);
     public List<Shift> GetScheduledShiftsByEmpId(int id);
     public List<Shift> GetScheduledShiftsByEmail(string email);
-
-
 }

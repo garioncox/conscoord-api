@@ -10,15 +10,35 @@ namespace conscoord_api.Controllers;
 public class ShiftController : ControllerBase
 {
     private readonly IShiftService _shiftService;
-    public ShiftController(IShiftService service)
+    private readonly IEmployeeShiftService _employeeShiftService;
+    private readonly IRoleUtils _roleUtils;
+    public ShiftController(IRoleUtils roleUtils, IShiftService service, IEmployeeShiftService employeeShiftService)
     {
         _shiftService = service;
+        _employeeShiftService = employeeShiftService;
+        _roleUtils = roleUtils;
     }
 
     [HttpGet("getAll")]
     public async Task<List<Shift>> GetShiftsListAsync()
     {
         return await _shiftService.GetAllShifts();
+    }
+
+    [HttpGet("getAll/errored/{companyId}")]
+    public async Task<ActionResult<List<string>>> GetDatesWithErrors(int companyId)
+    {
+        var user = HttpContext.User;
+        var hasPerms = await _roleUtils.HasPerms(user, [Role.ADMIN_ROLE]);
+        if (!hasPerms) { return BadRequest("User is not logged in"); }
+
+        var shifts = await _shiftService.GetShiftsWithErrorsByCompany(companyId);
+        var errorDates = shifts
+            .Select(s => s.StartTime.Split(" ")[0])
+            .Distinct()
+            .ToList();
+
+        return Ok(errorDates);
     }
 
     [HttpGet("get/{shiftId}")]
