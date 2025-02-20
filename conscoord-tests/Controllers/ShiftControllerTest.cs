@@ -2,7 +2,9 @@ using System.Security.Claims;
 using conscoord_api.Controllers;
 using conscoord_api.Data;
 using conscoord_api.Data.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
+using NUnit.Framework.Constraints;
 
 namespace conscoord_tests.Controllers;
 
@@ -17,7 +19,7 @@ public class ShiftControllerTest
         mockRoleUtils.HasPerms(Arg.Any<ClaimsPrincipal>(), Arg.Any<string[]>()).Returns(true);
 
         var mockShiftService = Substitute.For<IShiftService>();
-        mockShiftService.GetAllShifts().Returns(
+        mockShiftService.GetShiftsWithErrorsByCompany(Arg.Any<int>()).Returns(
             [
                 new Shift() { Id = 0, StartTime = "2024/12/01 00:00:00", EndTime = "2024/12/01 01:00:00" },
                 new Shift() { Id = 1, StartTime = "2024/12/02 00:00:00", EndTime = "2024/12/02 01:00:00" },
@@ -27,26 +29,28 @@ public class ShiftControllerTest
         );
 
         var mockEmployeeShiftService = Substitute.For<IEmployeeShiftService>();
-        mockEmployeeShiftService.GetallEmployeeShifts().Returns([
-            new EmployeeShift() { Id = 0, ShiftId = 0, ClockInTime = "2024/12/01 00:00:00", ClockOutTime = "2024/12/01 01:00:00" },
-            new EmployeeShift() { Id = 1, ShiftId = 1, ClockInTime = "", ClockOutTime = "" },
-            new EmployeeShift() { Id = 2, ShiftId = 2, ClockOutTime = "2024/12/03 01:00:00" },
-            new EmployeeShift() { Id = 3, ShiftId = 3 },
-        ]);
 
         ShiftController controller = new(mockRoleUtils, mockShiftService, mockEmployeeShiftService)
         {
             ControllerContext = TestControllerContext.GetContext(true)
         };
 
-        // ACT
-        var errors = await controller.GetDatesWithErrors();
+        var companyId = 1;
 
-        // ASSERT
-        Assert.That(errors, Is.Not.Empty);
-        Assert.That(errors, Has.Count.EqualTo(3));
-        Assert.That(errors, Does.Contain("2024/12/02"));
-        Assert.That(errors, Does.Contain("2024/12/03"));
-        Assert.That(errors, Does.Contain("2024/12/04"));
+        // ACT
+        var result = await controller.GetDatesWithErrors(companyId);
+
+        // Ensure the result is an ActionResult<List<string>>
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
+
+        // Extract the actual List<string>
+        var okResult = result.Result as OkObjectResult;
+        var errorList = okResult?.Value as List<string>;
+
+        // Now perform assertions
+        Assert.That(errorList, Is.Not.Null);
+        Assert.That(errorList, Is.Not.Empty);
+        Assert.That(errorList, Has.Count.EqualTo(4));
     }
 }

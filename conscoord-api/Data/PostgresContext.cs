@@ -42,10 +42,14 @@ public partial class PostgresContext : DbContext
     {
         optionsBuilder.UseNpgsql(_configuration.DB);
     }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasPostgresEnum("practicum2425", "status", new[] { "ACTIVE", "ARCHIVED", "COMPLETED" });
+
+        modelBuilder.Entity<InvoiceFromDB>(entity =>
+        {
+            entity.HasKey(e => e.projectId).HasName("p_key");
+        });
 
         modelBuilder.Entity<Company>(entity =>
         {
@@ -57,11 +61,6 @@ public partial class PostgresContext : DbContext
             entity.Property(e => e.Name)
                 .HasMaxLength(50)
                 .HasColumnName("name");
-        });
-
-        modelBuilder.Entity<InvoiceFromDB>(entity =>
-        {
-            entity.HasKey(e => e.projectId).HasName("p_key");
         });
 
         modelBuilder.Entity<CompanyProject>(entity =>
@@ -128,13 +127,14 @@ public partial class PostgresContext : DbContext
             entity.Property(e => e.ClockOutTime)
                 .HasMaxLength(20)
                 .HasColumnName("clock_out_time");
-            entity.Property(e => e.Didnotwork).HasColumnName("didnotwork");
+            entity.Property(e => e.DidNotWork).HasColumnName("did_not_work");
             entity.Property(e => e.EmpId).HasColumnName("emp_id");
-            entity.Property(e => e.Hasbeeninvoiced).HasColumnName("hasbeeninvoiced");
+            entity.Property(e => e.HasBeenInvoiced).HasColumnName("has_been_invoiced");
+            entity.Property(e => e.IsResidual).HasColumnName("is_residual");
             entity.Property(e => e.Notes)
                 .HasMaxLength(500)
                 .HasColumnName("notes");
-            entity.Property(e => e.Reportedcanceled).HasColumnName("reportedcanceled");
+            entity.Property(e => e.ReportedCanceled).HasColumnName("reported_canceled");
             entity.Property(e => e.ShiftId).HasColumnName("shift_id");
 
             entity.HasOne(d => d.Emp).WithMany(p => p.EmployeeShifts)

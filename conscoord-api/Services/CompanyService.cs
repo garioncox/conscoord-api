@@ -17,7 +17,7 @@ public class CompanyService : ICompanyService
         return await _context.Companies.ToListAsync();
     }
 
-    public async Task AddCompany(string companyName)
+    public async Task<int> AddCompany(string companyName)
     {
         Company company = new Company()
         {
@@ -26,5 +26,7 @@ public class CompanyService : ICompanyService
 
         _context.Companies.Add(company);
         await _context.SaveChangesAsync();
+        var NewCompany = await _context.Companies.FirstOrDefaultAsync(c => c.Name == companyName);
+        return NewCompany!.Id;
     }
 }
