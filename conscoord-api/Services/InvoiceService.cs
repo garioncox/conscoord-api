@@ -68,13 +68,6 @@ public class InvoiceService : IInvoiceService
             var employees = new List<employeeInfo> { rowsEmployee };
             var rowsShift = new shiftInfo { shiftId = row.shiftId, shiftLocation = row.shiftName, employeesByShift = employees };
 
-            var dbEmpShift = await _context.EmployeeShifts.FirstOrDefaultAsync(es => es.EmpId == rowsEmployee.employeeId && es.ShiftId == rowsShift.shiftId);
-
-            if (dbEmpShift is not null)
-            {
-                dbEmpShift.HasBeenInvoiced = true;
-                await _context.SaveChangesAsync();
-            }
 
             //check if project exists
             if (!projectIdToIndex.ContainsKey(row.projectId))
@@ -107,5 +100,16 @@ public class InvoiceService : IInvoiceService
         }
         await Task.CompletedTask;
         return result;
+    }
+
+    public async Task updateHasBeenInvoiced(employeeInfo rowsEmployee, shiftInfo rowsShift)
+    {
+        var dbEmpShift = await _context.EmployeeShifts.FirstOrDefaultAsync(es => es.EmpId == rowsEmployee.employeeId && es.ShiftId == rowsShift.shiftId);
+
+        if (dbEmpShift is not null)
+        {
+            dbEmpShift.HasBeenInvoiced = true;
+            await _context.SaveChangesAsync();
+        }
     }
 }
