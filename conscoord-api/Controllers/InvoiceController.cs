@@ -23,9 +23,9 @@ public class InvoiceController : ControllerBase
     [HttpPost("getInvoicePreview")]
     public async Task<ActionResult<List<InvoiceInfoDTO>>> GetInvoiceInfoByCompanyTimePeriod(InvoiceDTO DTO)
     {
-        //var user = HttpContext.User;
-        //var hasPerms = await _RoleUtils.HasPerms(user, [Role.ADMIN_ROLE]);
-        //if (!hasPerms) { return NotFound(); }
+        var user = HttpContext.User;
+        var hasPerms = await _RoleUtils.HasPerms(user, [Role.ADMIN_ROLE]);
+        if (!hasPerms) { return NotFound(); }
 
         var startDateValid = DateTime.TryParseExact(DTO.startDate, ["yyyy/MM/dd", "yyyy/MM/d"], null, System.Globalization.DateTimeStyles.None, out var startDate);
         var endDateValid = DateTime.TryParseExact(DTO.endDate, ["yyyy/MM/dd", "yyyy/MM/d"], null, System.Globalization.DateTimeStyles.None, out var endDate);
