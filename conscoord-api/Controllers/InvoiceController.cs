@@ -80,6 +80,7 @@ public class InvoiceController : ControllerBase
         double grandTotal = 0;
         var maxYPosition = 750;
         var invoicedata = await interfaceService.GetInvoiceInfoByCompanyTimePeriod(DTO);
+
         if (invoicedata.Count == 0)
         {
             return BadRequest("There are no shifts in this time period");
@@ -97,7 +98,7 @@ public class InvoiceController : ControllerBase
 
                     if (projectGrandTotals.ContainsKey(data.projectId))
                     {
-                        projectGrandTotals[data.projectId] += projectGrandTotals[data.projectId] + (employee.hoursWorked * 75);
+                        projectGrandTotals[data.projectId] = projectGrandTotals[data.projectId] + (employee.hoursWorked * 75);
                     }
                     else
                     {
@@ -209,6 +210,8 @@ public class InvoiceController : ControllerBase
 
                 foreach (var employee in shift.employeesByShift)
                 {
+                    await interfaceService.updateHasBeenInvoiced(employee, shift);
+
                     yPosition += 20;
                     checkIfNewPageNeeded(maxYPosition, document, ref page, ref gfx, ref yPosition);
 
@@ -219,10 +222,10 @@ public class InvoiceController : ControllerBase
                     gfx.DrawString($"{employee.hoursWorked:F2}", normalFont, textBrush,
                         new XRect(310, yPosition, 100, page.Height),
                         XStringFormats.TopRight);
-                    gfx.DrawString("75", subHeaderFont, XBrushes.Black,
+                    gfx.DrawString("75", normalFont, XBrushes.Black,
                         new XRect(page.Width - 230, yPosition, 100, page.Height),
                         XStringFormats.TopRight);
-                    gfx.DrawString($"{employee.hoursWorked * 75:F2}", subHeaderFont, XBrushes.Black,
+                    gfx.DrawString($"{employee.hoursWorked * 75:F2}", normalFont, XBrushes.Black,
                         new XRect(page.Width - 150, yPosition, 100, page.Height),
                         XStringFormats.TopRight);
 
