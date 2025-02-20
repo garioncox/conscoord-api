@@ -12,6 +12,18 @@ public class ShiftService : IShiftService
         _context = context;
     }
 
+    public async Task<List<Shift>> GetShiftsWithErrorsByCompany(int companyId)
+    {
+        return await _context.Shifts
+            .Where(s => s.ProjectShifts
+                .Any(ps => ps.Project.CompanyProjects
+                    .Any(cp => cp.CompanyId == companyId)) &&
+                    s.EmployeeShifts.Any(es => es.ClockInTime == null || es.ClockInTime == "" ||
+                                               es.ClockOutTime == null || es.ClockOutTime == ""))
+            .Distinct()
+            .ToListAsync();
+    }
+
     public async Task ArchiveShiftAsync(int shift_id)
     {
         var shift = await _context.Shifts
