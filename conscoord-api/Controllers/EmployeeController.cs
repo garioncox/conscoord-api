@@ -12,9 +12,9 @@ namespace conscoord_api.Controllers;
 public class EmployeeController : Controller
 {
     private readonly IEmployeeService _EmployeeService;
-    private readonly RoleUtils _roleUtils;
+    private readonly IRoleUtils _roleUtils;
 
-    public EmployeeController(RoleUtils roleservice, IEmployeeService service)
+    public EmployeeController(IRoleUtils roleservice, IEmployeeService service)
     {
         _EmployeeService = service;
         _roleUtils = roleservice;

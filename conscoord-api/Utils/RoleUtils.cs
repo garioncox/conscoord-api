@@ -1,9 +1,8 @@
 using System.Security.Claims;
-using conscoord_api.Data;
 using conscoord_api.Data.Interfaces;
 
 namespace conscoord_api.Utils;
-public class RoleUtils(IRoleService roleService)
+public class RoleUtils(IRoleService roleService) : IRoleUtils
 {
     IRoleService _RoleService = roleService;
 

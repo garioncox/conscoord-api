@@ -8,11 +8,11 @@ namespace conscoord_api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class EmployeeShiftController(IEmployeeShiftService service, IShiftService shiftService, RoleUtils roleUtils) : ControllerBase
+public class EmployeeShiftController(IEmployeeShiftService service, IShiftService shiftService, IRoleUtils roleUtils) : ControllerBase
 {
     private readonly IEmployeeShiftService _empShiftService = service;
     private readonly IShiftService _shiftService = shiftService;
-    private readonly RoleUtils _roleUtils = roleUtils;
+    private readonly IRoleUtils _roleUtils = roleUtils;
 
     [HttpPost("add")]
     public async Task<ActionResult> CreateEmpShift([FromBody] EmployeeShiftDTO empShift)
@@ -89,7 +89,6 @@ public class EmployeeShiftController(IEmployeeShiftService service, IShiftServic
     }
 
     [HttpGet("get/history/{email}")]
-
     public async Task<IActionResult> GetHistoryByEmail(string email)
     {
         var result = await _empShiftService.GetHistoryByEmail(email);
