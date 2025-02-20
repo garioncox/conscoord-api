@@ -26,7 +26,7 @@ public class InvoiceControllerTests
         var companyId = 0;
         var startDate = "2025/02/18";
         var endDate = "2025/02/19";
-        InvoiceDTO dto = new(companyId, startDate, endDate);
+        InvoiceDTO dto = new(companyId, startDate, endDate, false);
 
         // ACT
         await controller.GetInvoiceInfoByCompanyTimePeriod(dto);
@@ -51,7 +51,7 @@ public class InvoiceControllerTests
         var companyId = 0;
         var startDate = "2025/02/18";
         var endDate = startDate;
-        InvoiceDTO dto = new(companyId, startDate, endDate);
+        InvoiceDTO dto = new(companyId, startDate, endDate, false);
 
         // ACT
         await controller.GetInvoiceInfoByCompanyTimePeriod(dto);
@@ -76,7 +76,7 @@ public class InvoiceControllerTests
         var companyId = 0;
         var startDate = "2025/02/19";
         var endDate = "2025/02/18";
-        InvoiceDTO dto = new(companyId, startDate, endDate);
+        InvoiceDTO dto = new(companyId, startDate, endDate, false);
 
         // ACT
         var result = await controller.GetInvoiceInfoByCompanyTimePeriod(dto);
