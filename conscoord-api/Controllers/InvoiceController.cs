@@ -1,7 +1,6 @@
 using conscoord_api.Data;
 using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
-using conscoord_api.Utils;
 using Microsoft.AspNetCore.Mvc;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
@@ -81,6 +80,11 @@ public class InvoiceController : ControllerBase
         double grandTotal = 0;
         var maxYPosition = 750;
         var invoicedata = await interfaceService.GetInvoiceInfoByCompanyTimePeriod(DTO);
+        if (invoicedata.Count == 0)
+        {
+            return BadRequest("There are no shifts in this time period");
+        }
+
         Dictionary<int, double> projectGrandTotals = new Dictionary<int, double>();
 
         foreach (var data in invoicedata)
@@ -228,8 +232,12 @@ public class InvoiceController : ControllerBase
 
             yPosition += 20;
 
+            gfx.DrawString("Project Total: ", subHeaderFont, XBrushes.Black,
+                new XRect(page.Width - 220, yPosition + 5, 100, page.Height),
+                XStringFormats.TopRight);
+
             gfx.DrawString($"{projectGrandTotals[data.projectId]:C}", subHeaderFont, XBrushes.Black,
-                new XRect(page.Width - 150, yPosition + 10, 100, page.Height),
+                new XRect(page.Width - 150, yPosition + 5, 100, page.Height),
                 XStringFormats.TopRight);
 
             // Horizontal Line
