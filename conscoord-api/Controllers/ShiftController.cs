@@ -1,4 +1,3 @@
-using System.Text.Json;
 using conscoord_api.Data;
 using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
@@ -55,8 +54,6 @@ public class ShiftController : ControllerBase
         {
             return BadRequest("Invalid data returned from GetShiftsWithErrors.");
         }
-
-        Console.WriteLine(JsonSerializer.Serialize(shiftsList));
 
         var errorDates = shiftsList
             .Select(s => s.StartTime.Split(" ")[0])
