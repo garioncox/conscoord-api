@@ -26,14 +26,36 @@ public class ShiftController : ControllerBase
     }
 
     [HttpGet("getAll/errored/{companyId}")]
-    public async Task<ActionResult<List<string>>> GetDatesWithErrors(int companyId)
+    public async Task<ActionResult<List<Shift>>> GetShiftsWithErrors(int companyId)
     {
         var user = HttpContext.User;
         var hasPerms = await _roleUtils.HasPerms(user, [Role.ADMIN_ROLE]);
         if (!hasPerms) { return BadRequest("User is not logged in"); }
 
         var shifts = await _shiftService.GetShiftsWithErrorsByCompany(companyId);
-        var errorDates = shifts
+
+        return Ok(shifts);
+    }
+
+    [HttpGet("getAll/errored/dates/{companyId}")]
+    public async Task<ActionResult<List<string>>> GetDatesWithErrors(int companyId)
+    {
+        var user = HttpContext.User;
+        var hasPerms = await _roleUtils.HasPerms(user, [Role.ADMIN_ROLE]);
+        if (!hasPerms) { return BadRequest("User is not logged in"); }
+
+        var result = await GetShiftsWithErrors(companyId);
+        if (result.Result is not OkObjectResult okResult)
+        {
+            return BadRequest("Failed to fetch shifts with errors.");
+        }
+
+        if (okResult.Value is not List<Shift> shiftsList)
+        {
+            return BadRequest("Invalid data returned from GetShiftsWithErrors.");
+        }
+
+        var errorDates = shiftsList
             .Select(s => s.StartTime.Split(" ")[0])
             .Distinct()
             .ToList();
