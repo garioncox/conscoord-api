@@ -44,7 +44,7 @@ public class InvoiceController : ControllerBase
     }
 
     [HttpPost("generateInvoice")]
-    public async Task<IActionResult> GeneratePDF(IInvoiceService interfaceService, InvoiceDTO DTO)
+    public async Task<IActionResult> GeneratePDF(IInvoiceService interfaceService, InvoiceDTO DTO, ICompanyService companyService)
     {
         var user = HttpContext.User;
         var hasPerms = await _RoleUtils.HasPerms(user, [Role.ADMIN_ROLE]);
@@ -80,6 +80,8 @@ public class InvoiceController : ControllerBase
         double grandTotal = 0;
         var maxYPosition = 750;
         var invoicedata = await interfaceService.GetInvoiceInfoByCompanyTimePeriod(DTO);
+        List<Company> companies = await companyService.GetCompanyListAsync();
+        Company company = companies.Where(c => c.Id == DTO.companyId).FirstOrDefault();
 
         if (invoicedata.Count == 0)
         {
@@ -162,7 +164,7 @@ public class InvoiceController : ControllerBase
         gfx.DrawString("For:", subHeaderFont, XBrushes.Black,
             new XRect(270, yPosition + 10, page.Width - 80, page.Height),
             XStringFormats.TopLeft);
-        gfx.DrawString("Company 123", normalFont, XBrushes.Black,
+        gfx.DrawString(company.Name, normalFont, XBrushes.Black,
             new XRect(270, yPosition + 30, page.Width - 80, page.Height),
             XStringFormats.TopLeft);
 

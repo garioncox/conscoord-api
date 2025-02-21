@@ -18,6 +18,7 @@ public class InvoiceService : IInvoiceService
 
     public async Task<List<InvoiceInfoDTO>> GetInvoiceInfoByCompanyTimePeriod(InvoiceDTO DTO)
     {
+
         var startDateValidate = DateTime.TryParseExact(DTO.startDate, ["yyyy/MM/dd", "yyyy/MM/d"], null, System.Globalization.DateTimeStyles.None, out var startDate);
         var endDateValidate = DateTime.TryParseExact(DTO.endDate, ["yyyy/MM/dd", "yyyy/MM/d"], null, System.Globalization.DateTimeStyles.None, out var endDate);
 
@@ -48,7 +49,8 @@ public class InvoiceService : IInvoiceService
 
 
         List<InvoiceInfoDTO> result = new List<InvoiceInfoDTO>();
-        Dictionary<int, int> projectIdToIndex = new Dictionary<int, int>();
+        Dictionary<int, int> projectIdToIndex = new Dictionary<int, int>();    
+
 
         foreach (var row in allInvoiceInfo)
         {
