@@ -21,4 +21,5 @@ public class employeeInfo
     public decimal employeePayRate { get; set; }
     public double hoursWorked { get; set; }
     public bool? has_been_invoiced { get; set; }
+    public bool? is_residual { get; set; }
 }

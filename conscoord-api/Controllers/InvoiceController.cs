@@ -85,12 +85,15 @@ public class InvoiceController : ControllerBase
 
         if (invoicedata.Count == 0)
         {
-            return BadRequest("There are no shifts in this time period");
+            return BadRequest("There are no valid shifts in this time period");
         }
 
         Dictionary<int, double> projectGrandTotals = new Dictionary<int, double>();
+        List<InvoiceInfoDTO> itemsToRemove = new List<InvoiceInfoDTO>();
+        List<ShiftDTO> shiftsToRemove = new List<ShiftDTO>();
+        List<EmployeeDTO> employeesToRemove = new List<EmployeeDTO>();
 
-        foreach (var data in invoicedata)
+        foreach (var data in invoicedata.ToList())
         {
             foreach (var shift in data.shiftsByProject)
             {
@@ -203,7 +206,8 @@ public class InvoiceController : ControllerBase
 
             foreach (var shift in data.shiftsByProject)
             {
-                yPosition += 20;
+
+                        yPosition += 20;
                 checkIfNewPageNeeded(maxYPosition, document, ref page, ref gfx, ref yPosition);
 
                 gfx.DrawString("Shift: " + shift.shiftId + " - " + shift.shiftLocation, subHeaderFont, subHeaderBrush,
@@ -216,6 +220,8 @@ public class InvoiceController : ControllerBase
 
                     yPosition += 20;
                     checkIfNewPageNeeded(maxYPosition, document, ref page, ref gfx, ref yPosition);
+
+                    textBrush = employee.is_residual == true ? XBrushes.Orange : XBrushes.Black;
 
                     gfx.DrawString($"Employee: {employee.employeeId} - {employee.employeeName}", normalFont, textBrush,
                         new XRect(80, yPosition, page.Width - 200, page.Height),
@@ -230,6 +236,8 @@ public class InvoiceController : ControllerBase
                     gfx.DrawString($"{employee.hoursWorked * 75:F2}", normalFont, XBrushes.Black,
                         new XRect(page.Width - 150, yPosition, 100, page.Height),
                         XStringFormats.TopRight);
+
+                    textBrush = XBrushes.Black;
 
                     hoursCounter += employee.hoursWorked;
                 }
