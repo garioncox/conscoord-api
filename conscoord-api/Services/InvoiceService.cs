@@ -24,7 +24,7 @@ public class InvoiceService : IInvoiceService
 
         string SQLQuery = @$"select p.id as projectId,p.""location"" as projectName, s.end_time as shiftEnd,
                 s.id as shiftId,s.""location"" as shiftName, 
-                e.id as employeeId, e.name as employeeName, e.payrate, es.clock_in_time as clockInTime, es.clock_out_time as clockOutTime, es.has_been_invoiced 
+                e.id as employeeId, e.name as employeeName, e.payrate, es.clock_in_time as clockInTime, es.clock_out_time as clockOutTime, es.has_been_invoiced, es.is_residual
                 from practicum2425.project p
                 join practicum2425.company_project cp
                 on cp.project_id = p.id
@@ -36,12 +36,7 @@ public class InvoiceService : IInvoiceService
                 on es.shift_id = s.id
                 join practicum2425.employee e
                 on e.id = es.emp_id
-                where es.clock_in_time is not null and es.clock_out_time is not null and cp.company_id = {DTO.companyId}";
-
-        if (DTO.includeInvoicedShifts)
-        { SQLQuery += ";"; }
-        else
-        { SQLQuery += " and es.has_been_invoiced = false;"; }
+                where cp.company_id = {DTO.companyId} and es.has_been_invoiced = false;";
 
         var allInvoiceInfo = _context.InvoiceData.FromSqlRaw(SQLQuery)
                 .AsNoTracking()
@@ -54,19 +49,41 @@ public class InvoiceService : IInvoiceService
 
         foreach (var row in allInvoiceInfo)
         {
-            var ClockOutParsed = DateTime.ParseExact(row.clockouttime, ["H:mm", "HH:mm"], null);
-            var ClockInParsed = DateTime.ParseExact(row.clockintime, ["H:mm", "HH:mm"], null);
-            var hoursSpan = ClockOutParsed - ClockInParsed;
-            var hoursWorked = (hoursSpan.TotalHours + 24) % 24;
-
+            double hoursWorked = 0;
             var endDateValid = DateTime.TryParseExact(row.shiftEnd, "yyyy/MM/dd HH:mm:ss", null, System.Globalization.DateTimeStyles.None, out var shiftEndDate);
+
+            try
+            {
+                var ClockOutParsed = DateTime.ParseExact(row.clockouttime, ["H:mm", "HH:mm"], null);
+                var ClockInParsed = DateTime.ParseExact(row.clockintime, ["H:mm", "HH:mm"], null);
+
+                var hoursSpan = ClockOutParsed - ClockInParsed;
+                hoursWorked = (hoursSpan.TotalHours + 24) % 24;
+            }
+            catch
+            {
+
+                if (shiftEndDate < startDate || shiftEndDate > endDate)
+                {
+                    continue;
+                }
+
+                //only run this if generating the actual invoice
+                if (!DTO.includeErroredShifts)
+                {
+                    await markAsResidual(row.employeeId, row.shiftId);
+                    continue;
+                }
+            }
+
+
 
             if (shiftEndDate < startDate || shiftEndDate > endDate)
             {
                 continue;
             }
 
-            var rowsEmployee = new employeeInfo { employeeId = row.employeeId, employeeName = row.employeeName, employeePayRate = row.payrate ?? 75, hoursWorked = hoursWorked, has_been_invoiced = row.has_been_invoiced };
+            var rowsEmployee = new employeeInfo { employeeId = row.employeeId, employeeName = row.employeeName, employeePayRate = row.payrate ?? 75, hoursWorked = hoursWorked, has_been_invoiced = row.has_been_invoiced, is_residual = row.is_residual };
             var employees = new List<employeeInfo> { rowsEmployee };
             var rowsShift = new shiftInfo { shiftId = row.shiftId, shiftLocation = row.shiftName, employeesByShift = employees };
 
@@ -111,6 +128,17 @@ public class InvoiceService : IInvoiceService
         if (dbEmpShift is not null)
         {
             dbEmpShift.HasBeenInvoiced = true;
+            await _context.SaveChangesAsync();
+        }
+    }
+
+    public async Task markAsResidual(int rowsEmployee, int rowsShift)
+    {
+        var dbEmpShift = await _context.EmployeeShifts.FirstOrDefaultAsync(es => es.EmpId == rowsEmployee && es.ShiftId == rowsShift);
+
+        if (dbEmpShift is not null)
+        {
+            dbEmpShift.IsResidual = true;
             await _context.SaveChangesAsync();
         }
     }
