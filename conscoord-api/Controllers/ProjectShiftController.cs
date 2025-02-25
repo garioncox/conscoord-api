@@ -56,8 +56,8 @@ public class ProjectShiftController : ControllerBase
             Status = Shift.STATUS_ACTIVE,
         };
 
-        await _shiftService.CreateShift(shift);
-        await _projectShiftService.CreateProjectShiftAsync(dto.ProjectId, shift.Id);
+        int shiftId = await _shiftService.CreateShift(shift);
+        await _projectShiftService.CreateProjectShiftAsync(dto.ProjectId, shiftId);
         return Ok();
     }
 
