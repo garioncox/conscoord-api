@@ -9,4 +9,5 @@ public interface IProjectService
     public Task ArchiveProjectAsync(Project project);
     public Task<List<Project>> GetCompanyProjectsAsync(Employee employee);
     public Task<List<Project>> GetProjectArchivedAsync();
+    public Task<Project?> GetProjectByIdAsync(int projectId);
 }
