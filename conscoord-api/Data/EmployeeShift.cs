@@ -7,9 +7,9 @@ public partial class EmployeeShift
 {
     public int Id { get; set; }
 
-    public string? ClockInTime { get; set; }
+    public TimeOnly? ClockInTime { get; set; }
 
-    public string? ClockOutTime { get; set; }
+    public TimeOnly? ClockOutTime { get; set; }
 
     public int EmpId { get; set; }
 

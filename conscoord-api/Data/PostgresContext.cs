@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using conscoord_api.Data.DTOs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -120,13 +118,11 @@ public partial class PostgresContext : DbContext
 
             entity.ToTable("employee_shift", "practicum2425");
 
+            entity.HasIndex(e => new { e.EmpId, e.ShiftId }, "employee_shift_unique").IsUnique();
+
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.ClockInTime)
-                .HasMaxLength(20)
-                .HasColumnName("clock_in_time");
-            entity.Property(e => e.ClockOutTime)
-                .HasMaxLength(20)
-                .HasColumnName("clock_out_time");
+            entity.Property(e => e.ClockInTime).HasColumnName("clock_in_time");
+            entity.Property(e => e.ClockOutTime).HasColumnName("clock_out_time");
             entity.Property(e => e.DidNotWork).HasColumnName("did_not_work");
             entity.Property(e => e.EmpId).HasColumnName("emp_id");
             entity.Property(e => e.HasBeenInvoiced).HasColumnName("has_been_invoiced");
@@ -160,7 +156,7 @@ public partial class PostgresContext : DbContext
                 .HasMaxLength(300)
                 .HasColumnName("description");
             entity.Property(e => e.EndDate)
-                .HasMaxLength(20)
+                .HasColumnType("timestamp without time zone")
                 .HasColumnName("end_date");
             entity.Property(e => e.Location)
                 .HasMaxLength(50)
@@ -169,7 +165,7 @@ public partial class PostgresContext : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("name");
             entity.Property(e => e.StartDate)
-                .HasMaxLength(20)
+                .HasColumnType("timestamp without time zone")
                 .HasColumnName("start_date");
             entity.Property(e => e.Status)
                 .HasMaxLength(16)
@@ -227,14 +223,14 @@ public partial class PostgresContext : DbContext
                 .HasMaxLength(200)
                 .HasColumnName("description");
             entity.Property(e => e.EndTime)
-                .HasMaxLength(20)
+                .HasColumnType("timestamp without time zone")
                 .HasColumnName("end_time");
             entity.Property(e => e.Location)
                 .HasMaxLength(50)
                 .HasColumnName("location");
             entity.Property(e => e.RequestedEmployees).HasColumnName("requested_employees");
             entity.Property(e => e.StartTime)
-                .HasMaxLength(20)
+                .HasColumnType("timestamp without time zone")
                 .HasColumnName("start_time");
             entity.Property(e => e.Status)
                 .HasMaxLength(16)

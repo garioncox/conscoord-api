@@ -80,8 +80,13 @@ public class InvoiceController : ControllerBase
         double grandTotal = 0;
         var maxYPosition = 750;
         var invoicedata = await interfaceService.GetInvoiceInfoByCompanyTimePeriod(DTO);
-        List<Company> companies = await companyService.GetCompanyListAsync();
-        Company company = companies.Where(c => c.Id == DTO.companyId).FirstOrDefault();
+        var companies = await companyService.GetCompanyListAsync();
+        var company = companies.Where(c => c.Id == DTO.companyId).FirstOrDefault();
+
+        if (company is null)
+        {
+            return BadRequest("Ensure that a company is passed in");
+        }
 
         if (invoicedata.Count == 0)
         {

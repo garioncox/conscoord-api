@@ -2,8 +2,8 @@ namespace conscoord_api.Data.DTOs;
 public class EmployeeShiftDTO
 {
     public int? Id { get; set; }
-    public string? ClockInTime { get; set; }
-    public string? ClockOutTime { get; set; }
+    public TimeOnly? ClockInTime { get; set; }
+    public TimeOnly? ClockOutTime { get; set; }
     public bool? Didnotwork { get; set; }
     public int EmpId { get; set; }
     public bool? Hasbeeninvoiced { get; set; }

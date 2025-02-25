@@ -18,8 +18,8 @@ public class ShiftService : IShiftService
             .Where(s => s.ProjectShifts
                 .Any(ps => ps.Project.CompanyProjects
                     .Any(cp => cp.CompanyId == companyId)) &&
-                    s.EmployeeShifts.Any(es => es.ClockInTime == null || es.ClockInTime == "" ||
-                                               es.ClockOutTime == null || es.ClockOutTime == ""))
+                    s.EmployeeShifts.Any(es => es.ClockInTime == null  ||
+                                               es.ClockOutTime == null))
             .Distinct()
             .ToListAsync();
     }

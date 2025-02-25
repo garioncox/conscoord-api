@@ -65,7 +65,7 @@ public class EmployeeShiftService : IEmployeeShiftService
           .Include(s => s.Shift)
           .Include(e => e.Emp)
           .AsEnumerable()
-          .Where(s => DateTime.ParseExact(s.Shift.StartTime, "yyyy/MM/dd HH:mm:ss", null) >= currentTime)
+          .Where(s => s.Shift.StartTime >= currentTime)
           .ToList();
 
         return futureShifts;
@@ -79,9 +79,8 @@ public class EmployeeShiftService : IEmployeeShiftService
             .AsEnumerable()
             .Where(s =>
             {
-                DateTime startTime;
-                var parsed = DateTime.TryParseExact(s.Shift.StartTime, "yyyy/MM/dd HH:mm:ss", null, System.Globalization.DateTimeStyles.None, out startTime);
-                return parsed && startTime >= start && startTime <= end;
+                var startTime = s.Shift.StartTime;
+                return startTime >= start && startTime <= end;
             })
             .ToList();
 
@@ -124,18 +123,17 @@ public class EmployeeShiftService : IEmployeeShiftService
                 };
             }
 
-            var ClockOutParsed = DateTime.ParseExact(es.ClockOutTime, ["H:mm", "HH:mm"], null);
-            var ClockInParsed = DateTime.ParseExact(es.ClockInTime, ["H:mm", "HH:mm"], null);
+            var ClockOutParsed = es.ClockOutTime;
+            var ClockInParsed = es.ClockInTime;
             var hoursWorked = ClockOutParsed - ClockInParsed;
 
             return new EmployeeHistoryDTO()
             {
                 location = es.Shift.Location ?? "",
-                hours = ((hoursWorked.TotalHours + 24) % 24).ToString(),
+                hours = hoursWorked.Value.TotalHours.ToString(),
                 date = es.Shift.StartTime,
                 projectName = es.Shift.ProjectShifts.FirstOrDefault()?.Project.Name ?? ""
             };
-
 
         }).ToList();
 

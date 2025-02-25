@@ -29,13 +29,10 @@ public class EmployeeShiftController(IEmployeeShiftService service, IShiftServic
         }
 
         // For the shift we are adding, check to see if it overlaps with an existing shift we signed up for
-        DateTime ts = DateTime.Parse(toSignUpFor.StartTime);
-        DateTime te = DateTime.Parse(toSignUpFor.EndTime);
         foreach (var s in signedUpFor)
         {
-            DateTime ss = DateTime.Parse(s.StartTime);
-            DateTime se = DateTime.Parse(s.EndTime);
-            if (ts > ss && ts < se || te > ss && te < se)
+            if (toSignUpFor.StartTime > s.StartTime && toSignUpFor.StartTime < s.EndTime ||
+                toSignUpFor.EndTime > s.StartTime && toSignUpFor.EndTime < s.EndTime)
             {
                 return BadRequest($"Shift overlaps with existing shift [{s.Id}]");
             }
