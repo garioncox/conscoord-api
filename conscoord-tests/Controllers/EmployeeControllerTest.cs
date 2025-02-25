@@ -30,7 +30,7 @@ public class EmployeeControllerTests
         var actual = await controller.GetCurrentUser();
 
         // Assert
-        Assert.That(actual.Result, Is.InstanceOf<NotFoundResult>());
+        Assert.That(actual.Result, Is.InstanceOf<BadRequestObjectResult>());
 
         await mockEmployeeService.Received(0).GetEmployeeByEmailAsync(Arg.Any<string>());
         await mockEmployeeService.Received(0).AddEmployee(Arg.Any<Employee>());

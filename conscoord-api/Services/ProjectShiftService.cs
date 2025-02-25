@@ -1,5 +1,4 @@
 using conscoord_api.Data;
-using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,12 +16,12 @@ public class ProjectShiftService : IProjectShiftService
         return await _context.ProjectShifts.ToListAsync();
     }
 
-    public async Task CreateProjectShiftAsync(ProjectShiftDTO projectShift)
+    public async Task CreateProjectShiftAsync(int projectId, int shiftId)
     {
         var addProjectShift = new ProjectShift
         {
-            ProjectId = projectShift.ProjectId,
-            ShiftId = projectShift.ShiftId
+            ProjectId = projectId,
+            ShiftId = shiftId
         };
 
         _context.ProjectShifts.Add(addProjectShift);
@@ -41,5 +40,4 @@ public class ProjectShiftService : IProjectShiftService
             await _context.SaveChangesAsync();
         }
     }
-
 }

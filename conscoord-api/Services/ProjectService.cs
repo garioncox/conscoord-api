@@ -76,4 +76,11 @@ public class ProjectService : IProjectService
     {
         return _context.Projects.Where(p => p.Status == Shift.STATUS_ACTIVE).ToListAsync();
     }
+
+    public async Task<Project?> GetProjectByIdAsync(int projectId)
+    {
+        return await _context.Projects
+            .Where(p => p.Id == projectId)
+            .FirstAsync();
+    }
 }

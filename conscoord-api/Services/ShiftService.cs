@@ -39,10 +39,11 @@ public class ShiftService : IShiftService
         }
     }
 
-    public async Task CreateShift(Shift shift)
+    public async Task<int> CreateShift(Shift shift)
     {
         _context.Shifts.Add(shift);
         await _context.SaveChangesAsync();
+        return shift.Id;
     }
 
     public async Task EditShiftAsync(Shift shift)

@@ -8,7 +8,7 @@ public interface IShiftService
     public Task<Shift[]> GetShiftByProjectAsync(Project project);
     public Task<List<Shift>> GetShiftsWithErrorsByCompany(int companyId);
     public Task<List<Shift>> GetShiftsByProject(int projectId);
-    public Task CreateShift(Shift shift);
+    public Task<int> CreateShift(Shift shift);
     public Task ArchiveShiftAsync(int shiftId);
     public Task EditShiftAsync(Shift shift);
     public Task DeleteShiftAsync(int shiftId);
