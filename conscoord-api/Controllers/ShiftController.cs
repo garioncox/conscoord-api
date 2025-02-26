@@ -90,23 +90,6 @@ public class ShiftController : ControllerBase
         return await _shiftService.GetShiftsByProject(projectId);
     }
 
-    [HttpPost("add")]
-    public async Task<int> CreateShift([FromBody] ShiftDTO shiftDTO)
-    {
-        Shift shift = new()
-        {
-            StartTime = shiftDTO.StartTime,
-            EndTime = shiftDTO.EndTime,
-            Description = shiftDTO.Description,
-            Location = shiftDTO.Location,
-            RequestedEmployees = shiftDTO.RequestedEmployees,
-            Status = Shift.STATUS_ACTIVE,
-        };
-
-        await _shiftService.CreateShift(shift);
-        return shift.Id;
-    }
-
     [HttpPut("archive/{shiftId}")]
     public async Task ArchiveShift(int shiftId)
     {

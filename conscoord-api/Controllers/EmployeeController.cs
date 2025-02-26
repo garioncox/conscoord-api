@@ -41,7 +41,7 @@ public class EmployeeController : Controller
     public async Task<ActionResult<Employee>> GetCurrentUser()
     {
         var user = HttpContext.User;
-        if (user.Identity?.IsAuthenticated == false) { return NotFound(); }
+        if (user.Identity?.IsAuthenticated == false) { return BadRequest("User is not authenticated"); }
 
         var userEmail = user?.FindFirst(ClaimTypes.Email)?.Value;
         var employee = await _EmployeeService.GetEmployeeByEmailAsync(userEmail ?? "");

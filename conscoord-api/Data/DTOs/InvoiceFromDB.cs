@@ -12,5 +12,6 @@ public class InvoiceFromDB
     public TimeOnly? clockintime { get; set; } = null;
     public TimeOnly? clockouttime { get; set; } = null;
     public bool? has_been_invoiced { get; set; } = false;
+    public bool? is_residual { get; set; } = false;
 }
 
