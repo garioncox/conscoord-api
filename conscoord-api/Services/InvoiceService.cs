@@ -46,7 +46,11 @@ public class InvoiceService : IInvoiceService
             var ClockOutParsed = row.clockouttime;
             var ClockInParsed = row.clockintime;
             var hoursSpan = ClockOutParsed - ClockInParsed;
-            var hoursWorked = hoursSpan!.Value.TotalHours;
+            var hoursWorked = 0.0;
+            if (hoursSpan is not null)
+            {
+                hoursWorked = hoursSpan.Value.TotalHours;
+            }
 
             var shiftEndDate = row.shiftEnd;
 

@@ -1,4 +1,3 @@
-using System.Security.Cryptography.X509Certificates;
 using conscoord_api.Data;
 using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
@@ -40,8 +39,8 @@ public class ProjectShiftController : ControllerBase
 
         var shiftDTO = dto.Shift;
 
-        if (DateTime.Parse(shiftDTO.StartTime) > DateTime.Parse(project.EndDate) ||
-            DateTime.Parse(shiftDTO.EndTime) < DateTime.Parse(project.StartDate))
+        if (shiftDTO.StartTime > project.EndDate ||
+            shiftDTO.EndTime < project.StartDate)
         {
             return BadRequest("Shift cannot be created outside the project timeline");
         }
@@ -56,7 +55,7 @@ public class ProjectShiftController : ControllerBase
             Status = Shift.STATUS_ACTIVE,
         };
 
-        int shiftId = await _shiftService.CreateShift(shift);
+        var shiftId = await _shiftService.CreateShift(shift);
         await _projectShiftService.CreateProjectShiftAsync(dto.ProjectId, shiftId);
         return Ok();
     }
