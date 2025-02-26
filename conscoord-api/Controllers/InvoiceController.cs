@@ -26,19 +26,6 @@ public class InvoiceController : ControllerBase
         var hasPerms = await _RoleUtils.HasPerms(user, [Role.ADMIN_ROLE]);
         if (!hasPerms) { return NotFound(); }
 
-        var startDateValid = DateTime.TryParseExact(DTO.startDate, ["yyyy/MM/dd", "yyyy/MM/d"], null, System.Globalization.DateTimeStyles.None, out var startDate);
-        var endDateValid = DateTime.TryParseExact(DTO.endDate, ["yyyy/MM/dd", "yyyy/MM/d"], null, System.Globalization.DateTimeStyles.None, out var endDate);
-
-        if (!startDateValid || !endDateValid)
-        {
-            return BadRequest("Please make sure that the date format is YYYY/MM/DD format");
-        }
-
-        if (startDate > endDate)
-        {
-            return BadRequest("Please make sure the Start Date is before the End Date");
-        }
-
         var result = await _invoiceService.GetInvoiceInfoByCompanyTimePeriod(DTO);
         return Ok(result);
     }
@@ -50,28 +37,7 @@ public class InvoiceController : ControllerBase
         var hasPerms = await _RoleUtils.HasPerms(user, [Role.ADMIN_ROLE]);
         if (!hasPerms) { return NotFound(); }
 
-        var startDateValid = DateTime.TryParseExact(
-            DTO.startDate,
-            new string[] { "yyyy/MM/dd", "yyyy/MM/dd" },
-            null,
-            System.Globalization.DateTimeStyles.None,
-            out var startDate
-        );
-
-        var endDateValid = DateTime.TryParseExact(
-            DTO.endDate,
-            new string[] { "yyyy/MM/dd", "yyyy/MM/dd" },
-            null,
-            System.Globalization.DateTimeStyles.None,
-            out var endDate
-        );
-
-        if (!startDateValid || !endDateValid)
-        {
-            return BadRequest("Please make sure that the date format is YYYY/MM/DD format");
-        }
-
-        if (startDate > endDate)
+        if (DTO.startDate > DTO.endDate)
         {
             return BadRequest("Please make sure the Start Date is before the End Date");
         }
