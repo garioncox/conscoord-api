@@ -2,8 +2,6 @@ using conscoord_api.Data;
 using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.IdentityModel.Tokens;
 
 namespace conscoord_api.Services;
 
@@ -18,10 +16,6 @@ public class InvoiceService : IInvoiceService
 
     public async Task<List<InvoiceInfoDTO>> GetInvoiceInfoByCompanyTimePeriod(InvoiceDTO DTO)
     {
-
-        var startDateValidate = DateTime.TryParseExact(DTO.startDate, ["yyyy/MM/dd", "yyyy/MM/d"], null, System.Globalization.DateTimeStyles.None, out var startDate);
-        var endDateValidate = DateTime.TryParseExact(DTO.endDate, ["yyyy/MM/dd", "yyyy/MM/d"], null, System.Globalization.DateTimeStyles.None, out var endDate);
-
         string SQLQuery = @$"select p.id as projectId,p.""location"" as projectName, s.end_time as shiftEnd,
                 s.id as shiftId,s.""location"" as shiftName, 
                 e.id as employeeId, e.name as employeeName, e.payrate, es.clock_in_time as clockInTime, es.clock_out_time as clockOutTime, es.has_been_invoiced, es.is_residual
@@ -49,36 +43,18 @@ public class InvoiceService : IInvoiceService
 
         foreach (var row in allInvoiceInfo)
         {
-            double hoursWorked = 0;
-            var endDateValid = DateTime.TryParseExact(row.shiftEnd, "yyyy/MM/dd HH:mm:ss", null, System.Globalization.DateTimeStyles.None, out var shiftEndDate);
-
-            try
+            var ClockOutParsed = row.clockouttime;
+            var ClockInParsed = row.clockintime;
+            var hoursSpan = ClockOutParsed - ClockInParsed;
+            var hoursWorked = 0.0;
+            if (hoursSpan is not null)
             {
-                var ClockOutParsed = DateTime.ParseExact(row.clockouttime, ["H:mm", "HH:mm"], null);
-                var ClockInParsed = DateTime.ParseExact(row.clockintime, ["H:mm", "HH:mm"], null);
-
-                var hoursSpan = ClockOutParsed - ClockInParsed;
-                hoursWorked = (hoursSpan.TotalHours + 24) % 24;
-            }
-            catch
-            {
-
-                if (shiftEndDate < startDate || shiftEndDate > endDate)
-                {
-                    continue;
-                }
-
-                //only run this if generating the actual invoice
-                if (!DTO.includeErroredShifts)
-                {
-                    await markAsResidual(row.employeeId, row.shiftId);
-                    continue;
-                }
+                hoursWorked = hoursSpan.Value.TotalHours;
             }
 
+            var shiftEndDate = row.shiftEnd;
 
-
-            if (shiftEndDate < startDate || shiftEndDate > endDate)
+            if (shiftEndDate < DTO.startDate || shiftEndDate > DTO.endDate)
             {
                 continue;
             }
@@ -86,7 +62,6 @@ public class InvoiceService : IInvoiceService
             var rowsEmployee = new employeeInfo { employeeId = row.employeeId, employeeName = row.employeeName, employeePayRate = row.payrate ?? 75, hoursWorked = hoursWorked, has_been_invoiced = row.has_been_invoiced, is_residual = row.is_residual };
             var employees = new List<employeeInfo> { rowsEmployee };
             var rowsShift = new shiftInfo { shiftId = row.shiftId, shiftLocation = row.shiftName, employeesByShift = employees };
-
 
             //check if project exists
             if (!projectIdToIndex.ContainsKey(row.projectId))

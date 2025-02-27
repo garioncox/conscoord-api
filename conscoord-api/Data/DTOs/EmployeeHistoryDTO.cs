@@ -4,6 +4,6 @@ public class EmployeeHistoryDTO
 {
     public required string hours { get; set; }
     public required string location { get; set; }
-    public required string date { get; set; }
+    public required DateTime date { get; set; }
     public required string projectName { get; set; }
 }
