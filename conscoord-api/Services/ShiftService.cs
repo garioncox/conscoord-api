@@ -85,8 +85,12 @@ public class ShiftService : IShiftService
 
     public Task<Shift[]> GetShiftByProjectAsync(Project project)
     {
-        // TODO: KGB-111
-        return Task.FromResult(new Shift[0]);
+        var projectShifts = _context.Shifts
+            .Where(s => s.ProjectShifts
+                .Any(ps => ps.ProjectId == project.Id))
+            .ToArray();
+        
+        return Task.FromResult(projectShifts);
     }
 
     public List<Shift> GetScheduledShiftsByEmpId(int id)
