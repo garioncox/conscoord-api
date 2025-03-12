@@ -39,15 +39,13 @@ public class ShiftControllerTest
         // ACT
         var result = await controller.GetDatesWithErrors(companyId);
 
-        // Ensure the result is an ActionResult<List<string>>
+        // ASSERT
         Assert.That(result, Is.Not.Null);
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
-
-        // Extract the actual List<string>
+        
         var okResult = result.Result as OkObjectResult;
         var errorList = okResult?.Value as List<string>;
 
-        // Now perform assertions
         Assert.That(errorList, Is.Not.Null);
         Assert.That(errorList, Is.Not.Empty);
         Assert.That(errorList, Has.Count.EqualTo(4));
