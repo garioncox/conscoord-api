@@ -24,8 +24,8 @@ public class InvoiceControllerTests
         };
 
         var companyId = 0;
-        var startDate = "2025/02/18";
-        var endDate = "2025/02/19";
+        var startDate = DateTime.Parse("2025/02/18");
+        var endDate = DateTime.Parse("2025/02/19");
         InvoiceDTO dto = new(companyId, startDate, endDate, false);
 
         // ACT
@@ -49,7 +49,7 @@ public class InvoiceControllerTests
         };
 
         var companyId = 0;
-        var startDate = "2025/02/18";
+        var startDate = DateTime.Parse("2025/02/18");
         var endDate = startDate;
         InvoiceDTO dto = new(companyId, startDate, endDate, false);
 
@@ -74,8 +74,8 @@ public class InvoiceControllerTests
         };
 
         var companyId = 0;
-        var startDate = "2025/02/19";
-        var endDate = "2025/02/18";
+        var startDate = DateTime.Parse("2025/02/19");
+        var endDate = DateTime.Parse("2025/02/18");
         InvoiceDTO dto = new(companyId, startDate, endDate, false);
 
         // ACT

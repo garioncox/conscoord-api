@@ -20,10 +20,10 @@ public class ShiftControllerTest
         var mockShiftService = Substitute.For<IShiftService>();
         mockShiftService.GetShiftsWithErrorsByCompany(Arg.Any<int>()).Returns(
             [
-                new Shift() { Id = 0, StartTime = "2024/12/01 00:00:00", EndTime = "2024/12/01 01:00:00" },
-                new Shift() { Id = 1, StartTime = "2024/12/02 00:00:00", EndTime = "2024/12/02 01:00:00" },
-                new Shift() { Id = 2, StartTime = "2024/12/03 00:00:00", EndTime = "2024/12/03 01:00:00" },
-                new Shift() { Id = 3, StartTime = "2024/12/04 00:00:00", EndTime = "2024/12/04 01:00:00" },
+                new Shift() { Id = 0, StartTime = DateTime.Parse("2024/12/01 00:00:00"), EndTime = DateTime.Parse("2024/12/01 01:00:00") },
+                new Shift() { Id = 1, StartTime = DateTime.Parse("2024/12/02 00:00:00"), EndTime = DateTime.Parse("2024/12/02 01:00:00") },
+                new Shift() { Id = 2, StartTime = DateTime.Parse("2024/12/03 00:00:00"), EndTime = DateTime.Parse("2024/12/03 01:00:00") },
+                new Shift() { Id = 3, StartTime = DateTime.Parse("2024/12/04 00:00:00"), EndTime = DateTime.Parse("2024/12/04 01:00:00") },
             ]
         );
 
