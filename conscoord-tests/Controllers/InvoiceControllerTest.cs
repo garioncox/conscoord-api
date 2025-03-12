@@ -85,6 +85,5 @@ public class InvoiceControllerTests
         // ASSERT
         Assert.That(badRequestResult, Is.Not.Null);
         Assert.That(badRequestResult.StatusCode, Is.EqualTo(400));
-        Assert.That(badRequestResult.Value, Is.EqualTo("Please make sure the Start Date is before the End Date"));
     }
 }

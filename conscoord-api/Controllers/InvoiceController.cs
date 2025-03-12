@@ -26,6 +26,8 @@ public class InvoiceController : ControllerBase
         var hasPerms = await _RoleUtils.HasPerms(user, [Role.ADMIN_ROLE]);
         if (!hasPerms) { return NotFound(); }
 
+        if (DTO.startDate > DTO.endDate) { return BadRequest("Selected Start Date cannot be after End Date"); }
+
         var result = await _invoiceService.GetInvoiceInfoByCompanyTimePeriod(DTO);
         return Ok(result);
     }
