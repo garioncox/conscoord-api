@@ -50,7 +50,7 @@ public class ShiftClockInReminderTests
         var shift = new EmployeeShift
         {
             Emp = new Employee { Email = "test@example.com" },
-            ClockInTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")
+            ClockInTime = TimeOnly.FromDateTime(DateTime.MinValue)
         };
 
         mockShiftService.GetShiftsWithinTime(Arg.Any<DateTime>(), Arg.Any<DateTime>())

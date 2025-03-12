@@ -31,8 +31,8 @@ public class ProjectShiftControllerTest
             ProjectId = 0,
             Shift = new()
             {
-                StartTime = "2024/01/01",
-                EndTime = "2024/01/31",
+                StartTime = DateTime.Parse("2024/01/01"),
+                EndTime = DateTime.Parse("2024/01/31"),
                 Status = Shift.STATUS_ACTIVE
             }
         };
@@ -53,8 +53,8 @@ public class ProjectShiftControllerTest
         projectServiceMock.GetProjectByIdAsync(Arg.Any<int>())
             .Returns(new Project()
             {
-                StartDate = "2025/12/01",
-                EndDate = "2025/12/31"
+                StartDate = DateTime.Parse("2025/12/01"),
+                EndDate = DateTime.Parse("2025/12/31")
             });
         var shiftServiceMock = Substitute.For<IShiftService>();
         var roleUtilsMock = Substitute.For<IRoleUtils>();
@@ -70,8 +70,8 @@ public class ProjectShiftControllerTest
             ProjectId = 0,
             Shift = new()
             {
-                StartTime = "2024/01/01",
-                EndTime = "2024/01/31",
+                StartTime = DateTime.Parse("2024/01/01"),
+                EndTime = DateTime.Parse("2024/01/31"),
                 Status = Shift.STATUS_ACTIVE
             }
         };
@@ -92,8 +92,8 @@ public class ProjectShiftControllerTest
         projectServiceMock.GetProjectByIdAsync(Arg.Any<int>())
             .Returns(new Project()
             {
-                StartDate = "2024/12/01",
-                EndDate = "2024/12/31"
+                StartDate = DateTime.Parse("2024/12/01"),
+                EndDate = DateTime.Parse("2024/12/31")
             });
         var shiftServiceMock = Substitute.For<IShiftService>();
         var roleUtilsMock = Substitute.For<IRoleUtils>();
@@ -109,8 +109,8 @@ public class ProjectShiftControllerTest
             ProjectId = 0,
             Shift = new()
             {
-                StartTime = "2025/01/01",
-                EndTime = "2025/01/31",
+                StartTime = DateTime.Parse("2025/01/01"),
+                EndTime = DateTime.Parse("2025/01/31"),
                 Status = Shift.STATUS_ACTIVE
             }
         };
@@ -131,8 +131,8 @@ public class ProjectShiftControllerTest
         projectServiceMock.GetProjectByIdAsync(Arg.Any<int>())
             .Returns(new Project()
             {
-                StartDate = "2024/12/01",
-                EndDate = "2024/12/31"
+                StartDate = DateTime.Parse("2024/12/01"),
+                EndDate = DateTime.Parse("2024/12/31")
             });
         var shiftServiceMock = Substitute.For<IShiftService>();
         var roleUtilsMock = Substitute.For<IRoleUtils>();
@@ -148,8 +148,8 @@ public class ProjectShiftControllerTest
             ProjectId = 0,
             Shift = new()
             {
-                StartTime = "2024/12/10",
-                EndTime = "2024/12/10",
+                StartTime = DateTime.Parse("2024/12/10"),
+                EndTime = DateTime.Parse("2024/12/10"),
                 Status = Shift.STATUS_ACTIVE
             }
         };

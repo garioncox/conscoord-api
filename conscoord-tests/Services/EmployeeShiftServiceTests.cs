@@ -19,15 +19,15 @@ internal class EmployeeShiftServiceTests
             new Shift()
             {
                 Id = 0,
-                StartTime = DateTime.MinValue.ToString(),
-                EndTime = DateTime.MinValue.AddHours(8).ToString(),
+                StartTime = DateTime.MinValue,
+                EndTime = DateTime.MinValue.AddHours(8),
                 RequestedEmployees = 10
             },
             new Shift()
             {
                 Id = 1,
-                StartTime = DateTime.MinValue.AddHours(4).ToString(),
-                EndTime = DateTime.MinValue.AddHours(12).ToString(),
+                StartTime = DateTime.MinValue.AddHours(4),
+                EndTime = DateTime.MinValue.AddHours(12),
                 RequestedEmployees = 10
             },
         ];
@@ -74,8 +74,8 @@ internal class EmployeeShiftServiceTests
             new Shift()
             {
                 Id = 0,
-                StartTime = DateTime.MinValue.ToString(),
-                EndTime = DateTime.MinValue.AddHours(8).ToString(),
+                StartTime = DateTime.MinValue,
+                EndTime = DateTime.MinValue.AddHours(8),
                 RequestedEmployees = 10
             },
         ];

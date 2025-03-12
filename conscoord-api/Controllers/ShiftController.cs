@@ -56,7 +56,7 @@ public class ShiftController : ControllerBase
         }
 
         var errorDates = shiftsList
-            .Select(s => s.StartTime.Date)
+            .Select(s => s.StartTime.Date.ToString("yyyy/MM/dd"))
             .Distinct()
             .ToList();
 
