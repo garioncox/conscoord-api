@@ -48,6 +48,32 @@ public class InvoiceController : ControllerBase
         double grandTotal = 0;
         var maxYPosition = 750;
         var invoicedata = await interfaceService.GetInvoiceInfoByCompanyTimePeriod(DTO);
+
+        // Remove employees with hoursWorked = 0
+        foreach (var project in invoicedata)
+        {
+            foreach (var shift in project.shiftsByProject)
+            {
+                shift.employeesByShift = shift.employeesByShift
+                    .Where(emp => emp.hoursWorked > 0)
+                    .ToList();
+            }
+        }
+
+        // Remove shifts that have no employees left
+        foreach (var project in invoicedata)
+        {
+            project.shiftsByProject = project.shiftsByProject
+                .Where(shift => shift.employeesByShift.Any())
+                .ToList();
+        }
+
+        // Remove projects that have no shifts left
+        invoicedata = invoicedata
+            .Where(project => project.shiftsByProject.Any())
+            .ToList();
+
+
         var companies = await companyService.GetCompanyListAsync();
         var company = companies.Where(c => c.Id == DTO.companyId).FirstOrDefault();
 
