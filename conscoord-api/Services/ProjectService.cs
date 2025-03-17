@@ -1,4 +1,5 @@
 using conscoord_api.Data;
+using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -82,5 +83,19 @@ public class ProjectService : IProjectService
         return await _context.Projects
             .Where(p => p.Id == projectId)
             .FirstAsync();
+    }
+
+    public async Task<ProjectDetailsDTO> GetProjectDetailsAsync(int projectId)
+    {
+        var project = await _context.Projects
+            .Where(p => p.Id == projectId)
+            .FirstAsync();
+
+        var contact = await _context.Employees
+            .Where(c => c.Id == project.Contactinfo)
+            .FirstAsync();
+
+        
+        return new Task<ProjectDetailsDTO>(new ProjectDetailsDTO());
     }
 }

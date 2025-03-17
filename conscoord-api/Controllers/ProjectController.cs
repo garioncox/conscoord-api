@@ -2,7 +2,6 @@ using System.Security.Claims;
 using conscoord_api.Data;
 using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
-using conscoord_api.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace conscoord_api.Controllers;
@@ -101,5 +100,11 @@ public class ProjectController : ControllerBase
             return NotFound("The employee has no associated projects");
         }
         return Ok(result);
+    }
+
+    [HttpGet("get/Details/{projectId}")]
+    public async Task<ProjectDetailsDTO> GetProjectDetailsAsync(int projectId)
+    {
+        return await _projectService.GetProjectDetailsAsync(projectId);
     }
 }
