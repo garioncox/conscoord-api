@@ -16,10 +16,13 @@ public class ShiftService : IShiftService
     {
         return await _context.Shifts
             .Where(s => s.ProjectShifts
-                .Any(ps => ps.Project.CompanyProjects
-                    .Any(cp => cp.CompanyId == companyId)) &&
-                    s.EmployeeShifts.Any(es => es.ClockInTime == null  ||
-                                               es.ClockOutTime == null))
+                .Any(ps =>
+                    ps.Project.CompanyProjects
+                        .Any(cp => cp.CompanyId == companyId)) &&
+                    s.EmployeeShifts
+                        .Any(es => es.ClockInTime == null || es.ClockOutTime == null) &&
+                    s.EmployeeShifts
+                        .All(es => es.IsResidual != true))
             .Distinct()
             .ToListAsync();
     }
