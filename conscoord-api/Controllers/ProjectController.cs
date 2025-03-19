@@ -101,10 +101,4 @@ public class ProjectController : ControllerBase
         }
         return Ok(result);
     }
-
-    [HttpGet("get/Details/{projectId}")]
-    public async Task<ProjectDetailsDTO> GetProjectDetailsAsync(int projectId)
-    {
-        return await _projectService.GetProjectDetailsAsync(projectId);
-    }
 }

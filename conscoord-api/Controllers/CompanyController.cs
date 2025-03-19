@@ -24,6 +24,18 @@ public class CompanyController : ControllerBase
         return await _CompanyService.GetCompanyListAsync();
     }
 
+    [HttpGet("get/name/{projectId}")]
+    public async Task<ActionResult<string>> GetCompanyNameByProjectIdAsync(int projectId)
+    {
+        var name = await _CompanyService.GetCompanyNameByProjectIdAsync(projectId);
+        if (name == null)
+        {
+            return BadRequest("Company not found for the project specifed");
+        }
+
+        return Ok(name);
+    }
+
     [HttpPost("add")]
     public async Task<int> AddCompany([FromBody] CompanyRequestDTO request)
     {
