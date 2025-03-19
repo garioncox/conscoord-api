@@ -49,30 +49,83 @@ public class InvoiceController : ControllerBase
         var maxYPosition = 750;
         var invoicedata = await interfaceService.GetInvoiceInfoByCompanyTimePeriod(DTO);
 
-        // Remove employees with hoursWorked = 0
-        foreach (var project in invoicedata)
+        List<InvoiceInfoDTO> residualShifts = new List<InvoiceInfoDTO>();
+
+        foreach (var project in invoicedata.ToList()) // Iterate over projects
         {
-            foreach (var shift in project.shiftsByProject)
+            foreach (var shift in project.shiftsByProject.ToList()) // Iterate over shifts
             {
+                // Remove employees with hoursWorked == 0
                 shift.employeesByShift = shift.employeesByShift
                     .Where(emp => emp.hoursWorked > 0)
                     .ToList();
+
+                // Remove shift if it has no employees left
+                if (!shift.employeesByShift.Any())
+                {
+                    project.shiftsByProject.Remove(shift);
+                }
+            }
+
+            // Remove project if it has no shifts left
+            if (!project.shiftsByProject.Any())
+            {
+                invoicedata.Remove(project);
             }
         }
 
-        // Remove shifts that have no employees left
-        foreach (var project in invoicedata)
+
+        foreach (var project in invoicedata.ToList())
         {
-            project.shiftsByProject = project.shiftsByProject
-                .Where(shift => shift.employeesByShift.Any())
-                .ToList();
+            // Create a new project DTO for residual shifts
+            var residualProject = new InvoiceInfoDTO
+            {
+                projectId = project.projectId,
+                projectName = project.projectName,
+                shiftsByProject = new List<shiftInfo>()
+            };
+
+            foreach (var shift in project.shiftsByProject.ToList())
+            {
+                // Separate residual employees
+                var shiftResidualEmployees = shift.employeesByShift
+                    .Where(emp => emp.is_residual == true)
+                    .ToList();
+
+                if (shiftResidualEmployees.Any())
+                {
+                    // Add to the residual project
+                    residualProject.shiftsByProject.Add(new shiftInfo
+                    {
+                        shiftId = shift.shiftId,
+                        shiftLocation = shift.shiftLocation,
+                        employeesByShift = shiftResidualEmployees
+                    });
+
+                    // Remove residual employees from the original shift
+                    shift.employeesByShift = shift.employeesByShift
+                        .Where(emp => emp.is_residual != true)
+                        .ToList();
+                }
+
+                // Remove shifts with no employees left
+                if (!shift.employeesByShift.Any())
+                {
+                    project.shiftsByProject.Remove(shift);
+                }
+            }
+
+            // Only add the project if it contains residual shifts
+            if (residualProject.shiftsByProject.Any())
+            {
+                residualShifts.Add(residualProject);
+            }
         }
 
         // Remove projects that have no shifts left
         invoicedata = invoicedata
             .Where(project => project.shiftsByProject.Any())
             .ToList();
-
 
         var companies = await companyService.GetCompanyListAsync();
         var company = companies.Where(c => c.Id == DTO.companyId).FirstOrDefault();
@@ -82,12 +135,12 @@ public class InvoiceController : ControllerBase
             return BadRequest("Ensure that a company is passed in");
         }
 
-        if (invoicedata.Count == 0)
+        if (invoicedata.Count == 0 && residualShifts.Count == 0)
         {
             return BadRequest("There are no valid shifts in this time period");
         }
 
-        Dictionary<int, double> projectGrandTotals = new Dictionary<int, double>();
+        Dictionary<(int, bool), double> projectGrandTotals = new Dictionary<(int, bool), double>();
         List<InvoiceInfoDTO> itemsToRemove = new List<InvoiceInfoDTO>();
         List<ShiftDTO> shiftsToRemove = new List<ShiftDTO>();
         List<EmployeeDTO> employeesToRemove = new List<EmployeeDTO>();
@@ -100,13 +153,34 @@ public class InvoiceController : ControllerBase
                 {
                     grandTotal += employee.hoursWorked * 75;
 
-                    if (projectGrandTotals.ContainsKey(data.projectId))
+                    if (projectGrandTotals.ContainsKey((data.projectId,false)))
                     {
-                        projectGrandTotals[data.projectId] = projectGrandTotals[data.projectId] + (employee.hoursWorked * 75);
+                        projectGrandTotals[(data.projectId, false)] = projectGrandTotals[(data.projectId, false)] + (employee.hoursWorked * 75);
                     }
                     else
                     {
-                        projectGrandTotals[data.projectId] = employee.hoursWorked * 75;
+                        projectGrandTotals[(data.projectId, false)] = employee.hoursWorked * 75;
+                    }
+                }
+            }
+        }
+
+        //get project totals for the residual shifts
+        foreach (var data in residualShifts.ToList())
+        {
+            foreach (var shift in data.shiftsByProject)
+            {
+                foreach (var employee in shift.employeesByShift)
+                {
+                    grandTotal += employee.hoursWorked * 75;
+
+                    if (projectGrandTotals.ContainsKey((data.projectId, true)))
+                    {
+                        projectGrandTotals[(data.projectId, true)] = projectGrandTotals[(data.projectId, true)] + (employee.hoursWorked * 75);
+                    }
+                    else
+                    {
+                        projectGrandTotals[(data.projectId, true)] = employee.hoursWorked * 75;
                     }
                 }
             }
@@ -206,7 +280,7 @@ public class InvoiceController : ControllerBase
             foreach (var shift in data.shiftsByProject)
             {
 
-                        yPosition += 20;
+                yPosition += 20;
                 checkIfNewPageNeeded(maxYPosition, document, ref page, ref gfx, ref yPosition);
 
                 gfx.DrawString("Shift: " + shift.shiftId + " - " + shift.shiftLocation, subHeaderFont, subHeaderBrush,
@@ -219,8 +293,6 @@ public class InvoiceController : ControllerBase
 
                     yPosition += 20;
                     checkIfNewPageNeeded(maxYPosition, document, ref page, ref gfx, ref yPosition);
-
-                    textBrush = employee.is_residual == true ? XBrushes.Orange : XBrushes.Black;
 
                     gfx.DrawString($"Employee: {employee.employeeId} - {employee.employeeName}", normalFont, textBrush,
                         new XRect(80, yPosition, page.Width - 200, page.Height),
@@ -248,7 +320,76 @@ public class InvoiceController : ControllerBase
                 new XRect(page.Width - 220, yPosition + 5, 100, page.Height),
                 XStringFormats.TopRight);
 
-            gfx.DrawString($"{projectGrandTotals[data.projectId]:C}", subHeaderFont, XBrushes.Black,
+            gfx.DrawString($"{projectGrandTotals[(data.projectId, false)]:C}", subHeaderFont, XBrushes.Black,
+                new XRect(page.Width - 150, yPosition + 5, 100, page.Height),
+                XStringFormats.TopRight);
+
+            // Horizontal Line
+            yPosition += 40;
+            gfx.DrawLine(XPens.DarkGray, 40, yPosition, page.Width - 40, yPosition);
+        }
+
+        gfx.DrawString("Residual Shifts", titleFont, XBrushes.Black,
+        new XRect(page.Width / 2 - 30, yPosition + 5, 100, page.Height),
+        XStringFormats.TopRight);
+
+        // Horizontal Line
+        yPosition += 40;
+        gfx.DrawLine(XPens.DarkGray, 40, yPosition, page.Width - 40, yPosition);
+
+        foreach (var data in residualShifts)
+        {
+            yPosition += 20;
+            checkIfNewPageNeeded(maxYPosition, document, ref page, ref gfx, ref yPosition);
+
+            gfx.DrawString(data.projectId + " - " + data.projectName, headerFont, headerBrush,
+                new XRect(40, yPosition, page.Width - 80, page.Height),
+                XStringFormats.TopLeft);
+
+            foreach (var shift in data.shiftsByProject)
+            {
+
+                yPosition += 20;
+                checkIfNewPageNeeded(maxYPosition, document, ref page, ref gfx, ref yPosition);
+
+                gfx.DrawString("Shift: " + shift.shiftId + " - " + shift.shiftLocation, subHeaderFont, subHeaderBrush,
+                    new XRect(60, yPosition, page.Width - 80, page.Height),
+                    XStringFormats.TopLeft);
+
+                foreach (var employee in shift.employeesByShift)
+                {
+                    await interfaceService.updateHasBeenInvoiced(employee, shift);
+
+                    yPosition += 20;
+                    checkIfNewPageNeeded(maxYPosition, document, ref page, ref gfx, ref yPosition);
+
+                    gfx.DrawString($"Employee: {employee.employeeId} - {employee.employeeName}", normalFont, textBrush,
+                        new XRect(80, yPosition, page.Width - 200, page.Height),
+                        XStringFormats.TopLeft);
+
+                    gfx.DrawString($"{employee.hoursWorked:F2}", normalFont, textBrush,
+                        new XRect(310, yPosition, 100, page.Height),
+                        XStringFormats.TopRight);
+                    gfx.DrawString("75", normalFont, XBrushes.Black,
+                        new XRect(page.Width - 230, yPosition, 100, page.Height),
+                        XStringFormats.TopRight);
+                    gfx.DrawString($"{employee.hoursWorked * 75:F2}", normalFont, XBrushes.Black,
+                        new XRect(page.Width - 150, yPosition, 100, page.Height),
+                        XStringFormats.TopRight);
+
+                    textBrush = XBrushes.Black;
+
+                    hoursCounter += employee.hoursWorked;
+                }
+            }
+
+            yPosition += 20;
+
+            gfx.DrawString("Project Total: ", subHeaderFont, XBrushes.Black,
+                new XRect(page.Width - 220, yPosition + 5, 100, page.Height),
+                XStringFormats.TopRight);
+
+            gfx.DrawString($"{projectGrandTotals[(data.projectId, true)]:C}", subHeaderFont, XBrushes.Black,
                 new XRect(page.Width - 150, yPosition + 5, 100, page.Height),
                 XStringFormats.TopRight);
 
