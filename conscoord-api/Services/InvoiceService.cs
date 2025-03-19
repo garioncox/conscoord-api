@@ -96,13 +96,14 @@ public class InvoiceService : IInvoiceService
         return result;
     }
 
+    //TODO: FIX THIS - need to create invoice, save to table and update this value to the new invoice
     public async Task updateHasBeenInvoiced(employeeInfo rowsEmployee, shiftInfo rowsShift)
     {
         var dbEmpShift = await _context.EmployeeShifts.FirstOrDefaultAsync(es => es.EmpId == rowsEmployee.employeeId && es.ShiftId == rowsShift.shiftId);
 
         if (dbEmpShift is not null)
         {
-            dbEmpShift.HasBeenInvoiced = true;
+            //dbEmpShift.HasBeenInvoiced = true;
             await _context.SaveChangesAsync();
         }
     }

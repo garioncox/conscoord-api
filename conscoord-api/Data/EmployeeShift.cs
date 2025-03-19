@@ -17,15 +17,17 @@ public partial class EmployeeShift
 
     public string? Notes { get; set; }
 
-    public bool? HasBeenInvoiced { get; set; }
+    public bool DidNotWork { get; set; }
 
-    public bool? DidNotWork { get; set; }
+    public bool ReportedCanceled { get; set; }
 
-    public bool? ReportedCanceled { get; set; }
+    public bool IsResidual { get; set; }
 
-    public bool? IsResidual { get; set; }
+    public int? InvoiceId { get; set; }
 
     public virtual Employee Emp { get; set; } = null!;
+
+    public virtual Invoice? Invoice { get; set; }
 
     public virtual Shift Shift { get; set; } = null!;
 }

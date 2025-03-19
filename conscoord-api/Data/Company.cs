@@ -12,4 +12,6 @@ public partial class Company
     public virtual ICollection<CompanyProject> CompanyProjects { get; set; } = new List<CompanyProject>();
 
     public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
+
+    public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
 }

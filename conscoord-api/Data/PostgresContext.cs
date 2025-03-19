@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using conscoord_api.Data.DTOs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -27,6 +29,8 @@ public partial class PostgresContext : DbContext
 
     public virtual DbSet<EmployeeShift> EmployeeShifts { get; set; }
 
+    public virtual DbSet<Invoice> Invoices { get; set; }
+
     public virtual DbSet<Project> Projects { get; set; }
 
     public virtual DbSet<ProjectShift> ProjectShifts { get; set; }
@@ -40,6 +44,7 @@ public partial class PostgresContext : DbContext
     {
         optionsBuilder.UseNpgsql(_configuration.DB);
     }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasPostgresEnum("practicum2425", "status", new[] { "ACTIVE", "ARCHIVED", "COMPLETED" });
@@ -125,7 +130,7 @@ public partial class PostgresContext : DbContext
             entity.Property(e => e.ClockOutTime).HasColumnName("clock_out_time");
             entity.Property(e => e.DidNotWork).HasColumnName("did_not_work");
             entity.Property(e => e.EmpId).HasColumnName("emp_id");
-            entity.Property(e => e.HasBeenInvoiced).HasColumnName("has_been_invoiced");
+            entity.Property(e => e.InvoiceId).HasColumnName("invoice_id");
             entity.Property(e => e.IsResidual).HasColumnName("is_residual");
             entity.Property(e => e.Notes)
                 .HasMaxLength(500)
@@ -138,10 +143,34 @@ public partial class PostgresContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("employee_shift_emp_id_fkey");
 
+            entity.HasOne(d => d.Invoice).WithMany(p => p.EmployeeShifts)
+                .HasForeignKey(d => d.InvoiceId)
+                .HasConstraintName("invoice_id_fk");
+
             entity.HasOne(d => d.Shift).WithMany(p => p.EmployeeShifts)
                 .HasForeignKey(d => d.ShiftId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("employee_shift_shift_id_fkey");
+        });
+
+
+        modelBuilder.Entity<Invoice>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("invoice_pkey");
+
+            entity.ToTable("invoice", "practicum2425");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.CompanyId).HasColumnName("company_id");
+            entity.Property(e => e.InvoiceNumber).HasColumnName("invoice_number");
+            entity.Property(e => e.InvoiceUrl)
+                .HasMaxLength(150)
+                .HasColumnName("invoice_url");
+            entity.Property(e => e.PostedDate).HasColumnName("posted_date");
+
+            entity.HasOne(d => d.Company).WithMany(p => p.Invoices)
+                .HasForeignKey(d => d.CompanyId)
+                .HasConstraintName("company_id_fk");
         });
 
         modelBuilder.Entity<Project>(entity =>

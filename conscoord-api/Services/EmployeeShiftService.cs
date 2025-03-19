@@ -37,7 +37,6 @@ public class EmployeeShiftService : IEmployeeShiftService
         newEmpShift.ClockInTime = empShift.ClockInTime;
         newEmpShift.ClockOutTime = empShift.ClockOutTime;
         newEmpShift.DidNotWork = empShift.Didnotwork;
-        newEmpShift.HasBeenInvoiced = empShift.Hasbeeninvoiced;
         newEmpShift.Notes = empShift.Notes;
         newEmpShift.ReportedCanceled = empShift.Reportedcanceled;
 
