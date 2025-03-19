@@ -51,9 +51,10 @@ public class InvoiceController : ControllerBase
 
         List<InvoiceInfoDTO> residualShifts = new List<InvoiceInfoDTO>();
 
-        foreach (var project in invoicedata.ToList()) // Iterate over projects
+        //Remove data with errors
+        foreach (var project in invoicedata.ToList()) 
         {
-            foreach (var shift in project.shiftsByProject.ToList()) // Iterate over shifts
+            foreach (var shift in project.shiftsByProject.ToList()) 
             {
                 // Remove employees with hoursWorked == 0
                 shift.employeesByShift = shift.employeesByShift
@@ -74,7 +75,7 @@ public class InvoiceController : ControllerBase
             }
         }
 
-
+        //Separate out the residual shifts
         foreach (var project in invoicedata.ToList())
         {
             // Create a new project DTO for residual shifts
@@ -145,6 +146,7 @@ public class InvoiceController : ControllerBase
         List<ShiftDTO> shiftsToRemove = new List<ShiftDTO>();
         List<EmployeeDTO> employeesToRemove = new List<EmployeeDTO>();
 
+        //Calculate project totals and grand total
         foreach (var data in invoicedata.ToList())
         {
             foreach (var shift in data.shiftsByProject)
