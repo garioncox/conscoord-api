@@ -35,7 +35,6 @@ public class InvoiceService : IInvoiceService
         var allInvoiceInfo = _context.InvoiceData.FromSqlRaw(SQLQuery)
                 .AsNoTracking()
                 .ToList();
-        Console.WriteLine("Include residuals is " + DTO.includeResidualShifts);
 
         List<InvoiceInfoDTO> result = new List<InvoiceInfoDTO>();
         Dictionary<int, int> projectIdToIndex = new Dictionary<int, int>();    
