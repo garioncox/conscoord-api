@@ -20,6 +20,6 @@ public class employeeInfo
     public required string employeeName { get; set; }
     public decimal employeePayRate { get; set; }
     public double hoursWorked { get; set; }
-    public bool? has_been_invoiced { get; set; }
+    public int? invoiceId { get; set; }
     public bool? is_residual { get; set; }
 }

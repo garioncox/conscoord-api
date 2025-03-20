@@ -16,9 +16,9 @@ public class InvoiceService : IInvoiceService
 
     public async Task<List<InvoiceInfoDTO>> GetInvoiceInfoByCompanyTimePeriod(InvoiceDTO DTO)
     {
-        string SQLQuery = @$"select p.id as projectId,p.""location"" as projectName, s.end_time as shiftEnd,
+        var SQLQuery = @$"select p.id as projectId,p.""location"" as projectName, s.end_time as shiftEnd,
                 s.id as shiftId,s.""location"" as shiftName, 
-                e.id as employeeId, e.name as employeeName, e.payrate, es.clock_in_time as clockInTime, es.clock_out_time as clockOutTime, es.has_been_invoiced, es.is_residual
+                e.id as employeeId, e.name as employeeName, e.payrate, es.clock_in_time as clockInTime, es.clock_out_time as clockOutTime, es.invoice_id as InvoiceId, es.is_residual
                 from practicum2425.project p
                 join practicum2425.company_project cp
                 on cp.project_id = p.id
@@ -30,7 +30,7 @@ public class InvoiceService : IInvoiceService
                 on es.shift_id = s.id
                 join practicum2425.employee e
                 on e.id = es.emp_id
-                where cp.company_id = {DTO.companyId} and es.has_been_invoiced = false;";
+                where cp.company_id = {DTO.companyId} and es.invoice_id is null;";
 
         var allInvoiceInfo = _context.InvoiceData.FromSqlRaw(SQLQuery)
                 .AsNoTracking()
@@ -59,7 +59,7 @@ public class InvoiceService : IInvoiceService
                 continue;
             }
 
-            var rowsEmployee = new employeeInfo { employeeId = row.employeeId, employeeName = row.employeeName, employeePayRate = row.payrate ?? 75, hoursWorked = hoursWorked, has_been_invoiced = row.has_been_invoiced, is_residual = row.is_residual };
+            var rowsEmployee = new employeeInfo { employeeId = row.employeeId, employeeName = row.employeeName, employeePayRate = row.payrate ?? 75, hoursWorked = hoursWorked, invoiceId = row.invoiceId, is_residual = row.is_residual };
             var employees = new List<employeeInfo> { rowsEmployee };
             var rowsShift = new shiftInfo { shiftId = row.shiftId, shiftLocation = row.shiftName, employeesByShift = employees };
 
@@ -103,7 +103,7 @@ public class InvoiceService : IInvoiceService
 
         if (dbEmpShift is not null)
         {
-            //dbEmpShift.HasBeenInvoiced = true;
+            dbEmpShift.InvoiceId = 0;
             await _context.SaveChangesAsync();
         }
     }
