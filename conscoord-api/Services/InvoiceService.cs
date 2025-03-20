@@ -36,7 +36,6 @@ public class InvoiceService : IInvoiceService
                 .AsNoTracking()
                 .ToList();
 
-
         List<InvoiceInfoDTO> result = new List<InvoiceInfoDTO>();
         Dictionary<int, int> projectIdToIndex = new Dictionary<int, int>();    
 
@@ -54,12 +53,29 @@ public class InvoiceService : IInvoiceService
 
             var shiftEndDate = row.shiftEnd;
 
-            if (shiftEndDate < DTO.startDate || shiftEndDate > DTO.endDate)
+            //include residual shifts means anything in the past will show up
+            if (DTO.includeResidualShifts)
             {
-                continue;
+                if (row.is_residual == null || (bool)!row.is_residual)
+                {
+                    if (shiftEndDate < DTO.startDate || shiftEndDate > DTO.endDate)
+                    {
+                        continue;
+                    }
+                }
             }
 
+
             var rowsEmployee = new employeeInfo { employeeId = row.employeeId, employeeName = row.employeeName, employeePayRate = row.payrate ?? 75, hoursWorked = hoursWorked, invoiceId = row.invoiceId, is_residual = row.is_residual };
+
+            else
+            {
+                if (shiftEndDate < DTO.startDate || shiftEndDate > DTO.endDate)
+                {
+                    continue;
+                }
+            }
+
             var employees = new List<employeeInfo> { rowsEmployee };
             var rowsShift = new shiftInfo { shiftId = row.shiftId, shiftLocation = row.shiftName, employeesByShift = employees };
 
