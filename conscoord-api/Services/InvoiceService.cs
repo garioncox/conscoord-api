@@ -64,10 +64,6 @@ public class InvoiceService : IInvoiceService
                     }
                 }
             }
-
-
-            var rowsEmployee = new employeeInfo { employeeId = row.employeeId, employeeName = row.employeeName, employeePayRate = row.payrate ?? 75, hoursWorked = hoursWorked, invoiceId = row.invoiceId, is_residual = row.is_residual };
-
             else
             {
                 if (shiftEndDate < DTO.startDate || shiftEndDate > DTO.endDate)
@@ -75,6 +71,7 @@ public class InvoiceService : IInvoiceService
                     continue;
                 }
             }
+            var rowsEmployee = new employeeInfo { employeeId = row.employeeId, employeeName = row.employeeName, employeePayRate = row.payrate ?? 75, hoursWorked = hoursWorked, invoiceId = row.invoiceId, is_residual = row.is_residual };
 
             var employees = new List<employeeInfo> { rowsEmployee };
             var rowsShift = new shiftInfo { shiftId = row.shiftId, shiftLocation = row.shiftName, employeesByShift = employees };
