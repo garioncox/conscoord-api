@@ -1,7 +1,6 @@
 using conscoord_api.Data;
 using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
-using conscoord_api.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace conscoord_api.Controllers;
@@ -27,6 +26,10 @@ public class CompanyController : ControllerBase
     [HttpGet("get/name/{projectId}")]
     public async Task<ActionResult<string>> GetCompanyNameByProjectIdAsync(int projectId)
     {
+        var user = HttpContext.User;
+        var hasPerms = await _RoleUtils.HasPerms(user, Role.ALL_ROLES);
+        if (!hasPerms) { return BadRequest("User is not logged in"); }
+
         var name = await _CompanyService.GetCompanyNameByProjectIdAsync(projectId);
         if (name == null)
         {
