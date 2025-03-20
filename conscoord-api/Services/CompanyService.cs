@@ -29,4 +29,22 @@ public class CompanyService : ICompanyService
         var NewCompany = await _context.Companies.FirstOrDefaultAsync(c => c.Name == companyName);
         return NewCompany!.Id;
     }
+
+    public async Task<string?> GetCompanyNameByProjectIdAsync(int projectId)
+    {
+        try
+        {
+            var company = await _context.Companies
+                .Include(c => c.CompanyProjects)
+                .ThenInclude(cp => cp.Project)
+                .Where(c => c.CompanyProjects.Any(cp => cp.Project.Id == projectId))
+                .FirstAsync();
+
+            return company.Name;
+        }
+        catch (InvalidOperationException)
+        {
+            return null;
+        }
+    }
 }
