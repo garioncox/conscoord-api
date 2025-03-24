@@ -206,7 +206,7 @@ public class InvoiceController : ControllerBase
             foreach (var shift in data.shiftsByProject)
             {
 
-                        yPosition += 20;
+                yPosition += 20;
                 checkIfNewPageNeeded(maxYPosition, document, ref page, ref gfx, ref yPosition);
 
                 gfx.DrawString("Shift: " + shift.shiftId + " - " + shift.shiftLocation, subHeaderFont, subHeaderBrush,

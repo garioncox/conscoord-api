@@ -16,7 +16,7 @@ public class InvoiceService : IInvoiceService
 
     public async Task<List<InvoiceInfoDTO>> GetInvoiceInfoByCompanyTimePeriod(InvoiceDTO DTO)
     {
-        string SQLQuery = @$"select p.id as projectId,p.""location"" as projectName, s.end_time as shiftEnd,
+        var SQLQuery = @$"select p.id as projectId,p.""location"" as projectName, s.end_time as shiftEnd,
                 s.id as shiftId,s.""location"" as shiftName, 
                 e.id as employeeId, e.name as employeeName, e.payrate, es.clock_in_time as clockInTime, es.clock_out_time as clockOutTime, es.has_been_invoiced, es.is_residual
                 from practicum2425.project p
@@ -38,7 +38,7 @@ public class InvoiceService : IInvoiceService
 
 
         List<InvoiceInfoDTO> result = new List<InvoiceInfoDTO>();
-        Dictionary<int, int> projectIdToIndex = new Dictionary<int, int>();    
+        Dictionary<int, int> projectIdToIndex = new Dictionary<int, int>();
 
 
         foreach (var row in allInvoiceInfo)
