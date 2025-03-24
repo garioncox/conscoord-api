@@ -42,7 +42,7 @@ public class ShiftControllerTest
         // ASSERT
         Assert.That(result, Is.Not.Null);
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
-        
+
         var okResult = result.Result as OkObjectResult;
         var errorList = okResult?.Value as List<string>;
 

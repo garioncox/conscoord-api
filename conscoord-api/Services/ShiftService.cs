@@ -92,7 +92,7 @@ public class ShiftService : IShiftService
             .Where(s => s.ProjectShifts
                 .Any(ps => ps.ProjectId == project.Id))
             .ToArray();
-        
+
         return Task.FromResult(projectShifts);
     }
 
