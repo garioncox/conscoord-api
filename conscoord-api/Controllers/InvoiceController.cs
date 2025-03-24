@@ -52,9 +52,9 @@ public class InvoiceController : ControllerBase
         List<InvoiceInfoDTO> residualShifts = new List<InvoiceInfoDTO>();
 
         //Remove data with errors
-        foreach (var project in invoicedata.ToList()) 
+        foreach (var project in invoicedata.ToList())
         {
-            foreach (var shift in project.shiftsByProject.ToList()) 
+            foreach (var shift in project.shiftsByProject.ToList())
             {
                 // Remove employees with hoursWorked == 0
                 shift.employeesByShift = shift.employeesByShift
@@ -155,7 +155,7 @@ public class InvoiceController : ControllerBase
                 {
                     grandTotal += employee.hoursWorked * 75;
 
-                    if (projectGrandTotals.ContainsKey((data.projectId,false)))
+                    if (projectGrandTotals.ContainsKey((data.projectId, false)))
                     {
                         projectGrandTotals[(data.projectId, false)] = projectGrandTotals[(data.projectId, false)] + (employee.hoursWorked * 75);
                     }

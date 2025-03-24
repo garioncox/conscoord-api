@@ -37,7 +37,7 @@ public class InvoiceService : IInvoiceService
                 .ToList();
 
         List<InvoiceInfoDTO> result = new List<InvoiceInfoDTO>();
-        Dictionary<int, int> projectIdToIndex = new Dictionary<int, int>();    
+        Dictionary<int, int> projectIdToIndex = new Dictionary<int, int>();
 
 
         foreach (var row in allInvoiceInfo)
