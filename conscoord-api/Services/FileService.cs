@@ -13,6 +13,12 @@ public class FileService
     {
         _configurations = customConfiguration.Value;
         _key = _configurations.AZURE_KEY;
+
+        //https://www.youtube.com/watch?v=DzQ7CNnb9yM @3:40
+        var credential = new StorageShareKeyCredential(_storageAccount, _key);
+        var blobUri = $"https://{_storageAccount}.blob.core.windows.net";
+        var blobServiceClinet = new BlobServiceClient(new Uri(blobUri), credential);
+        _filesContainer = blobServiceClinet.GetBlobContainerClient("files");
     }
 
     private readonly string _storageAccount = "invoices";
