@@ -1,3 +1,5 @@
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using conscoord_api.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,14 +15,14 @@ public class AzureFilesController : Controller
         _fileService = fileService;
     }
 
-    [HttpGet("")]
+    [HttpGet("")] figure out how to get only one company (Maybe set up a new Container for each company)
     public async Task<IActionResult> GetAllFiles()
     {
         var result = await _fileService.GetAll();
         return Ok(result);
     }
 
-    [HttpPost()]
+    [HttpPost()] likley wont need after it works in invoiceServce
     public async Task<IActionResult> Upload(IFormFile file)
     {
         var result = await _fileService.uploadAsync(file);

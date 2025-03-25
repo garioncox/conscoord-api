@@ -420,7 +420,7 @@ public class InvoiceController : ControllerBase
             XStringFormats.TopRight);
 
         // Save the document
-        var filename = $"Invoice {DTO.startDate} - {DTO.endDate}";
+        var filename = $"Invoice {Invoice name} {DTO.startDate} - {DTO.endDate}";
         document.Save(filename);
 
         var currentFilePath = System.IO.Path.GetFullPath(".");

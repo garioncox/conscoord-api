@@ -14,6 +14,8 @@ public class InvoiceService : IInvoiceService
         _context = context;
     }
 
+    public int create new invoice
+
     public async Task<List<InvoiceInfoDTO>> GetInvoiceInfoByCompanyTimePeriod(InvoiceDTO DTO)
     {
         var SQLQuery = @$"select p.id as projectId,p.""location"" as projectName, s.end_time as shiftEnd,
