@@ -50,8 +50,8 @@ builder.Services.Configure<CustomConfiguration>(o =>
         o.SMTP_PASSWORD = Environment.GetEnvironmentVariable("SMTP_PASSWORD") ?? envVars["SMTP_PASSWORD"];
         o.DB = Environment.GetEnvironmentVariable("DB") ?? envVars["DB"];
         o.EMAIL_ENABLED = (Environment.GetEnvironmentVariable("EMAIL_ENABLED") ?? envVars["EMAIL_ENABLED"]) == "TRUE";
-        o.AZURE_KEY = Environment.GetEnvironmentVariable("")?? envVars["SMPT_AZURE_KEY"];
-        o.AZURE_CONNECTION = Environment.GetEnvironmentVariable("") ?? envVars["SMPT_AZURE_CONNECTION"];
+        o.AZURE_KEY = Environment.GetEnvironmentVariable("AZURE_KEY")?? envVars["AZURE_KEY"];
+        o.AZURE_CONNECTION = Environment.GetEnvironmentVariable("AZURE_CONNECTION") ?? envVars["AZURE_CONNECTION"];
     }
 );
 
@@ -69,7 +69,7 @@ builder.Services.AddScoped<IEmailService, EmailController>();
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 builder.Services.AddScoped<ShiftClockInReminder>();
 builder.Services.AddScoped<IRoleUtils, RoleUtils>();
-builder.Services.AddScoped<FileService>();
+builder.Services.AddSingleton<AzureFileService>();
 
 var app = builder.Build();
 
