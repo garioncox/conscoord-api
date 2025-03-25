@@ -57,10 +57,29 @@ public class EmployeeShiftController(IEmployeeShiftService service, IShiftServic
     }
 
     [HttpDelete("delete/{Id}")]
-    public async Task DeleteEmpShift(int Id)
+    public async Task DeleteEmpShiftByShiftId(int Id)
     {
-        await _empShiftService.DeleteEmpShiftAsync(Id);
+        await _empShiftService.DeleteEmpShiftByShiftIdAsync(Id);
     }
+
+    [HttpDelete("delete")]
+    public async Task<ActionResult> DeleteEmpShift(int shiftId, int employeeId)
+    {
+        try
+        {
+            var deleted = await _empShiftService.DeleteEmpShiftByShiftIdAndEmployeeIdAsync(shiftId, employeeId);
+            if (!deleted)
+            {
+                return BadRequest("Employee Not Connected To Shift.");
+            }
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal Server Error: {ex.Message}");
+        }
+    }
+
 
     [HttpGet("getall")]
     public List<EmployeeShift> GetAllShifts()

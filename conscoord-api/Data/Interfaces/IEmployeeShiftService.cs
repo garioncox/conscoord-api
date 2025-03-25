@@ -6,7 +6,8 @@ public interface IEmployeeShiftService
 {
     List<EmployeeShift> GetallEmployeeShifts();
     Task CreateEmployeeShift(EmployeeShift empShift);
-    Task DeleteEmpShiftAsync(int shiftId);
+    Task DeleteEmpShiftByShiftIdAsync(int shiftId);
+    Task<bool> DeleteEmpShiftByShiftIdAndEmployeeIdAsync(int shiftId, int employeeId);
     List<EmployeeShift> GetFutureShifts();
     List<EmployeeShift> GetShiftsWithinTime(DateTime start, DateTime End);
     Task UpdateEmpShift(EmployeeShiftDTO empShift);

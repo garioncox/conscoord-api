@@ -1,6 +1,8 @@
 using conscoord_api.Data;
 using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace conscoord_api.Services;
@@ -44,7 +46,7 @@ public class EmployeeShiftService : IEmployeeShiftService
         await _context.SaveChangesAsync();
     }
 
-    public async Task DeleteEmpShiftAsync(int shiftId)
+    public async Task DeleteEmpShiftByShiftIdAsync(int shiftId)
     {
         var shift = _context.EmployeeShifts
             .Where(s => s.ShiftId == shiftId)
@@ -115,6 +117,7 @@ public class EmployeeShiftService : IEmployeeShiftService
             {
                 return new EmployeeHistoryDTO()
                 {
+                    shiftId = es.ShiftId,
                     location = es.Shift.Location ?? "",
                     hours = "--",
                     date = es.Shift.StartTime,
@@ -128,6 +131,7 @@ public class EmployeeShiftService : IEmployeeShiftService
 
             return new EmployeeHistoryDTO()
             {
+                shiftId = es.ShiftId,
                 location = es.Shift.Location ?? "",
                 hours = hoursWorked.Value.TotalHours.ToString(),
                 date = es.Shift.StartTime,
@@ -137,5 +141,20 @@ public class EmployeeShiftService : IEmployeeShiftService
         }).ToList();
 
         return value;
+    }
+
+    public async Task<bool> DeleteEmpShiftByShiftIdAndEmployeeIdAsync(int shiftId, int employeeId)
+    {
+        var empShift = await _context.EmployeeShifts
+            .FirstOrDefaultAsync(es => es.ShiftId == shiftId && es.EmpId == employeeId);
+
+        if (empShift == null)
+        {
+            return false;
+        }
+
+        _context.EmployeeShifts.Remove(empShift);
+        await _context.SaveChangesAsync();
+        return true;
     }
 }
