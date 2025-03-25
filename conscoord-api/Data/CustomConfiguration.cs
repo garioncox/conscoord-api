@@ -6,4 +6,6 @@ public class CustomConfiguration
     public required string SMTP_PASSWORD { get; set; }
     public required string DB { get; set; }
     public required bool EMAIL_ENABLED { get; set; }
+    public required string AZURE_KEY { get; set; }
+    public required string AZURE_CONNECTION { get; set; }
 }
