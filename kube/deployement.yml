@@ -32,6 +32,10 @@ spec:
               value: "${SMTP_PASSWORD}"
             - name: EMAIL_ENABLED
               value: "${EMAIL_ENABLED}"
+            - name: AZURE_KEY
+              value: "${AZURE_KEY}"
+            - name: AZURE_CONNECTION
+              value: "${AZURE_CONNECTION}"
           ports:
             - containerPort: 8080
           readinessProbe:

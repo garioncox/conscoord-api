@@ -1,6 +1,8 @@
+using System.Collections;
 using conscoord_api.Data;
 using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
+using conscoord_api.Services;
 using Microsoft.AspNetCore.Mvc;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
@@ -12,11 +14,13 @@ public class InvoiceController : ControllerBase
 {
     private readonly IInvoiceService _invoiceService;
     private readonly IRoleUtils _RoleUtils;
+    private readonly AzureFileService _FilesService;
 
-    public InvoiceController(IInvoiceService invoiceService, IRoleUtils roleUtils)
+    public InvoiceController(IInvoiceService invoiceService, IRoleUtils roleUtils, AzureFileService filesService)
     {
         _invoiceService = invoiceService;
         _RoleUtils = roleUtils;
+        _FilesService = filesService;
     }
 
     [HttpPost("getInvoicePreview")]
@@ -416,19 +420,23 @@ public class InvoiceController : ControllerBase
             XStringFormats.TopRight);
 
         // Save the document
-        var filename = "Invoice.pdf";
+        var filename = $"Invoice {DTO.startDate} - {DTO.endDate}";
         document.Save(filename);
 
         var currentFilePath = System.IO.Path.GetFullPath(".");
         var fileBytes = System.IO.File.ReadAllBytes(currentFilePath + "/" + filename);
 
-        if (System.IO.File.Exists(System.IO.Path.Combine(currentFilePath, filename)))
-        {
-            System.IO.File.Delete(System.IO.Path.Combine(currentFilePath, filename));
-        }
+        //if (System.IO.File.Exists(System.IO.Path.Combine(currentFilePath, filename)))
+        //{
+        //    System.IO.File.Delete(System.IO.Path.Combine(currentFilePath, filename));
+        //}
 
-        return File(fileBytes, "application/pdf", "Invoice.pdf");
+        //upload to azure
+        var stream = new MemoryStream(fileBytes);
+        IFormFile file = new FormFile(stream, 0, fileBytes.Length, filename, filename);
+        await _FilesService.uploadAsync(file);
 
+        return File(fileBytes, "application/pdf", filename);
     }
 
     private static void checkIfNewPageNeeded(int maxYPosition, PdfDocument document, ref PdfPage page, ref XGraphics gfx, ref double yPosition)
