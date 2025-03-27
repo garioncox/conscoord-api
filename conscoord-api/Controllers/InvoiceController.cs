@@ -36,6 +36,11 @@ public class InvoiceController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("getAll/{companyId}")]
+    public async Task<List<AzureInvoiceDTO>> GetAllInvoicesByCompany(int companyId) {
+        return await _invoiceService.GetAllInvoicesByCompany(companyId);
+    }
+
     [HttpPost("generateInvoice")]
     public async Task<IActionResult> GeneratePDF(IInvoiceService interfaceService, InvoiceDTO DTO, ICompanyService companyService)
     {

@@ -6,4 +6,5 @@ public interface IInvoiceService
 {
     Task<List<InvoiceInfoDTO>> GetInvoiceInfoByCompanyTimePeriod(InvoiceDTO DTO);
     Task updateHasBeenInvoiced(employeeInfo rowsEmployee, shiftInfo rowsShift);
+    Task<List<AzureInvoiceDTO>> GetAllInvoicesByCompany(int companyId);
 }
