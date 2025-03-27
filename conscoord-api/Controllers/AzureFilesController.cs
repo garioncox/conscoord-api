@@ -15,14 +15,21 @@ public class AzureFilesController : Controller
         _fileService = fileService;
     }
 
-    [HttpGet("")] figure out how to get only one company (Maybe set up a new Container for each company)
+
+    [HttpGet("invoice/{companyName}")]
+    public async Task<IActionResult> GetInvoicePerCompany(string companyName)
+    {
+        return BadRequest("the dev forgot to add the implementation to this one, the big dummy");
+    }
+
+    [HttpGet("")]
     public async Task<IActionResult> GetAllFiles()
     {
         var result = await _fileService.GetAll();
         return Ok(result);
     }
 
-    [HttpPost()] likley wont need after it works in invoiceServce
+    [HttpPost()] //likley wont need after it works in invoiceServce
     public async Task<IActionResult> Upload(IFormFile file)
     {
         var result = await _fileService.uploadAsync(file);

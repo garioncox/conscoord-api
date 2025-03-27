@@ -14,7 +14,19 @@ public class InvoiceService : IInvoiceService
         _context = context;
     }
 
-    public int create new invoice
+    public async Task<Invoice> CreateInvoice(int CompanyId)
+    {
+        var invoice = new Invoice
+        {
+            CompanyId = CompanyId,
+            InvoiceNumber = new Guid(),
+        };
+
+        _context.Invoices.Add(invoice);
+        await _context.SaveChangesAsync();
+
+        return invoice;
+    }
 
     public async Task<List<InvoiceInfoDTO>> GetInvoiceInfoByCompanyTimePeriod(InvoiceDTO DTO)
     {
@@ -118,7 +130,7 @@ public class InvoiceService : IInvoiceService
 
         if (dbEmpShift is not null)
         {
-            dbEmpShift.InvoiceId = 0;
+            dbEmpShift.InvoiceId = 1;
             await _context.SaveChangesAsync();
         }
     }
@@ -132,5 +144,19 @@ public class InvoiceService : IInvoiceService
             dbEmpShift.IsResidual = true;
             await _context.SaveChangesAsync();
         }
+    }
+
+    public async Task AddURL(int id, string URL)
+    {
+        var invoice = await _context.Invoices.FirstOrDefaultAsync(i => i.Id == id);
+
+        if (invoice is null)
+        {
+            throw new KeyNotFoundException("Invoice not found in the database");
+        }
+
+        invoice.InvoiceUrl = URL;
+
+        await _context.SaveChangesAsync();
     }
 }

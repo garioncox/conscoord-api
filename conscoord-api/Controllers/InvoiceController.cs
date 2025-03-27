@@ -404,7 +404,6 @@ public class InvoiceController : ControllerBase
             gfx.DrawLine(XPens.DarkGray, 40, yPosition, page.Width - 40, yPosition);
         }
 
-
         // Grand Total (Bottom Right)
         yPosition += 25;
         checkIfNewPageNeeded(maxYPosition, document, ref page, ref gfx, ref yPosition);
@@ -419,22 +418,26 @@ public class InvoiceController : ControllerBase
             new XRect(page.Width - 150, yPosition, 100, page.Height),
             XStringFormats.TopRight);
 
-        // Save the document
-        var filename = $"Invoice {Invoice name} {DTO.startDate} - {DTO.endDate}";
+        var invoice = await _invoiceService.CreateInvoice(DTO.companyId);
+        var filename = $"Invoice {invoice.InvoiceNumber} {DTO.startDate} - {DTO.endDate}";
+
         document.Save(filename);
 
         var currentFilePath = System.IO.Path.GetFullPath(".");
         var fileBytes = System.IO.File.ReadAllBytes(currentFilePath + "/" + filename);
 
-        //if (System.IO.File.Exists(System.IO.Path.Combine(currentFilePath, filename)))
-        //{
-        //    System.IO.File.Delete(System.IO.Path.Combine(currentFilePath, filename));
-        //}
+        // Save the document
+        if (System.IO.File.Exists(System.IO.Path.Combine(currentFilePath, filename)))
+        {
+            System.IO.File.Delete(System.IO.Path.Combine(currentFilePath, filename));
+        }
 
         //upload to azure
         var stream = new MemoryStream(fileBytes);
         IFormFile file = new FormFile(stream, 0, fileBytes.Length, filename, filename);
-        await _FilesService.uploadAsync(file);
+        var uploadResponse = await _FilesService.uploadAsync(file);
+
+        await _invoiceService.AddURL(invoice.Id, uploadResponse.Blob.URI);
 
         return File(fileBytes, "application/pdf", filename);
     }

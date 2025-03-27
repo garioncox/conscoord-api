@@ -6,4 +6,6 @@ public interface IInvoiceService
 {
     Task<List<InvoiceInfoDTO>> GetInvoiceInfoByCompanyTimePeriod(InvoiceDTO DTO);
     Task updateHasBeenInvoiced(employeeInfo rowsEmployee, shiftInfo rowsShift);
+    Task<Invoice> CreateInvoice(int CompanyId);
+    Task AddURL(int id, string URL);
 }

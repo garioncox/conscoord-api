@@ -16,6 +16,7 @@ public class AzureFileService
     private readonly string _storageAccount = "practicuminvoice";
     private readonly string _key;
     private readonly BlobContainerClient _filesContainer;
+    //private readonly BlobContainerClient _filesContainer1;
 
     public AzureFileService(IOptions<CustomConfiguration> customConfiguration)
     {
@@ -25,7 +26,8 @@ public class AzureFileService
         var credential = new StorageSharedKeyCredential(_storageAccount, _key);
         var blobUri = $"https://{_storageAccount}.blob.core.windows.net";
         var blobServiceClinet = new BlobServiceClient(new Uri(blobUri), credential);
-        _filesContainer = blobServiceClinet.GetBlobContainerClient("invoices");
+        _filesContainer = blobServiceClinet.GetBlobContainerClient("invoices"); //create new one per company
+        //_filesContainer1 = blobServiceClinet.CreateBlobContainer();
     }
 
 
