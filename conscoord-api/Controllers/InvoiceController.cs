@@ -28,12 +28,22 @@ public class InvoiceController : ControllerBase
     {
         var user = HttpContext.User;
         var hasPerms = await _RoleUtils.HasPerms(user, [Role.ADMIN_ROLE]);
-        if (!hasPerms) { return NotFound(); }
+        if (!hasPerms) { return BadRequest("User is not logged in"); }
 
         if (DTO.startDate > DTO.endDate) { return BadRequest("Selected Start Date cannot be after End Date"); }
 
         var result = await _invoiceService.GetInvoiceInfoByCompanyTimePeriod(DTO);
         return Ok(result);
+    }
+
+    [HttpGet("getAll/{companyId}")]
+    public async Task<ActionResult<List<AzureInvoiceDTO>>> GetAllInvoicesByCompany(int companyId)
+    {
+        var user = HttpContext.User;
+        var hasPerms = await _RoleUtils.HasPerms(user, [Role.ADMIN_ROLE]);
+        if (!hasPerms) { return BadRequest("User is not logged in"); }
+        
+        return await _invoiceService.GetAllInvoicesByCompany(companyId);
     }
 
     [HttpPost("generateInvoice")]
