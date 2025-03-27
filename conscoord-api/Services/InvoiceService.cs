@@ -16,10 +16,12 @@ public class InvoiceService : IInvoiceService
 
     public async Task<Invoice> CreateInvoice(int CompanyId)
     {
+        Guid guid = Guid.NewGuid();
         var invoice = new Invoice
         {
             CompanyId = CompanyId,
-            InvoiceNumber = new Guid(),
+            InvoiceNumber = guid,
+            PostedDate = DateTime.Now.ToUniversalTime()
         };
 
         _context.Invoices.Add(invoice);

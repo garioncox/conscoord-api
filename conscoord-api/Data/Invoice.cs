@@ -13,7 +13,7 @@ public partial class Invoice
 
     public int CompanyId { get; set; }
 
-    public DateOnly PostedDate { get; set; }
+    public DateTime PostedDate { get; set; }
 
     public virtual Company? Company { get; set; }
 

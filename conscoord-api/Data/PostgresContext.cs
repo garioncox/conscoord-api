@@ -162,7 +162,7 @@ public partial class PostgresContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CompanyId).HasColumnName("company_id");
-            entity.Property(e => e.InvoiceNumber).HasColumnName("invoice_number");
+            entity.Property(e => e.InvoiceNumber).HasColumnName("invoice_number").HasColumnType("uuid"); ;
             entity.Property(e => e.InvoiceUrl)
                 .HasMaxLength(150)
                 .HasColumnName("invoice_url");
