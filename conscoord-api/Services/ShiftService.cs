@@ -22,7 +22,8 @@ public class ShiftService : IShiftService
                     s.EmployeeShifts
                         .Any(es => es.ClockInTime == null || es.ClockOutTime == null) &&
                     s.EmployeeShifts
-                        .All(es => es.IsResidual != true))
+                        .All(es => es.IsResidual != true) &&
+                s.StartTime < DateTime.Now)
             .Distinct()
             .ToListAsync();
     }

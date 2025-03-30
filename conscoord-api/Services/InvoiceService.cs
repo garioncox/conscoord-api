@@ -2,6 +2,7 @@ using conscoord_api.Data;
 using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace conscoord_api.Services;
 
@@ -147,18 +148,22 @@ public class InvoiceService : IInvoiceService
             await _context.SaveChangesAsync();
         }
     }
-
-    public async Task AddURL(int id, string URL)
+    public async Task<List<AzureInvoiceDTO>> GetAllInvoicesByCompany(int companyId)
     {
-        var invoice = await _context.Invoices.FirstOrDefaultAsync(i => i.Id == id);
+        var invoices = await _context.Invoices
+            .Where(i => i.CompanyId == companyId)
+            .ToListAsync();
 
-        if (invoice is null)
+        if (invoices.IsNullOrEmpty())
         {
-            throw new KeyNotFoundException("Invoice not found in the database");
+            return [];
         }
 
-        invoice.InvoiceUrl = URL;
-
-        await _context.SaveChangesAsync();
+        return invoices.Select(i => new AzureInvoiceDTO()
+        {
+            Id = i.InvoiceNumber,
+            URI = i.InvoiceUrl,
+            Name = string.IsNullOrEmpty(i.InvoiceUrl) ? "" : Path.GetFileNameWithoutExtension(i.InvoiceUrl)
+        }).ToList();
     }
 }
