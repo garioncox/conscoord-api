@@ -16,9 +16,9 @@ public class InvoiceController : ControllerBase
 {
     private readonly IInvoiceService _invoiceService;
     private readonly IRoleUtils _RoleUtils;
-    private readonly AzureFileService _FilesService;
+    private readonly IAzureFileService _FilesService;
 
-    public InvoiceController(IInvoiceService invoiceService, IRoleUtils roleUtils, AzureFileService filesService)
+    public InvoiceController(IInvoiceService invoiceService, IRoleUtils roleUtils, IAzureFileService filesService)
     {
         _invoiceService = invoiceService;
         _RoleUtils = roleUtils;
@@ -297,8 +297,6 @@ public class InvoiceController : ControllerBase
 
                 foreach (var employee in shift.employeesByShift)
                 {
-                    await interfaceService.updateHasBeenInvoiced(employee, shift);
-
                     yPosition += 20;
                     CheckIfNewPageNeeded(maxYPosition, document, ref page, ref gfx, ref yPosition);
 
@@ -366,8 +364,6 @@ public class InvoiceController : ControllerBase
 
                 foreach (var employee in shift.employeesByShift)
                 {
-                    await interfaceService.updateHasBeenInvoiced(employee, shift);
-
                     yPosition += 20;
                     CheckIfNewPageNeeded(maxYPosition, document, ref page, ref gfx, ref yPosition);
 
@@ -433,26 +429,54 @@ public class InvoiceController : ControllerBase
             System.IO.File.Delete(System.IO.Path.Combine(currentFilePath, filename));
         }
 
-        var InvoiceCreated = DateTime.Now;
         var name = FormatInvoiceName(company.Name, DTO.startDate.Date.ToString(), DTO.endDate.Date.ToString());
 
         var AzureResponse = await UploadToAzure(fileBytes, name);
+
 
         if (AzureResponse.Blob.URI is null)
         {
             Console.WriteLine(AzureResponse.Status);
             return BadRequest("No URL returned from Azure, a file of the same name likely exists");
         }
+
         if (AzureResponse.Error)
         {
             return BadRequest("Error uploading to Azure: " + AzureResponse.Status);
         }
+        else
+        {
+            await SendToDatabase(DTO.companyId, invoicedata, residualShifts, AzureResponse.Blob.URI);
+        }
 
-        var invoice = await _invoiceService.CreateInvoice(DTO.companyId,InvoiceCreated);
-
-        await _invoiceService.AddURL(invoice.Id, AzureResponse.Blob.URI);
 
         return File(fileBytes, "application/pdf", filename);
+    }
+
+    private async Task SendToDatabase(int companyId, List<InvoiceInfoDTO> invoicedata, List<InvoiceInfoDTO> residualShifts, string Url)
+    {
+        var invoice = await _invoiceService.CreateInvoice(companyId, Url);
+
+        foreach (var data in invoicedata)
+        {
+            foreach (var shift in data.shiftsByProject)
+            {
+                foreach (var employee in shift.employeesByShift)
+                {
+                    await _invoiceService.updateHasBeenInvoiced(employee, shift, invoice.Id);
+                }
+            }
+        }
+        foreach (var data in residualShifts)
+        {
+            foreach (var shift in data.shiftsByProject)
+            {
+                foreach (var employee in shift.employeesByShift)
+                {
+                    await _invoiceService.updateHasBeenInvoiced(employee, shift, invoice.Id);
+                }
+            }
+        }
     }
 
     private async Task<AzureResponseDTO> UploadToAzure(byte[] fileBytes, string name)

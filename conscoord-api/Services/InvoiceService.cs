@@ -14,13 +14,14 @@ public class InvoiceService : IInvoiceService
         _context = context;
     }
 
-    public async Task<Invoice> CreateInvoice(int CompanyId)
+    public async Task<Invoice> CreateInvoice(int CompanyId, string Url)
     {
         Guid guid = Guid.NewGuid();
         var invoice = new Invoice
         {
             CompanyId = CompanyId,
             InvoiceNumber = guid,
+            InvoiceUrl = Url,
             PostedDate = DateTime.Now.ToUniversalTime()
         };
 
@@ -125,14 +126,13 @@ public class InvoiceService : IInvoiceService
         return result;
     }
 
-    //TODO: FIX THIS - need to create invoice, save to table and update this value to the new invoice
-    public async Task updateHasBeenInvoiced(employeeInfo rowsEmployee, shiftInfo rowsShift)
+    public async Task updateHasBeenInvoiced(employeeInfo rowsEmployee, shiftInfo rowsShift, int invoiceId)
     {
         var dbEmpShift = await _context.EmployeeShifts.FirstOrDefaultAsync(es => es.EmpId == rowsEmployee.employeeId && es.ShiftId == rowsShift.shiftId);
 
         if (dbEmpShift is not null)
         {
-            dbEmpShift.InvoiceId = 1;
+            dbEmpShift.InvoiceId = invoiceId;
             await _context.SaveChangesAsync();
         }
     }

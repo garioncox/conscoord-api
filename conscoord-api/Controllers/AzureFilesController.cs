@@ -1,5 +1,3 @@
-using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using conscoord_api.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,13 +25,6 @@ public class AzureFilesController : Controller
     {
         var result = await _fileService.GetAll();
         return Ok(result);
-    }
-
-    [HttpPost()] //likley wont need after it works in invoiceServce
-    public async Task<IActionResult> Upload(IFormFile file)
-    {
-        var result = await _fileService.uploadAsync(file);
-        return Ok();
     }
 
     [HttpGet("Download/{fileName}")]
