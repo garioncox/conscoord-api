@@ -13,18 +13,18 @@ public class AzureFilesController : Controller
         _fileService = fileService;
     }
 
+
+    [HttpGet("invoice/{companyName}")]
+    public async Task<IActionResult> GetInvoicePerCompany(string companyName)
+    {
+        return BadRequest("the dev forgot to add the implementation to this one, the big dummy");
+    }
+
     [HttpGet("")]
     public async Task<IActionResult> GetAllFiles()
     {
         var result = await _fileService.GetAll();
         return Ok(result);
-    }
-
-    [HttpPost()]
-    public async Task<IActionResult> Upload(IFormFile file)
-    {
-        var result = await _fileService.uploadAsync(file);
-        return Ok();
     }
 
     [HttpGet("Download/{fileName}")]

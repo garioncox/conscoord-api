@@ -69,7 +69,7 @@ builder.Services.AddScoped<IEmailService, EmailController>();
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 builder.Services.AddScoped<ShiftClockInReminder>();
 builder.Services.AddScoped<IRoleUtils, RoleUtils>();
-builder.Services.AddSingleton<AzureFileService>();
+builder.Services.AddScoped<IAzureFileService, AzureFileService>();
 
 var app = builder.Build();
 

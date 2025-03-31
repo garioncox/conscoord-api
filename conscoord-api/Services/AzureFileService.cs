@@ -2,7 +2,7 @@ using Azure.Storage;
 using Azure.Storage.Blobs;
 using conscoord_api.Data;
 using conscoord_api.Data.DTOs;
-using Microsoft.EntityFrameworkCore;
+using conscoord_api.Data.Interfaces;
 using Microsoft.Extensions.Options;
 
 namespace conscoord_api.Services;
@@ -10,12 +10,13 @@ namespace conscoord_api.Services;
 //taken from
 //https://www.youtube.com/watch?v=DzQ7CNnb9yM 
 
-public class AzureFileService
+public class AzureFileService : IAzureFileService
 {
     private readonly CustomConfiguration _configurations;
     private readonly string _storageAccount = "practicuminvoice";
     private readonly string _key;
     private readonly BlobContainerClient _filesContainer;
+    //private readonly BlobContainerClient _filesContainer1;
 
     public AzureFileService(IOptions<CustomConfiguration> customConfiguration)
     {
@@ -25,7 +26,7 @@ public class AzureFileService
         var credential = new StorageSharedKeyCredential(_storageAccount, _key);
         var blobUri = $"https://{_storageAccount}.blob.core.windows.net";
         var blobServiceClinet = new BlobServiceClient(new Uri(blobUri), credential);
-        _filesContainer = blobServiceClinet.GetBlobContainerClient("invoices");
+        _filesContainer = blobServiceClinet.GetBlobContainerClient("invoices"); //create new one per company
     }
 
 

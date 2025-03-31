@@ -2,7 +2,6 @@ using System.Collections;
 using conscoord_api.Data;
 using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
-using conscoord_api.Services;
 using Microsoft.AspNetCore.Mvc;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
@@ -14,9 +13,9 @@ public class InvoiceController : ControllerBase
 {
     private readonly IInvoiceService _invoiceService;
     private readonly IRoleUtils _RoleUtils;
-    private readonly AzureFileService _FilesService;
+    private readonly IAzureFileService _FilesService;
 
-    public InvoiceController(IInvoiceService invoiceService, IRoleUtils roleUtils, AzureFileService filesService)
+    public InvoiceController(IInvoiceService invoiceService, IRoleUtils roleUtils, IAzureFileService filesService)
     {
         _invoiceService = invoiceService;
         _RoleUtils = roleUtils;
@@ -287,7 +286,7 @@ public class InvoiceController : ControllerBase
         foreach (var data in invoicedata)
         {
             yPosition += 20;
-            checkIfNewPageNeeded(maxYPosition, document, ref page, ref gfx, ref yPosition);
+            CheckIfNewPageNeeded(maxYPosition, document, ref page, ref gfx, ref yPosition);
 
             gfx.DrawString(data.projectId + " - " + data.projectName, headerFont, headerBrush,
                 new XRect(40, yPosition, page.Width - 80, page.Height),
@@ -297,7 +296,7 @@ public class InvoiceController : ControllerBase
             {
 
                 yPosition += 20;
-                checkIfNewPageNeeded(maxYPosition, document, ref page, ref gfx, ref yPosition);
+                CheckIfNewPageNeeded(maxYPosition, document, ref page, ref gfx, ref yPosition);
 
                 gfx.DrawString("Shift: " + shift.shiftId + " - " + shift.shiftLocation, subHeaderFont, subHeaderBrush,
                     new XRect(60, yPosition, page.Width - 80, page.Height),
@@ -305,10 +304,8 @@ public class InvoiceController : ControllerBase
 
                 foreach (var employee in shift.employeesByShift)
                 {
-                    await interfaceService.updateHasBeenInvoiced(employee, shift);
-
                     yPosition += 20;
-                    checkIfNewPageNeeded(maxYPosition, document, ref page, ref gfx, ref yPosition);
+                    CheckIfNewPageNeeded(maxYPosition, document, ref page, ref gfx, ref yPosition);
 
                     gfx.DrawString($"Employee: {employee.employeeId} - {employee.employeeName}", normalFont, textBrush,
                         new XRect(80, yPosition, page.Width - 200, page.Height),
@@ -356,7 +353,7 @@ public class InvoiceController : ControllerBase
         foreach (var data in residualShifts)
         {
             yPosition += 20;
-            checkIfNewPageNeeded(maxYPosition, document, ref page, ref gfx, ref yPosition);
+            CheckIfNewPageNeeded(maxYPosition, document, ref page, ref gfx, ref yPosition);
 
             gfx.DrawString(data.projectId + " - " + data.projectName, headerFont, headerBrush,
                 new XRect(40, yPosition, page.Width - 80, page.Height),
@@ -366,7 +363,7 @@ public class InvoiceController : ControllerBase
             {
 
                 yPosition += 20;
-                checkIfNewPageNeeded(maxYPosition, document, ref page, ref gfx, ref yPosition);
+                CheckIfNewPageNeeded(maxYPosition, document, ref page, ref gfx, ref yPosition);
 
                 gfx.DrawString("Shift: " + shift.shiftId + " - " + shift.shiftLocation, subHeaderFont, subHeaderBrush,
                     new XRect(60, yPosition, page.Width - 80, page.Height),
@@ -374,10 +371,8 @@ public class InvoiceController : ControllerBase
 
                 foreach (var employee in shift.employeesByShift)
                 {
-                    await interfaceService.updateHasBeenInvoiced(employee, shift);
-
                     yPosition += 20;
-                    checkIfNewPageNeeded(maxYPosition, document, ref page, ref gfx, ref yPosition);
+                    CheckIfNewPageNeeded(maxYPosition, document, ref page, ref gfx, ref yPosition);
 
                     gfx.DrawString($"Employee: {employee.employeeId} - {employee.employeeName}", normalFont, textBrush,
                         new XRect(80, yPosition, page.Width - 200, page.Height),
@@ -414,10 +409,9 @@ public class InvoiceController : ControllerBase
             gfx.DrawLine(XPens.DarkGray, 40, yPosition, page.Width - 40, yPosition);
         }
 
-
         // Grand Total (Bottom Right)
         yPosition += 25;
-        checkIfNewPageNeeded(maxYPosition, document, ref page, ref gfx, ref yPosition);
+        CheckIfNewPageNeeded(maxYPosition, document, ref page, ref gfx, ref yPosition);
 
         gfx.DrawString($"Grand Total: ", titleFont, XBrushes.Black,
             new XRect(60, yPosition, 200, 40),
@@ -429,27 +423,88 @@ public class InvoiceController : ControllerBase
             new XRect(page.Width - 150, yPosition, 100, page.Height),
             XStringFormats.TopRight);
 
-        // Save the document
-        var filename = $"Invoice {DTO.startDate} - {DTO.endDate}";
+
+        var filename = $"Invoice.pdf";
         document.Save(filename);
 
         var currentFilePath = System.IO.Path.GetFullPath(".");
         var fileBytes = System.IO.File.ReadAllBytes(currentFilePath + "/" + filename);
 
-        //if (System.IO.File.Exists(System.IO.Path.Combine(currentFilePath, filename)))
-        //{
-        //    System.IO.File.Delete(System.IO.Path.Combine(currentFilePath, filename));
-        //}
+        // Save the document
+        if (System.IO.File.Exists(System.IO.Path.Combine(currentFilePath, filename)))
+        {
+            System.IO.File.Delete(System.IO.Path.Combine(currentFilePath, filename));
+        }
 
-        //upload to azure
-        var stream = new MemoryStream(fileBytes);
-        IFormFile file = new FormFile(stream, 0, fileBytes.Length, filename, filename);
-        await _FilesService.uploadAsync(file);
+        var name = FormatInvoiceName(company.Name, DTO.startDate.Date.ToString(), DTO.endDate.Date.ToString());
+
+        var AzureResponse = await UploadToAzure(fileBytes, name);
+
+
+        if (AzureResponse.Blob.URI is null)
+        {
+            return BadRequest("No URL returned from Azure, an invoice for that date range likely exists");
+        }
+
+        if (AzureResponse.Error)
+        {
+            return BadRequest("Error uploading to Azure: " + AzureResponse.Status);
+        }
+        else
+        {
+            await SendToDatabase(DTO.companyId, invoicedata, residualShifts, AzureResponse.Blob.URI);
+        }
+
 
         return File(fileBytes, "application/pdf", filename);
     }
 
-    private static void checkIfNewPageNeeded(int maxYPosition, PdfDocument document, ref PdfPage page, ref XGraphics gfx, ref double yPosition)
+    private async Task SendToDatabase(int companyId, List<InvoiceInfoDTO> invoicedata, List<InvoiceInfoDTO> residualShifts, string Url)
+    {
+        var invoice = await _invoiceService.CreateInvoice(companyId, Url);
+
+        foreach (var data in invoicedata)
+        {
+            foreach (var shift in data.shiftsByProject)
+            {
+                foreach (var employee in shift.employeesByShift)
+                {
+                    await _invoiceService.updateHasBeenInvoiced(employee, shift, invoice.Id);
+                }
+            }
+        }
+        foreach (var data in residualShifts)
+        {
+            foreach (var shift in data.shiftsByProject)
+            {
+                foreach (var employee in shift.employeesByShift)
+                {
+                    await _invoiceService.updateHasBeenInvoiced(employee, shift, invoice.Id);
+                }
+            }
+        }
+    }
+
+    private async Task<AzureResponseDTO> UploadToAzure(byte[] fileBytes, string name)
+    {
+        var stream = new MemoryStream(fileBytes);
+        IFormFile file = new FormFile(stream, 0, fileBytes.Length, name, name);
+        var uploadResponse = await _FilesService.uploadAsync(file);
+        return uploadResponse;
+    }
+
+    private static string FormatInvoiceName(string companyNameRaw, string startDate, string endDate)
+    {
+        var companyName = companyNameRaw.Replace(" ", "-");
+        var name = $"Invoice_{companyName}_{startDate}_{endDate}.pdf";
+
+        return name
+            .Replace(" 12:00:00 AM", "")
+            .Replace(" ", "_")
+            .Replace("/", "-");
+    }
+
+    private static void CheckIfNewPageNeeded(int maxYPosition, PdfDocument document, ref PdfPage page, ref XGraphics gfx, ref double yPosition)
     {
         if (yPosition > maxYPosition)
         {

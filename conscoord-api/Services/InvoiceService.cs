@@ -15,6 +15,23 @@ public class InvoiceService : IInvoiceService
         _context = context;
     }
 
+    public async Task<Invoice> CreateInvoice(int CompanyId, string Url)
+    {
+        Guid guid = Guid.NewGuid();
+        var invoice = new Invoice
+        {
+            CompanyId = CompanyId,
+            InvoiceNumber = guid,
+            InvoiceUrl = Url,
+            PostedDate = DateTime.Now.ToUniversalTime()
+        };
+
+        _context.Invoices.Add(invoice);
+        await _context.SaveChangesAsync();
+
+        return invoice;
+    }
+
     public async Task<List<InvoiceInfoDTO>> GetInvoiceInfoByCompanyTimePeriod(InvoiceDTO DTO)
     {
         var SQLQuery = @$"select p.id as projectId,p.""location"" as projectName, s.end_time as shiftEnd,
@@ -110,14 +127,13 @@ public class InvoiceService : IInvoiceService
         return result;
     }
 
-    //TODO: FIX THIS - need to create invoice, save to table and update this value to the new invoice
-    public async Task updateHasBeenInvoiced(employeeInfo rowsEmployee, shiftInfo rowsShift)
+    public async Task updateHasBeenInvoiced(employeeInfo rowsEmployee, shiftInfo rowsShift, int invoiceId)
     {
         var dbEmpShift = await _context.EmployeeShifts.FirstOrDefaultAsync(es => es.EmpId == rowsEmployee.employeeId && es.ShiftId == rowsShift.shiftId);
 
         if (dbEmpShift is not null)
         {
-            dbEmpShift.InvoiceId = 0;
+            dbEmpShift.InvoiceId = invoiceId;
             await _context.SaveChangesAsync();
         }
     }
@@ -132,7 +148,6 @@ public class InvoiceService : IInvoiceService
             await _context.SaveChangesAsync();
         }
     }
-
     public async Task<List<AzureInvoiceDTO>> GetAllInvoicesByCompany(int companyId)
     {
         var invoices = await _context.Invoices
