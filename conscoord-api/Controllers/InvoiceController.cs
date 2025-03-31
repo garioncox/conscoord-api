@@ -1,13 +1,10 @@
 using System.Collections;
-using System.Text.Json.Serialization;
 using conscoord_api.Data;
 using conscoord_api.Data.DTOs;
 using conscoord_api.Data.Interfaces;
-using conscoord_api.Services;
 using Microsoft.AspNetCore.Mvc;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 namespace conscoord_api.Controllers;
 
 [ApiController]
@@ -446,7 +443,6 @@ public class InvoiceController : ControllerBase
 
         if (AzureResponse.Blob.URI is null)
         {
-            Console.WriteLine(AzureResponse.Status);
             return BadRequest("No URL returned from Azure, an invoice for that date range likely exists");
         }
 
