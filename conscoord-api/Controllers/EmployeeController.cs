@@ -30,10 +30,9 @@ public class EmployeeController : Controller
     public async Task<List<Employee>> GetEmployeesByShiftId(int shift_id)
     {
         var user = HttpContext.User;
-        var hasPerms = await _roleUtils.HasPerms(user, [Role.ADMIN_ROLE, Role.CLIENT_ROLE]);
+        var hasPerms = await _roleUtils.HasPerms(user, Role.ALL_ROLES);
         if (!hasPerms) { return []; }
 
-        Console.WriteLine("received request with shiftID: " + shift_id);
         return await _EmployeeService.GetEmployeesByShiftIdAsync(shift_id);
     }
 
