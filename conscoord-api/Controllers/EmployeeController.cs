@@ -33,7 +33,6 @@ public class EmployeeController : Controller
         var hasPerms = await _roleUtils.HasPerms(user, Role.ALL_ROLES);
         if (!hasPerms) { return []; }
 
-        Console.WriteLine("received request with shiftID: " + shift_id);
         return await _EmployeeService.GetEmployeesByShiftIdAsync(shift_id);
     }
 
